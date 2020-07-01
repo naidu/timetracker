@@ -32,6 +32,13 @@ services:
       MYSQL_PASSWORD: anuko_pw
     volumes:
       - anuko_db:/var/lib/mysql
+    
+  composer:
+    restart: 'no'
+    image: composer:latest
+    command: install
+    volumes:
+      - .:/app
 
 volumes:
    anuko_db:

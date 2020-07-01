@@ -4,7 +4,7 @@
 // | Author: Sasitha Asaranga
 // +----------------------------------------------------------------------+
 
-require __DIR__ . './../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 require_once('../initialize.php');
 import('../form.Form');
 import('../ttOrgHelper');

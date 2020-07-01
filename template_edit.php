@@ -47,16 +47,22 @@ if (!$template) {
 }
 // End of access checks.
 
+$projects = ttGroupHelper::getActiveProjects();
+
 if ($request->isPost()) {
   $cl_name = trim($request->getParameter('name'));
   $cl_description = trim($request->getParameter('description'));
   $cl_content = trim($request->getParameter('content'));
   $cl_status = $request->getParameter('status');
+  $cl_projects = $request->getParameter('projects');
 } else {
   $cl_name = $template['name'];
   $cl_description = $template['description'];
   $cl_content = $template['content'];
   $cl_status = $template['status'];
+  $assigned_projects = ttTemplateHelper::getAssignedProjects($cl_template_id);
+  foreach ($assigned_projects as $project_item)
+    $cl_projects[] = $project_item['id'];
 }
 
 $form = new Form('templateForm');
@@ -66,6 +72,7 @@ $form->addInput(array('type'=>'textarea','name'=>'description','style'=>'width: 
 $form->addInput(array('type'=>'textarea','name'=>'content','style'=>'width: 250px; height: 80px;','value'=>$cl_content));
 $form->addInput(array('type'=>'combobox','name'=>'status','value'=>$cl_status,
   'data'=>array(ACTIVE=>$i18n->get('dropdown.status_active'),INACTIVE=>$i18n->get('dropdown.status_inactive'))));
+$form->addInput(array('type'=>'checkboxgroup','name'=>'projects','layout'=>'H','data'=>$projects,'datakeys'=>array('id','name'),'value'=>$cl_projects));
 $form->addInput(array('type'=>'submit','name'=>'btn_submit','value'=>$i18n->get('button.submit')));
 
 if ($request->isPost()) {
@@ -81,7 +88,8 @@ if ($request->isPost()) {
         'name' => $cl_name,
         'description' => $cl_description,
         'content' => $cl_content,
-        'status' => $cl_status))) {
+        'status' => $cl_status,
+        'projects' => $cl_projects))) {
         header('Location: templates.php');
         exit();
       } else
@@ -90,6 +98,7 @@ if ($request->isPost()) {
 } // isPost
 
 $smarty->assign('forms', array($form->getName()=>$form->toArray()));
+$smarty->assign('show_projects', count($projects) > 0 && defined('TEMPLATES_DEBUG'));
 $smarty->assign('title', $i18n->get('title.edit_template'));
 $smarty->assign('content_page_name', 'template_edit.tpl');
 $smarty->display('index.tpl');

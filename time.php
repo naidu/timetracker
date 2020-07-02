@@ -69,6 +69,7 @@ if ($request->isPost() && $userChanged) {
 $group_id = $user->getGroup();
 
 $showClient = $user->isPluginEnabled('cl');
+$showBillable = $user->isPluginEnabled('iv');
 $trackingMode = $user->getTrackingMode();
 $showProject = MODE_PROJECTS == $trackingMode || MODE_PROJECTS_AND_TASKS == $trackingMode;
 $showTask = MODE_PROJECTS_AND_TASKS == $trackingMode;
@@ -206,7 +207,8 @@ if (MODE_TIME == $trackingMode && $showClient) {
 
 if ($showProject) {
   // Dropdown for projects assigned to user.
-  $project_list = $user->getAssignedProjects();
+  $options['include_templates'] = $showTemplates;
+  $project_list = $user->getAssignedProjects($options);
   $form->addInput(array('type'=>'combobox',
     'onchange'=>'fillTaskDropdown(this.value);',
     'name'=>'project',
@@ -245,6 +247,9 @@ if ($showProject) {
   }
 }
 
+if ($showBillable)
+  $form->addInput(array('type'=>'checkbox','name'=>'billable','value'=>$cl_billable));
+
 if ($showTask) {
   $task_list = ttGroupHelper::getActiveTasks();
   $form->addInput(array('type'=>'combobox',
@@ -277,9 +282,7 @@ $form->addInput(array('type'=>'calendar','name'=>'date','value'=>$cl_date)); // 
 
 
 
-// TODO: refactoring ongoing down from here. Use $showBillable, perhaps?
-if ($user->isPluginEnabled('iv'))
-  $form->addInput(array('type'=>'checkbox','name'=>'billable','value'=>$cl_billable));
+// TODO: refactoring ongoing down from here.
 $form->addInput(array('type'=>'hidden','name'=>'browser_today','value'=>'')); // User current date, which gets filled in on btn_submit click.
 $form->addInput(array('type'=>'submit','name'=>'btn_submit','onclick'=>'browser_today.value=get_date()','value'=>$i18n->get('button.submit')));
 
@@ -465,11 +468,13 @@ $smarty->assign('day_total', ttTimeHelper::getTimeForDay($cl_date));
 $smarty->assign('time_records', $timeRecords);
 $smarty->assign('show_navigation', $user->isPluginEnabled('wv') && !$user->isOptionEnabled('week_menu'));
 $smarty->assign('show_client', $showClient);
+$smarty->assign('show_billable', $showBillable);
 $smarty->assign('show_project', $showProject);
 $smarty->assign('show_task', $showTask);
 $smarty->assign('show_start', $showStart);
 $smarty->assign('show_finish', $showFinish);
 $smarty->assign('show_duration', $showDuration);
+$smarty->assign('show_templates', $showTemplates);
 $smarty->assign('show_note_column', $showNoteColumn);
 $smarty->assign('show_note_row', $showNoteRow);
 $smarty->assign('show_files', $showFiles);

@@ -30,7 +30,7 @@
           <td>{$forms.timeRecordForm.client.control}</td>
         </tr>
 {/if}
-{if $user->isPluginEnabled('iv')}
+{if $show_billable}
         <tr>
           <td align="right">&nbsp;</td>
           <td><label>{$forms.timeRecordForm.billable.control}{$i18n.form.time.billable}</label></td>

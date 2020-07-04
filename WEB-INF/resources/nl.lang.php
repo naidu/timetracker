@@ -255,6 +255,9 @@ $i18n_key_words = array(
 'label.approval' => 'Rapport goedkeuring',
 'label.mark_approved' => 'Markeer goedkeuring',
 'label.template' => 'Sjabloon',
+// TODO: translate the following.
+// 'label.bind_templates_with_projects' => 'Bind templates with projects',
+// 'label.prepopulate_empty_note' => 'Prepopulate empty Note field',
 'label.attachments' => 'Bijlagen',
 'label.files' => 'Bestanden',
 'label.file' => 'Bestand',

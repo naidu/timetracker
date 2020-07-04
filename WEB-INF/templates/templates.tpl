@@ -46,6 +46,20 @@
         <tr><td align="center"><br>{$forms.templatesForm.btn_add.control}</td></tr>
       </table>
 {/if}
+      <div class="table-divider"></div>
+      <table width="100%">
+        <tr>
+          <td align="right" width=25%">{$forms.templatesForm.bind_templates_with_projects.control}</td>
+          <td><label for="bind_templates_with_projects">{$i18n.label.bind_templates_with_projects}</label> <a href="https://www.anuko.com/lp/tt_42.htm" target="_blank">{$i18n.label.what_is_it}</a></td>
+        </tr>
+        <tr>
+          <td align="right">{$forms.templatesForm.prepopulate_empty_note.control}</td>
+          <td><label for="prepopulate_empty_note">{$i18n.label.prepopulate_empty_note}</label> <a href="https://www.anuko.com/lp/tt_43.htm" target="_blank">{$i18n.label.what_is_it}</a></td>
+        </tr>
+        <tr>
+          <td colspan="2" height="50" align="center">{$forms.templatesForm.btn_save.control}</td>
+        </tr>
+      </table>
     </td>
   </tr>
 </table>

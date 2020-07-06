@@ -85,6 +85,7 @@ function fillDropdowns() {
 
   fillTaskDropdown(document.timeRecordForm.project.value);
   fillTemplateDropdown(document.timeRecordForm.project.value);
+  prepopulateNote();
 }
 
 // The fillProjectDropdown function populates the project combo box with
@@ -226,16 +227,21 @@ function fillTemplateDropdown(id) {
       }
     }
   }
+}
 
-  // Do things for prepopulate_empty_note.
-  if ({$prepopulate_empty_note} && dropdown.options.length >= 2) { // 2 because of mandatory top option.
-    var note = document.getElementById("note");
-    if (note.value == "") {
-      // We have an empty Note field.
-      dropdown.options[1].selected = true; // Select first template.
-      note.value = template_bodies[dropdown.options[1].value]; // Pre-polulate note with first template body.
-    }
-  }
+// The prepopulateNote function populates the note field with first found template body in Template dropdown.
+function prepopulateNote() {
+  {if !$prepopulate_note}
+    return;
+  {/if}
+  var dropdown = document.getElementById("template");
+  if (dropdown == null) return; // Nothing to do.
+
+  if (dropdown.options.length <= 1) return ; // 1 because of mandatory top option.
+
+  dropdown.options[1].selected = true; // Select first template.
+  var note = document.getElementById("note");
+  note.value = template_bodies[dropdown.options[1].value]; // Prepolulate note with first template body.
 }
 
 // The formDisable function disables some fields depending on what we have in other fields.

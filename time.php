@@ -210,7 +210,7 @@ if ($showProject) {
   $options['include_templates'] = $user->isPluginEnabled('tp') && $config->getDefinedValue('bind_templates_with_projects');
   $project_list = $user->getAssignedProjects($options);
   $form->addInput(array('type'=>'combobox',
-    'onchange'=>'fillTaskDropdown(this.value);fillTemplateDropdown(this.value);',
+    'onchange'=>'fillTaskDropdown(this.value);fillTemplateDropdown(this.value);prepopulateNote();',
     'name'=>'project',
     'style'=>'width: 250px;',
     'value'=>$cl_project,
@@ -315,7 +315,7 @@ if ($user->isPluginEnabled('tp')){
       'empty'=>array(''=>$i18n->get('dropdown.select'))));
     $smarty->assign('template_dropdown', 1);
     $smarty->assign('bind_templates_with_projects', $config->getDefinedValue('bind_templates_with_projects'));
-    $smarty->assign('prepopulate_empty_note', $config->getDefinedValue('prepopulate_empty_note'));
+    $smarty->assign('prepopulate_note', $config->getDefinedValue('prepopulate_note'));
     $smarty->assign('template_list', $template_list);
   }
 }

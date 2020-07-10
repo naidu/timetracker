@@ -51,13 +51,13 @@ if (!$user->behalf_id && !$user->can('track_own_time') && !$user->adjustBehalfId
 if ($request->isPost()) {
   $userChanged = $request->getParameter('user_changed'); // Reused in multiple places below.
   if ($userChanged && !($user->can('track_time') && $user->isUserValid($request->getParameter('user')))) {
-    header('Location: access_denied.php'); // Group changed, but no rght or wrong user id.
+    header('Location: access_denied.php'); // User changed, but no right or wrong user id.
     exit();
   }
 }
 // End of access checks.
 
-// Determine user for which we display this page.
+// Determine user for whom we display this page.
 if ($request->isPost() && $userChanged) {
   $user_id = $request->getParameter('user');
   $user->setOnBehalfUser($user_id);
@@ -127,6 +127,8 @@ if ($request->isPost()) {
 
 // Elements of timeRecordForm.
 $form = new Form('timeRecordForm');
+
+// Dropdown for user and a hidden control to indicate user change.
 if ($user->can('track_time')) {
   $rank = $user->getMaxRankForGroup($group_id);
   if ($user->can('track_own_time'))
@@ -374,7 +376,7 @@ $smarty->assign('client_list', $client_list);
 $smarty->assign('project_list', $project_list);
 $smarty->assign('task_list', $task_list);
 $smarty->assign('forms', array($form->getName()=>$form->toArray()));
-$smarty->assign('onload', 'onLoad="fillDropdowns()"');
+$smarty->assign('onload', 'onLoad="fillDropdowns();prepopulateNote();"');
 $smarty->assign('timestring', $selected_date->toString($user->getDateFormat()));
 $smarty->assign('title', $i18n->get('title.time'));
 $smarty->assign('content_page_name', 'mobile/time.tpl');

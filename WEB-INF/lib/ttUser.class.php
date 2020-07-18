@@ -64,7 +64,6 @@ class ttUser {
   var $record_type = 0;         // Record type (duration vs start and finish, or both).
   var $punch_mode = 0;          // Whether punch mode is enabled for user.
   var $allow_overlap = 0;       // Whether to allow overlapping time entries.
-  var $future_entries = 0;      // Whether to allow creating future entries.
   var $bcc_email = null;        // Bcc email.
   var $allow_ip = null;         // Specification from where user is allowed access.
   var $password_complexity = null; // Password complexity example.
@@ -74,6 +73,7 @@ class ttUser {
   // Refactoring ongoing. Towards using helper instead of config string?
   var $config = null;           // Comma-separated list of miscellaneous config options.
   var $configHelper = null;     // An instance of ttConfigHelper class.
+  var $custom_css = null;       // Custom css.
 
   var $custom_logo = 0;         // Whether to use a custom logo for group.
   var $lock_spec = null;        // Cron specification for record locking.
@@ -97,7 +97,7 @@ class ttUser {
     $sql = "SELECT u.id, u.login, u.name, u.group_id, u.role_id, r.rank, r.name as role_name, r.rights, u.client_id,".
       " u.quota_percent, u.email, g.org_id, g.group_key, g.name as group_name, g.currency, g.lang, g.decimal_mark, g.date_format,".
       " g.time_format, g.week_start, g.tracking_mode, g.project_required, g.task_required, g.record_type,".
-      " g.bcc_email, g.allow_ip, g.password_complexity, g.plugins, g.config, g.lock_spec, g.holidays, g.workday_minutes, g.custom_logo".
+      " g.bcc_email, g.allow_ip, g.password_complexity, g.plugins, g.config, g.lock_spec, g.custom_css, g.holidays, g.workday_minutes, g.custom_logo".
       " FROM tt_users u LEFT JOIN tt_groups g ON (u.group_id = g.id) LEFT JOIN tt_roles r on (r.id = u.role_id) WHERE ";
     if ($id)
       $sql .= "u.id = $id";
@@ -154,8 +154,9 @@ class ttUser {
       // Set user config options.
       $this->punch_mode = $this->configHelper->getDefinedValue('punch_mode');
       $this->allow_overlap = $this->configHelper->getDefinedValue('allow_overlap');
-      $this->future_entries = $this->configHelper->getDefinedValue('future_entries');
-      
+
+      $this->custom_css = $val['custom_css'];
+
       // Set "on behalf" id and name (user).
       if (isset($_SESSION['behalf_id'])) {
         $this->behalf_id = $_SESSION['behalf_id'];
@@ -302,6 +303,11 @@ class ttUser {
   function getConfigInt($name, $defaultVal) {
     $config = new ttConfigHelper($this->getConfig());
     return $config->getIntValue($name, $defaultVal);
+  }
+
+  // getCustomCss returns custom css for active group.
+  function getCustomCss() {
+    return ($this->behalfGroup ? $this->behalfGroup->custom_css : $this->custom_css);
   }
 
   // can - determines whether user has a right to do something.
@@ -708,6 +714,7 @@ class ttUser {
     if (isset($fields['allow_ip'])) $allow_ip_part = ', allow_ip = '.$mdb2->quote($fields['allow_ip']);
     if (isset($fields['plugins'])) $plugins_part = ', plugins = '.$mdb2->quote($fields['plugins']);
     if (isset($fields['config'])) $config_part = ', config = '.$mdb2->quote($fields['config']);
+    if (isset($fields['custom_css'])) $custom_css_part = ', custom_css = '.$mdb2->quote($fields['custom_css']);
     if (isset($fields['lock_spec'])) $lock_spec_part = ', lock_spec = '.$mdb2->quote($fields['lock_spec']);
     if (isset($fields['holidays'])) $holidays_part = ', holidays = '.$mdb2->quote($fields['holidays']);
     if (isset($fields['workday_minutes'])) $workday_minutes_part = ', workday_minutes = '.$mdb2->quote($fields['workday_minutes']);
@@ -715,7 +722,7 @@ class ttUser {
 
     $parts = trim($name_part.$description_part.$currency_part.$lang_part.$decimal_mark_part.$date_format_part.
       $time_format_part.$week_start_part.$tracking_mode_part.$task_required_part.$project_required_part.$record_type_part.
-      $bcc_email_part.$allow_ip_part.$plugins_part.$config_part.$lock_spec_part.$holidays_part.$workday_minutes_part.$modified_part, ',');
+      $bcc_email_part.$allow_ip_part.$plugins_part.$config_part.$custom_css_part.$lock_spec_part.$holidays_part.$workday_minutes_part.$modified_part, ',');
 
     $sql = "update tt_groups set $parts where id = $group_id and org_id = $this->org_id";
     $affected = $mdb2->exec($sql);

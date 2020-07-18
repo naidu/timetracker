@@ -537,7 +537,7 @@ class ttWeekViewHelper {
     $objEntryDate = new DateAndTime(DB_DATEFORMAT, $entry_date);
 
     // Prohibit creating entries in future.
-    if (!$user->future_entries && $fields['browser_today']) {
+    if (!$user->isOptionEnabled('future_entries') && $fields['browser_today']) {
       $objBrowserToday = new DateAndTime(DB_DATEFORMAT, $fields['browser_today']);
       if ($objEntryDate->after($objBrowserToday)) {
         $err->add($i18n->get('error.future_date'));
@@ -547,9 +547,6 @@ class ttWeekViewHelper {
 
     // Prepare an array of fields for regular insert function.
     $fields4insert = array();
-    $fields4insert['user_id'] = $user->getUser();
-    $fields4insert['group_id'] = $user->getGroup();
-    $fields4insert['org_id'] = $user->org_id;
     $fields4insert['date'] = $entry_date;
     $fields4insert['duration'] = $fields['duration'];
     $fields4insert['client'] = ttWeekViewHelper::parseFromWeekViewRow($fields['row_id'], 'cl');

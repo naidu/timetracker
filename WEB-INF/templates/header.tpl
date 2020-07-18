@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset={$smarty.const.CHARSET}">
@@ -6,6 +7,9 @@
   <link href="{$smarty.const.DEFAULT_CSS}" rel="stylesheet" type="text/css">
 {if $i18n.language.rtl}
   <link href="{$smarty.const.RTL_CSS}" rel="stylesheet" type="text/css">
+{/if}
+{if $user->getCustomCss()}
+  <link href="custom_css.php" rel="stylesheet" type="text/css">
 {/if}
   <title>Time Tracker{if $title} - {$title}{/if}</title>
   <script src="js/strftime.js"></script>

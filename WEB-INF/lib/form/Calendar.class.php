@@ -28,246 +28,205 @@
 
 import('form.FormElement');
 import('DateAndTime');
+import('ttTimeHelper');
 
 class Calendar extends FormElement {
-  var $holidays = array();
-  var $showHolidays = true;
-  var $weekStartDay = 0;
-  
-    var $mHeader = "padding: 5px; font-size: 8pt; color: #333333; background-color: #d9d9d9;";
-    var $mDayCell = "padding: 5px; border: 1px solid silver; font-size: 8pt; color: #333333; background-color: #ffffff;";
-    var $mDaySelected = "padding: 5px; border: 1px solid silver; font-size: 8pt; color: #666666; background-color: #a6ccf7;";
-    var $mDayWeekend = "padding: 5px; border: 1px solid silver; font-size: 8pt; color: #666666; background-color: #f7f7f7;";
-    var $mDayHoliday = "padding: 5px; border: 1px solid silver; font-size: 8pt; color: #666666; background-color: #f7f7f7;";
-    var $mDayHeader = "padding: 5px; border: 1px solid white; font-size: 8pt; color: #333333;";
-    var $mDayHeaderWeekend = "padding: 5px; border: 1px solid white; font-size: 8pt; color: #999999;";
+  var $weekStartDay = 0;   // Defaults to Sunday.
+  var $highlight = 'time'; // Determines what type of active days to highlight ("time" or "expenses").
+  var $monthNames = array('January','February','March','April','May','June','July','August','September','October','November','December');
+  var $weekdayShortNames = array('Su','Mo','Tu','We','Th','Fr','Sa');
 
-    var $controlName = "";
-    var $highlight = "time"; // Determines what type of active days to highlight ("time" or "expenses"). 
+  // Constructor.
+  function __construct($name) {
+    $this->class = 'Calendar';
+    $this->name = $name;
+  }
 
-    function __construct($name) {
-      $this->class = 'Calendar';
-      $this->controlName = $name; // TODO: why controlName? Other classes have "name".
-      $this->mMonthNames = array('January','February','March','April','May','June','July','August','September','October','November','December');
-      $this->mWeekDayShortNames = array('Su','Mo','Tu','We','Th','Fr','Sa');
-    }
+  // Sets what we highlight (days with existing time or expense entries).
+  function setHighlight($highlight) {
+    if ($highlight && $highlight != 'time')
+      $this->highlight = $highlight;
+  }
 
-    function setHighlight($highlight) {
-    	if ($highlight && $highlight != 'time')
-    	  $this->highlight = $highlight;
-    }
-
-    function localize() {
-      global $user;
-      global $i18n;
+  // Localizes Calendar control for user language.
+  function localize() {
+    global $user;
+    global $i18n;
       
-      $this->mMonthNames = $i18n->monthNames;
-      $this->mWeekDayShortNames = $i18n->weekdayShortNames;
-      $this->weekStartDay = $user->getWeekStart();
+    $this->monthNames = $i18n->monthNames;
+    $this->weekdayShortNames = $i18n->weekdayShortNames;
+    $this->weekStartDay = $user->getWeekStart();
+  }
+
+  // Generates html code for Calendar control.
+  function getHtml() {
+    global $i18n; // Needed to print Today.
+    global $user;
+
+    $selectedDate = $this->value;
+    if (!$selectedDate) $selectedDate = strftime(DB_DATEFORMAT);
+
+    // Determine month and year for selected date.
+    $selectedDateObject = new DateAndTime(DB_DATEFORMAT, $selectedDate);
+    $selectedMonth = $selectedDateObject->getMonth();
+    $selectedYear = $selectedDateObject->getYear();
+
+    // Determine date for the 1st of next month for calendar navigation.
+    $firstOfNextMonth2AM = mktime(2, 0, 0, $selectedMonth + 1, 1, $selectedYear); // 2 am on the 1st of next month.
+    $firstOfNextMonth = strftime(DB_DATEFORMAT, $firstOfNextMonth2AM);
+
+    // Determine date for the 1st of previous month.
+    $firstOfPreviousMonth2AM = mktime(2, 0, 0, $selectedMonth - 1, 1, $selectedYear); // 2 am on the 1st of previous month.
+    $firstOfPreviousMonth = strftime(DB_DATEFORMAT, $firstOfPreviousMonth2AM);
+
+    // Print calendar header.
+    $html .= "\n\n<!-- start of calendar -->\n";
+    $html .= '<table cellpadding="0" cellspacing="0" border="0" width="100%">'."\n";
+    $html .= '  <tr><td align="center">';
+    $html .= '<div class="calendarHeader">';
+    $html .= '<a href="?date='.$firstOfPreviousMonth.'" tabindex="-1">&lt;&lt;&lt;</a>  '.
+      $this->monthNames[$selectedMonth-1].'&nbsp;'.$selectedYear.
+      '  <a href="?date='.$firstOfNextMonth.'" tabindex="-1">&gt;&gt;&gt;</a></div></td></tr>'."\n";
+    $html .= "</table>\n";
+
+    // Start printing calendar table.
+    $html .= '<table border="0" cellpadding="1" cellspacing="1" width="100%">'."\n";
+
+    // Determine column indexes in calendar table for weekend start and end days.
+    if (defined('WEEKEND_START_DAY')) {
+      $weekend_start_idx = (7 + WEEKEND_START_DAY - $this->weekStartDay) % 7;
+      $weekend_end_idx = (7 + WEEKEND_START_DAY + 1 - $this->weekStartDay) % 7;
+    } else {
+      $weekend_start_idx = 6 - $this->weekStartDay;
+      $weekend_end_idx = (7 - $this->weekStartDay) % 7;
     }
 
-    function setStyle($style) { $this->style = $style; }
-    function setCellStyle($style) { $this->mCellStyle = $style; }
-    function setACellStyle($style) { $this->mACellStyle = $style; }
-    function setLinkStyle($style) { $this->mLinkStyle = $style; }
-
-    function setShowHolidays($value) {
-      $this->showHolidays = $value;
-    }
-
-    /**
-     * @return void
-     * @param date
-     * @desc Enter description here...
-     */
-    function toString($date="") {
-      global $i18n;
-    	
-      $indate = $this->value;
-      if (!$indate) $indate = strftime(DB_DATEFORMAT);
-
-      //current year and month
-      if ( strlen ( $indate ) > 0 ) {
-        $indateObj = new DateAndTime(DB_DATEFORMAT, $indate);
-        $thismonth = $indateObj->getMonth();
-        $thisyear = $indateObj->getYear();
+    // Print day headers.
+    $html .= '  <tr>';
+    for ($i = 0; $i < 7; $i++) {
+      $weekdayNameIdx = ($i + $this->weekStartDay) % 7;
+      if ($i == $weekend_start_idx || $i == $weekend_end_idx) {
+        $html .= '<td class="calendarDayHeaderWeekend">'.$this->weekdayShortNames[$weekdayNameIdx].'</td>';
       } else {
-        $thismonth = date("m");
-        $thisyear = date("Y");
+        $html .= '<td class="calendarDayHeader">'.$this->weekdayShortNames[$weekdayNameIdx].'</td>';
       }
+    }
+    $html .= "</tr>\n";
 
-      // next date, month, year
-      $next = mktime ( 2, 0, 0, $thismonth + 1, 1, $thisyear );
-      $nextyear = date ( "Y", $next );
-      $nextmonth = date ( "m", $next );
-      $nextdate = strftime (DB_DATEFORMAT, $next );
+    // Determine timestamps for iteration.
+    $firstDayOfSelectedMonth0am = mktime(0, 0, 0, $selectedMonth, 1, $selectedYear);
+    $lastDayOfSelectedMonth0am = mktime( 0, 0, 0, $selectedMonth + 1, 0, $selectedYear);
+    // Determine index of the 1st day of month in calendar table, which depends on user weekStartDay.
+    $firstDayOfSelectedMonthIdx = date("w", mktime ( 2, 0, 0, $selectedMonth, 1 - $this->weekStartDay, $selectedYear));
+    // Determine a timestamp when 1st display week starts by shifting back.
+    $firstWeekStart0am = $firstDayOfSelectedMonth0am - 86400 * $firstDayOfSelectedMonthIdx;
+    // Determine start day index, (0 or negative when we display empty days in a previous month).
+    $startDayIdx = 1 - $firstDayOfSelectedMonthIdx;
 
-      // prev date, month, year
-      $prev = mktime ( 2, 0, 0, $thismonth - 1, 1, $thisyear );
-      $prevyear = date ( "Y", $prev );
-      $prevmonth = date ( "m", $prev );
-      $prevdate = strftime(DB_DATEFORMAT, $prev );
+    // Determine active dates where entries exist for user.
+    $active_dates = $this->getActiveDates($firstDayOfSelectedMonth0am, $lastDayOfSelectedMonth0am);
 
-      $str = $this->_genStyles();
+    $handleHolidays = $user->getHolidays() != null;
+    $handleNotCompleteDays = $user->isOptionEnabled('time_not_complete_days');
+    $workday_minutes = $user->getWorkdayMinutes();
 
-      $str .= '<table cellpadding="0" cellspacing="0" border="0" width="100%">
-          <tr><td align="center"><div class="CalendarHeader">'.
-          //'<a href="?date='.$prevyear.'">&lt;&lt;</a> '.
-          '<a href="?date='.$prevdate.'" tabindex="-1">&lt;&lt;&lt;</a>  '.
-          $this->mMonthNames[$thismonth-1].'&nbsp;'.$thisyear.
-          '  <a href="?date='.$nextdate.'" tabindex="-1">&gt;&gt;&gt;</a>'.
-          //' <a href="?date='.$nextyear.'">&gt;&gt;</a>'.
-          '</div></td></tr>
-          </table>';
+    // Print calendar cells one week row at a time.
+    for ($timestamp = $firstWeekStart0am; $timestamp <= $lastDayOfSelectedMonth0am; $timestamp = mktime(0, 0, 0, $selectedMonth, $startDayIdx += 7, $selectedYear)) {
+      $html .= "  <tr>";
+      // Iterate through week days.
+      for ($j = 0; $j < 7; $j++) {
+        $cellDate0am = mktime(0, 0, 0, $selectedMonth, $startDayIdx + $j, $selectedYear);
+        if ($cellDate0am >= $firstDayOfSelectedMonth0am && $cellDate0am <= $lastDayOfSelectedMonth0am) {
+          $cell_style = "";
+          $link_style = "";
 
-      $str .= '<center>
-          <table border="0" cellpadding="1" cellspacing="1" width="100%">
-          <tr>';
+          // Handle weekends.
+          if ($j == $weekend_start_idx || $j == $weekend_end_idx) {
+            $cell_style = ' class="calendarDayWeekend"';
+            $link_style = ' class="calendarLinkWeekend"';
+          } else
+            $cell_style = ' class="calendarDay"';
 
-      $str .= "<tr>";
+          // Handle holidays.
+          $date_to_check = ttTimeHelper::dateInDatabaseFormat($selectedYear, $selectedMonth, $startDayIdx+$j);
+          if ($handleHolidays && ttTimeHelper::isHoliday($date_to_check)) {
+            $cell_style = ' class="calendarDayHoliday"';
+            $link_style = ' class="calendarLinkHoliday"';
+          }
 
-      // TODO: refactor this entire class, as $weekend_start and $weekend_end
-      // are not what their names suggest (debug with non zero week start to see it).
-      $weekend_start = 6 - $this->weekStartDay;      // Saturday by default.
-      $weekend_end = (7 - $this->weekStartDay) % 7;  // Sunday by default.
-      if (defined('WEEKEND_START_DAY')) {
-      	$weekend_start = (7 + WEEKEND_START_DAY - $this->weekStartDay) % 7;
-      	$weekend_end = (7 + WEEKEND_START_DAY + 1 - $this->weekStartDay) % 7;
-      } 
+          // Handle selected day.
+          if ($selectedDate == strftime(DB_DATEFORMAT, $cellDate0am))
+            $cell_style = ' class="calendarDaySelected"';
 
-      for ( $i=0; $i<7; $i++ ) {
-        $weekdayNameIdx = ($i + $this->weekStartDay) % 7;
-        if ($i==$weekend_start || $i==$weekend_end) {
-          $str .= '<td class="CalendarDayHeaderWeekend">'.$this->mWeekDayShortNames[$weekdayNameIdx].'</td>';
-        } else {
-          $str .= '<td class="CalendarDayHeader">'.$this->mWeekDayShortNames[$weekdayNameIdx].'</td>';
-        }
-      }
-
-      $str .= "</tr>\n";
-
-      list($wkstart,$monthstart,$monthend,$start_date) = $this->_getWeekDayBefore( $thisyear, $thismonth );
-
-      $active_dates = $this->_getActiveDates($monthstart, $monthend);
-
-      for ( $i = $wkstart; $i<=$monthend;  $i=mktime(0,0,0,$thismonth,$start_date+=7,$thisyear) ) {
-        $str .= "<TR>\n";
-          for ( $j = 0; $j < 7; $j++ ) {
-            $date = mktime(0,0,0,$thismonth,$start_date+$j,$thisyear);
-            if (($date >= $monthstart) && ($date <= $monthend)) {
-
-            $stl_cell = "";
-            $stl_link = "";
-
-            // weekend
-            if ($j==$weekend_start || $j==$weekend_end) {
-              $stl_cell = ' class="CalendarDayWeekend"';
-              $stl_link = ' class="CalendarLinkWeekend"';
-            } else {
-              $stl_cell = ' class="CalendarDay"';
-            }
-
-            // holidays
-            $date_to_check = ttTimeHelper::dateInDatabaseFormat($thisyear, $thismonth, $start_date+$j);
-            if (ttTimeHelper::isHoliday($date_to_check)) {
-              $stl_cell = ' class="CalendarDayHoliday"';
-              $stl_link = ' class="CalendarLinkHoliday"';
-            }
-
-            // selected day
-            if ( $indate == strftime(DB_DATEFORMAT, $date))
-              $stl_cell = ' class="CalendarDaySelected"';
-
-
-            $str .= '<td'.$stl_cell.'>';
-
+          $html .= '<td'.$cell_style.'>';
+          // Handle days with existing entries.
+          if ($active_dates) {
             // Entries exist.
-            if($active_dates) {
-              if( in_array(strftime(DB_DATEFORMAT, $date), $active_dates) )
-                $stl_link = ' class="CalendarLinkRecordsExist"';
+            if (in_array(strftime(DB_DATEFORMAT, $cellDate0am), $active_dates)) {
+              if ($handleNotCompleteDays && $this->highlight == 'time') {
+                $day_total_minutes = ttTimeHelper::toMinutes(ttTimeHelper::getTimeForDay($date_to_check));
+                if ($day_total_minutes >= $workday_minutes)
+                  $link_style = ' class="calendarLinkRecordsExist"';
+                else
+                  $link_style = ' class="calendarLinkNonCompleteDay"';
+              }
+              else
+                $link_style = ' class="calendarLinkRecordsExist"';
             }
-
-            $str .= "<a".$stl_link." href=\"?".$this->controlName."=".strftime(DB_DATEFORMAT, $date)."\" tabindex=\"-1\">".date("d",$date)."</a>";
-
-            $str .= "</TD>";
           }
-          else {
-            $str .= "<TD>&nbsp;</TD>\n";
-          }
+          $html .= "<a".$link_style." href=\"?".$this->name."=".strftime(DB_DATEFORMAT, $cellDate0am)."\" tabindex=\"-1\">".date("d",$cellDate0am)."</a>";
+          $html .= "</td>";
+        } else {
+          $html .= "<td>&nbsp;</td>";
         }
-        $str .= "</TR>\n";
       }
-
-      $str .= "<tr><td colspan=\"7\" align=\"center\"><a id=\"today_link\" href=\"?".$this->controlName."=".strftime(DB_DATEFORMAT)."\" tabindex=\"-1\">".$i18n->get('label.today')."</a></td></tr>\n";
-      $str .= "</table>\n";
-
-      $str .= "<input type=\"hidden\" name=\"$this->controlName\" value=\"$indate\">\n";
-
-      // Add script to adjust today link to match browser today, as PHP may run in a different timezone.
-      $str .= "<script>\n";
-      $str .= "function adjustToday() {\n";
-      $str .= "  var browser_today = new Date();\n";
-      $str .= "  document.getElementById('today_link').href = '?$this->controlName='+browser_today.strftime('".DB_DATEFORMAT."');\n";
-      $str .= "}\n";
-      $str .= "adjustToday();\n";
-      $str .= "</script>\n";
-      
-      return $str;
+      $html .= "</tr>\n";
     }
 
-    function getHtml() {
-        return $this->toString();
-    }
+    // Finished printing calendar table.
 
-    function _getWeekDayBefore($year, $month) {
-      $weekday = date ( "w", mktime ( 2, 0, 0, $month, 1 - $this->weekStartDay, $year ) );
-      return array(
-        mktime ( 0, 0, 0, $month, 1 - $weekday, $year ),
-        mktime ( 0, 0, 0, $month, 1, $year ),
-      mktime ( 0, 0, 0, $month + 1, 0, $year ),
-      (1 - $weekday)
-      );
-    }
+    // Print Today link.
+    $html .= "  <tr><td colspan=\"7\" align=\"center\"><a id=\"today_link\" href=\"?".$this->name."=".strftime(DB_DATEFORMAT)."\" tabindex=\"-1\">".$i18n->get('label.today')."</a></td></tr>\n";
+    $html .= "</table>\n";
 
-    function _genStyles() {
-      $str = "<style>\n";
-      $str .= ".CalendarHeader {". $this->mHeader ."}\n";
-      $str .= ".CalendarDay {". $this->mDayCell  ."}\n";
-      $str .= ".CalendarDaySelected {". $this->mDaySelected  ."}\n";
-      $str .= ".CalendarDayWeekend {". $this->mDayWeekend ."}\n";
-      $str .= ".CalendarDayHoliday {". $this->mDayHoliday ."}\n";
-      $str .= ".CalendarDayHeader {". $this->mDayHeader ."}\n";
-      $str .= ".CalendarDayHeaderWeekend {". $this->mDayHeaderWeekend ."}\n";
-      
-      $str .= ".CalendarLinkWeekend {color: #999999;}\n";
-      $str .= ".CalendarLinkHoliday {color: #999999;}\n";
-      $str .= ".CalendarLinkRecordsExist {color: #FF0000;}\n";
-        $str .= "</style>\n";
-        return $str;
-    }
-    
-    // _getActiveDates returns an array of dates, for which entries exist for user.
-    // Type of entries (time or expenses) is determined by $this->highlight value.
-    function _getActiveDates($start, $end) {
-      
-      global $user;
-      $user_id = $user->getUser();
-      
-      $table = ($this->highlight == 'expenses') ? 'tt_expense_items' : 'tt_log';
-      
-      $mdb2 = getConnection();
+    // Add a hidden control for selected date.
+    $html .= "<input type=\"hidden\" name=\"$this->name\" value=\"$selectedDate\">\n";
 
-      $start_date = date("Y-m-d", $start);
-      $end_date = date("Y-m-d", $end);
-      $sql = "SELECT date FROM $table WHERE date >= '$start_date' AND date <= '$end_date' AND user_id = $user_id AND status = 1";
-      $res = $mdb2->query($sql);
-      if (!is_a($res, 'PEAR_Error')) {
-        while ($row = $res->fetchRow()) {
-          $out[] = date('Y-m-d', strtotime($row['date']));
-        }
-        return @$out;
+    // Add script to adjust today link to match browser today, as PHP may run in a different timezone.
+    $html .= "<script>\n";
+    $html .= "function adjustToday() {\n";
+    $html .= "  var browser_today = new Date();\n";
+    $html .= "  document.getElementById('today_link').href = '?$this->name='+browser_today.strftime('".DB_DATEFORMAT."');\n";
+    $html .= "}\n";
+    $html .= "adjustToday();\n";
+    $html .= "</script>\n";
+
+    $html .= "<!-- end of calendar -->\n\n";
+    return $html;
+  }
+
+  // getActiveDates returns an array of dates, for which entries exist for user.
+  // Type of entries (time or expenses) is determined by $this->highlight value.
+  function getActiveDates($start, $end) {
+      
+    global $user;
+    $user_id = $user->getUser();
+      
+    $table = ($this->highlight == 'expenses') ? 'tt_expense_items' : 'tt_log';
+      
+    $mdb2 = getConnection();
+
+    $start_date = date("Y-m-d", $start);
+    $end_date = date("Y-m-d", $end);
+    $sql = "SELECT date FROM $table WHERE date >= '$start_date' AND date <= '$end_date' AND user_id = $user_id AND status = 1";
+    $res = $mdb2->query($sql);
+    if (!is_a($res, 'PEAR_Error')) {
+      while ($row = $res->fetchRow()) {
+        $out[] = date('Y-m-d', strtotime($row['date']));
       }
-      else
-        return false;
+      return @$out;
     }
+    else
+      return false;
+  }
 }

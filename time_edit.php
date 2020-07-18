@@ -310,7 +310,7 @@ if ($request->isPost()) {
   $new_date = new DateAndTime($user->date_format, $cl_date);
 
   // Prohibit creating entries in future.
-  if (!$user->future_entries) {
+  if (!$user->isOptionEnabled('future_entries')) {
     $browser_today = new DateAndTime(DB_DATEFORMAT, $request->getParameter('browser_today', null));
     if ($new_date->after($browser_today))
       $err->add($i18n->get('error.future_date'));
@@ -355,7 +355,6 @@ if ($request->isPost()) {
       $res = ttTimeHelper::update(array(
         'id'=>$cl_id,
         'date'=>$new_date->toString(DB_DATEFORMAT),
-        'user_id'=>$user_id,
         'client'=>$cl_client,
         'project'=>$cl_project,
         'task'=>$cl_task,
@@ -412,9 +411,6 @@ if ($request->isPost()) {
 
       $id = ttTimeHelper::insert(array(
         'date'=>$new_date->toString(DB_DATEFORMAT),
-        'user_id'=>$user_id,
-        'group_id'=>$user->getGroup(),
-        'org_id' => $user->org_id,
         'client'=>$cl_client,
         'project'=>$cl_project,
         'task'=>$cl_task,

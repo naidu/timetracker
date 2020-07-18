@@ -218,7 +218,7 @@ if ($request->isPost()) {
     // Finished validating user input.
 
     // Prohibit creating entries in future.
-    if (!$user->future_entries) {
+    if (!$user->isOptionEnabled('future_entries')) {
       $browser_today = new DateAndTime(DB_DATEFORMAT, $request->getParameter('browser_today', null));
       if ($selected_date->after($browser_today))
         $err->add($i18n->get('error.future_date'));
@@ -242,9 +242,6 @@ if ($request->isPost()) {
     if ($err->no()) {
       $id = ttTimeHelper::insert(array(
         'date' => $cl_date,
-        'user_id' => $user->getUser(),
-        'group_id' => $user->getGroup(),
-        'org_id' => $user->org_id,
         'client' => $cl_client,
         'project' => $cl_project,
         'task' => $cl_task,
@@ -277,7 +274,6 @@ if ($request->isPost()) {
       $res = ttTimeHelper::update(array(
         'id'=>$record['id'],
         'date'=>$cl_date,
-        'user_id'=>$user->getUser(),
         'client'=>$record['client_id'],
         'project'=>$record['project_id'],
         'task'=>$record['task_id'],

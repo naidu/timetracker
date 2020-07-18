@@ -39,6 +39,7 @@ CREATE TABLE `tt_groups` (
   `workday_minutes` smallint(4) default 480,             # number of work minutes in a regular working day
   `custom_logo` tinyint(4) default 0,                    # whether to use a custom logo or not
   `config` text default NULL,                            # miscellaneous group configuration settings
+  `custom_css` text default NULL,                        # custom css for group
   `created` datetime default NULL,                       # creation timestamp
   `created_ip` varchar(45) default NULL,                 # creator ip
   `created_by` int(11) default NULL,                     # creator user_id
@@ -313,6 +314,7 @@ CREATE TABLE `tt_cron` (
   `email` varchar(100) default NULL,            # email to send results to
   `cc` varchar(100) default NULL,               # cc email to send results to
   `subject` varchar(100) default NULL,          # email subject
+  `comment` text,                               # user provided comment for notification
   `report_condition` varchar(255) default NULL, # report condition, "count > 0" for sending not empty reports
   `status` tinyint(4) default 1,                # entry status
   PRIMARY KEY (`id`)
@@ -655,4 +657,4 @@ CREATE TABLE `tt_site_config` (
   PRIMARY KEY  (`param_name`)
 );
 
-INSERT INTO `tt_site_config` (`param_name`, `param_value`, `created`) VALUES ('version_db', '1.19.17', now()); # TODO: change when structure changes.
+INSERT INTO `tt_site_config` (`param_name`, `param_value`, `created`) VALUES ('version_db', '1.19.22', now()); # TODO: change when structure changes.

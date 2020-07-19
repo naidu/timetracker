@@ -162,6 +162,7 @@ class ttGroupExportHelper {
     $group_part .= " workday_minutes=\"".$group['workday_minutes']."\"";
     $group_part .= " custom_logo=\"".$group['custom_logo']."\"";
     $group_part .= " config=\"".$group['config']."\"";
+    $group_part .= " custom_css=\"".$group['custom_css']."\"";
     $group_part .= ">\n";
 
     // Write group info.
@@ -632,6 +633,7 @@ class ttGroupExportHelper {
         $notification_part .= " email=\"".htmlspecialchars($notification['email'])."\"";
         $notification_part .= " cc=\"".htmlspecialchars($notification['cc'])."\"";
         $notification_part .= " subject=\"".htmlspecialchars($notification['subject'])."\"";
+        $notification_part .= " comment=\"".htmlspecialchars($notification['comment'])."\"";
         $notification_part .= " report_condition=\"".htmlspecialchars($notification['report_condition'])."\"";
         $notification_part .= " status=\"".$notification['status']."\"";
         $notification_part .= "></notification>\n";

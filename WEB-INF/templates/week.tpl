@@ -33,10 +33,10 @@ function fillDropdowns() {
   <tr>
     <td valign="top">
       <table>
-{if $on_behalf_control}
+{if $user_dropdown}
         <tr>
           <td align="right">{$i18n.label.user}:</td>
-          <td>{$forms.weekTimeForm.onBehalfUser.control}</td>
+          <td>{$forms.weekTimeForm.user.control}</td>
         </tr>
 {/if}
 {if $show_client}
@@ -68,7 +68,7 @@ function fillDropdowns() {
 {/if}
 {if $show_task}
         <tr>
-          <td align="right">{$i18n.label.task}:</td>
+          <td align="right">{$i18n.label.task}{if $task_required} (*){/if}:</td>
           <td>{$forms.weekTimeForm.task.control}</td>
         </tr>
 {/if}
@@ -141,7 +141,7 @@ function fillDropdowns() {
     {if $show_task}
         <td valign="top">{$record.task|escape}</td>
     {/if}
-    {if (($smarty.const.TYPE_START_FINISH == $user->record_type) || ($smarty.const.TYPE_ALL == $user->record_type))}
+    {if $show_start}
         <td nowrap align="right" valign="top">{if $record.start}{$record.start}{else}&nbsp;{/if}</td>
         <td nowrap align="right" valign="top">{if $record.finish}{$record.finish}{else}&nbsp;{/if}</td>
     {/if}
@@ -159,12 +159,6 @@ function fillDropdowns() {
           &nbsp;
     {else}
           <a href="time_edit.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="images/icon_edit.png"></a>
-      {if ($record.duration == '0:00' && $record.start <> '')}
-          <input type="hidden" name="record_id" value="{$record.id}">
-          <input type="hidden" name="browser_date" value="">
-          <input type="hidden" name="browser_time" value="">
-          <input type="submit" id="btn_stop" name="btn_stop" onclick="browser_date.value=get_date();browser_time.value=get_time()" value="{$i18n.button.stop}">
-      {/if}
     {/if}
         </td>
         <td valign="top" align="center">

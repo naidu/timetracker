@@ -63,7 +63,7 @@ if ($jwt) {
             $success_response = ['error'=>'check the entered date'];
             $response = json_encode($success_response);
             print_r($response);
-                }
+          }
         foreach($record as $rec)
         {                                                                                                       
           $success_response = [$rec];                                                                           

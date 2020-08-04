@@ -64,7 +64,7 @@ if ($jwt) {
             $response = json_encode($success_response);
             print_r($response);
           }
-        foreach($record as $rec)
+      foreach($record as $rec)
         {                                                                                                       
           $success_response = [$rec];                                                                           
           $response = json_encode($success_response);

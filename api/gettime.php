@@ -54,19 +54,19 @@ if ($jwt) {
         }
       }
       //if no values entered
-      else                                                                                                  
+      else
+      {
+        $to_date=$from_date;
+        $record = ttTimeHelper::getAllDateRecords($from_date,$to_date);
+        if(sizeof($record)==0)
         {
-          $to_date=$from_date;                                                                                    
-          $record = ttTimeHelper::getAllDateRecords($from_date,$to_date);
-           if(sizeof($record)==0)
-          {  
-            $success_response = ['error'=>'check the entered date'];
-            $response = json_encode($success_response);
-            print_r($response);
-          }
-      foreach($record as $rec)
-        {                                                                                                       
-          $success_response = [$rec];                                                                           
+          $success_response = ['error'=>'check the entered date'];
+          $response = json_encode($success_response);
+          print_r($response);
+        }
+        foreach($record as $rec)
+        {
+          $success_response = [$rec];
           $response = json_encode($success_response);
           print_r($response);
         }

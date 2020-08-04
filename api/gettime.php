@@ -6,8 +6,6 @@ import('../ttOrgHelper');
 import('../ttUser');
 import('../ttTimeHelper');
 
-
-
 use \Firebase\JWT\JWT;
 
 header("Access-Control-Allow-Origin: *");
@@ -35,7 +33,6 @@ $to_date_in=$object->to_date;
 $from_date =$d="'$from_date_in'";
 $to_date =$d="'$to_date_in'";
 
-
 $isLoggedIn = false;
 //check fot token verification
 if ($jwt) {
@@ -54,34 +51,26 @@ if ($jwt) {
           $success_response = [$rec];
           $response = json_encode($success_response);
           print_r($response);
-
         }
-
       }
       //if no values entered
       else                                                                                                  
         {
-
           $to_date=$from_date;                                                                                    
           $record = ttTimeHelper::getAllDateRecords($from_date,$to_date);
            if(sizeof($record)==0)
-          {
-            
+          {  
             $success_response = ['error'=>'check the entered date'];
             $response = json_encode($success_response);
             print_r($response);
-
                 }
         foreach($record as $rec)
         {                                                                                                       
           $success_response = [$rec];                                                                           
           $response = json_encode($success_response);
           print_r($response);
-
         }
-
       }
-
     }
   } catch (Exception $e) {
     $isLoggedIn = false;
@@ -92,5 +81,4 @@ if ($jwt) {
     )));
   }
 }
-
 exit();

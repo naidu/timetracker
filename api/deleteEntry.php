@@ -62,7 +62,6 @@ if ($jwt) {
         $success_response = ['error' => 'check the entered key and value'];
         $response = json_encode($success_response);
         print_r($response);
-        
       }
     }
   } catch (Exception $e) {

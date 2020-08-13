@@ -28,8 +28,8 @@ services:
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
       MYSQL_DATABASE: timetracker
-      MYSQL_USER: anuko_user
-      MYSQL_PASSWORD: anuko_pw
+      MYSQL_USER: anuko_user_new
+      MYSQL_PASSWORD: anuko_pw_udian
     volumes:
       - anuko_db:/var/lib/mysql
     

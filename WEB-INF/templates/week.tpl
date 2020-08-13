@@ -33,10 +33,10 @@ function fillDropdowns() {
   <tr>
     <td valign="top">
       <table>
-{if $on_behalf_control}
+{if $user_dropdown}
         <tr>
           <td align="right">{$i18n.label.user}:</td>
-          <td>{$forms.weekTimeForm.onBehalfUser.control}</td>
+          <td>{$forms.weekTimeForm.user.control}</td>
         </tr>
 {/if}
 {if $show_client}
@@ -45,7 +45,7 @@ function fillDropdowns() {
           <td>{$forms.weekTimeForm.client.control}</td>
         </tr>
 {/if}
-{if $user->isPluginEnabled('iv')}
+{if $show_billable}
         <tr>
           <td align="right">&nbsp;</td>
           <td><label>{$forms.weekTimeForm.billable.control}{$i18n.form.time.billable}</label></td>
@@ -68,7 +68,7 @@ function fillDropdowns() {
 {/if}
 {if $show_task}
         <tr>
-          <td align="right">{$i18n.label.task}:</td>
+          <td align="right">{$i18n.label.task}{if $task_required} (*){/if}:</td>
           <td>{$forms.weekTimeForm.task.control}</td>
         </tr>
 {/if}
@@ -108,16 +108,16 @@ function fillDropdowns() {
       <table border="0" cellpadding="3" cellspacing="1" width="100%">
       <tr>
         <td width="5%" class="tableHeader">{$i18n.label.date}</td>
-  {if $user->isPluginEnabled('cl')}
+  {if $show_client}
         <td width="20%" class="tableHeader">{$i18n.label.client}</td>
   {/if}
-  {if ($smarty.const.MODE_PROJECTS == $user->tracking_mode || $smarty.const.MODE_PROJECTS_AND_TASKS == $user->tracking_mode)}
+  {if $show_project}
         <td class="tableHeader">{$i18n.label.project}</td>
   {/if}
-  {if ($smarty.const.MODE_PROJECTS_AND_TASKS == $user->tracking_mode)}
+  {if $show_task}
         <td class="tableHeader">{$i18n.label.task}</td>
   {/if}
-  {if (($smarty.const.TYPE_START_FINISH == $user->record_type) || ($smarty.const.TYPE_ALL == $user->record_type))}
+  {if $show_start}
         <td width="5%" class="tableHeader" align="right">{$i18n.label.start}</td>
         <td width="5%" class="tableHeader" align="right">{$i18n.label.finish}</td>
   {/if}
@@ -132,16 +132,16 @@ function fillDropdowns() {
   {foreach $time_records as $record}
       <tr bgcolor="{cycle values="#f5f5f5,#ffffff"}" {if !$record.billable} class="not_billable" {/if}>
         <td valign="top">{$record.date}</td>
-    {if $user->isPluginEnabled('cl')}
+    {if $show_client}
         <td valign="top">{$record.client|escape}</td>
     {/if}
-    {if ($smarty.const.MODE_PROJECTS == $user->tracking_mode || $smarty.const.MODE_PROJECTS_AND_TASKS == $user->tracking_mode)}
+    {if $show_project}
         <td valign="top">{$record.project|escape}</td>
     {/if}
-    {if ($smarty.const.MODE_PROJECTS_AND_TASKS == $user->tracking_mode)}
+    {if $show_task}
         <td valign="top">{$record.task|escape}</td>
     {/if}
-    {if (($smarty.const.TYPE_START_FINISH == $user->record_type) || ($smarty.const.TYPE_ALL == $user->record_type))}
+    {if $show_start}
         <td nowrap align="right" valign="top">{if $record.start}{$record.start}{else}&nbsp;{/if}</td>
         <td nowrap align="right" valign="top">{if $record.finish}{$record.finish}{else}&nbsp;{/if}</td>
     {/if}
@@ -149,29 +149,23 @@ function fillDropdowns() {
         <td valign="top">{if $record.comment}{$record.comment|escape}{else}&nbsp;{/if}</td>
     {if $show_files}
       {if $record.has_files}
-        <td valign="top" align="center"><a href="time_files.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.files}" src="images/icon_files.png"></a></td>
+        <td valign="top" align="center"><a href="time_files.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.files}" src="img/icon_files.png"></a></td>
       {else}
-        <td valign="top" align="center"><a href="time_files.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.files}" src="images/icon_file.png"></a></td>
+        <td valign="top" align="center"><a href="time_files.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.files}" src="img/icon_file.png"></a></td>
       {/if}
     {/if}
         <td valign="top" align="center">
     {if $record.approved || $record.timesheet_id || $record.invoice_id}
           &nbsp;
     {else}
-          <a href="time_edit.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="images/icon_edit.png"></a>
-      {if ($record.duration == '0:00' && $record.start <> '')}
-          <input type="hidden" name="record_id" value="{$record.id}">
-          <input type="hidden" name="browser_date" value="">
-          <input type="hidden" name="browser_time" value="">
-          <input type="submit" id="btn_stop" name="btn_stop" onclick="browser_date.value=get_date();browser_time.value=get_time()" value="{$i18n.button.stop}">
-      {/if}
+          <a href="time_edit.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon_edit.png"></a>
     {/if}
         </td>
         <td valign="top" align="center">
     {if $record.approved || $record.timesheet_id || $record.invoice_id}
           &nbsp;
     {else}
-          <a href="time_delete.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.delete}" src="images/icon_delete.png"></a>
+          <a href="time_delete.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon_delete.png"></a>
     {/if}
         </td>
       </tr>

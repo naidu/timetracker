@@ -84,7 +84,7 @@ class ttRegistrator {
       $this->err->add($i18n->get('error.field'), $i18n->get('label.confirm_password'));
     if ($this->password1 !== $this->password2)
       $this->err->add($i18n->get('error.not_equal'), $i18n->get('label.password'), $i18n->get('label.confirm_password'));
-    if (!ttValidEmail($this->email, true))
+    if (!ttValidEmail($this->email, !isTrue('EMAIL_REQUIRED')))
       $this->err->add($i18n->get('error.field'), $i18n->get('label.email'));
     if (!ttUserHelper::canAdd())
       $this->err->add($i18n->get('error.user_count'));
@@ -100,6 +100,7 @@ class ttRegistrator {
     // Protection from too many recent bot registrations from user IP.
     if (!$this->created_by_id) { // No problems for logged in user (site admin).
       if ($this->registeredRecently()) {
+        $this->err->add($i18n->get('error.registered_recently'));
         $this->err->add($i18n->get('error.access_denied'));
         return false;
       }

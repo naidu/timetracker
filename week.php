@@ -55,12 +55,35 @@ if (!$user->behalf_id && !$user->can('track_own_time') && !$user->adjustBehalfId
   header('Location: access_denied.php'); // Trying as self, but no right for self, and noone to work on behalf.
   exit();
 }
+if ($request->isPost()) {
+  $userChanged = $request->getParameter('user_changed'); // Reused in multiple places below.
+  if ($userChanged && !($user->can('track_time') && $user->isUserValid($request->getParameter('user')))) {
+    header('Location: access_denied.php'); // User changed, but no right or wrong user id.
+    exit();
+  }
+}
 // End of access checks.
 
+// Determine user for whom we display this page.
+if ($request->isPost() && $userChanged) {
+  $user_id = $request->getParameter('user');
+  $user->setOnBehalfUser($user_id);
+} else {
+  $user_id = $user->getUser();
+}
+
+$group_id = $user->getGroup();
+
 $showClient = $user->isPluginEnabled('cl');
+$showBillable = $user->isPluginEnabled('iv');
 $trackingMode = $user->getTrackingMode();
 $showProject = MODE_PROJECTS == $trackingMode || MODE_PROJECTS_AND_TASKS == $trackingMode;
 $showTask = MODE_PROJECTS_AND_TASKS == $trackingMode;
+if ($showTask) $taskRequired = $user->getConfigOption('task_required');
+$showWeekNote = $user->isOptionEnabled('week_note');
+$showWeekNotes = $user->isOptionEnabled('week_notes');
+$recordType = $user->getRecordType();
+$showStart = TYPE_START_FINISH == $recordType || TYPE_ALL == $recordType;
 $showFiles = $user->isPluginEnabled('at');
 
 // Initialize and store date in session.
@@ -107,6 +130,24 @@ if ($user->isPluginEnabled('mq')){
 }
 
 // Initialize variables.
+$cl_billable = 1;
+if ($showBillable) {
+  if ($request->isPost()) {
+    $cl_billable = $request->getParameter('billable');
+    $_SESSION['billable'] = (int) $cl_billable;
+  } else
+    if (isset($_SESSION['billable']))
+      $cl_billable = $_SESSION['billable'];
+}
+$cl_client = $request->getParameter('client', ($request->isPost() ? null : @$_SESSION['client']));
+$_SESSION['client'] = $cl_client;
+$cl_project = $request->getParameter('project', ($request->isPost() ? null : @$_SESSION['project']));
+$_SESSION['project'] = $cl_project;
+$cl_task = $request->getParameter('task', ($request->isPost() ? null : @$_SESSION['task']));
+$_SESSION['task'] = $cl_task;
+$cl_note = $request->getParameter('note', ($request->isPost() ? null : @$_SESSION['note']));
+$_SESSION['note'] = $cl_note;
+
 $timeCustomFields = array();
 // If we have time custom fields - collect input.
 if ($request->isPost()) {
@@ -123,25 +164,6 @@ if ($request->isPost()) {
   }
 }
 
-$cl_billable = 1;
-if ($user->isPluginEnabled('iv')) {
-  if ($request->isPost()) {
-    $cl_billable = $request->getParameter('billable');
-    $_SESSION['billable'] = (int) $cl_billable;
-  } else
-    if (isset($_SESSION['billable']))
-      $cl_billable = $_SESSION['billable'];
-}
-$on_behalf_id = $request->getParameter('onBehalfUser', (isset($_SESSION['behalf_id'])? $_SESSION['behalf_id'] : $user->id));
-$cl_client = $request->getParameter('client', ($request->isPost() ? null : @$_SESSION['client']));
-$_SESSION['client'] = $cl_client;
-$cl_project = $request->getParameter('project', ($request->isPost() ? null : @$_SESSION['project']));
-$_SESSION['project'] = $cl_project;
-$cl_task = $request->getParameter('task', ($request->isPost() ? null : @$_SESSION['task']));
-$_SESSION['task'] = $cl_task;
-$cl_note = $request->getParameter('note', ($request->isPost() ? null : @$_SESSION['note']));
-$_SESSION['note'] = $cl_note;
-
 // Get the data we need to display week view.
 // Get column headers, which are day numbers in month.
 $dayHeaders = ttWeekViewHelper::getDayHeadersForWeek($startDate->toString(DB_DATEFORMAT));
@@ -156,9 +178,6 @@ else
 
 // Build day totals (total durations for each day in week).
 $dayTotals = ttWeekViewHelper::getDayTotals($dataArray, $dayHeaders);
-$showWeekNote = $user->isOptionEnabled('week_note');
-$showWeekNotes = $user->isOptionEnabled('week_notes');
-
 
 // Define rendering class for a label field to the left of durations.
 class LabelCellRenderer extends DefaultCellRenderer {
@@ -224,7 +243,7 @@ class WeekViewCellRenderer extends DefaultCellRenderer {
     }
     // Disable control when time entry mode is TYPE_START_FINISH and there is no value in control
     // because we can't supply start and finish times in week view - there are no fields for them.
-    if (!$field->getValue() && TYPE_START_FINISH == $user->record_type) {
+    if (!$field->getValue() && TYPE_START_FINISH == $user->getRecordType()) {
         $field->setEnabled(false);
     }
     $this->setValue($field->getHtml());
@@ -236,20 +255,22 @@ class WeekViewCellRenderer extends DefaultCellRenderer {
 $form = new Form('weekTimeForm');
 
 if ($user->can('track_time')) {
+  $rank = $user->getMaxRankForGroup($group_id);
   if ($user->can('track_own_time'))
-    $options = array('status'=>ACTIVE,'max_rank'=>$user->rank-1,'include_self'=>true,'self_first'=>true);
+    $options = array('status'=>ACTIVE,'max_rank'=>$rank,'include_self'=>true,'self_first'=>true);
   else
-    $options = array('status'=>ACTIVE,'max_rank'=>$user->rank-1);
+    $options = array('status'=>ACTIVE,'max_rank'=>$rank);
   $user_list = $user->getUsers($options);
   if (count($user_list) >= 1) {
     $form->addInput(array('type'=>'combobox',
-      'onchange'=>'this.form.submit();',
-      'name'=>'onBehalfUser',
+      'onchange'=>'document.weekTimeForm.user_changed.value=1;document.weekTimeForm.submit();',
+      'name'=>'user',
       'style'=>'width: 250px;',
-      'value'=>$on_behalf_id,
+      'value'=>$user_id,
       'data'=>$user_list,
       'datakeys'=>array('id','name')));
-    $smarty->assign('on_behalf_control', 1);
+    $form->addInput(array('type'=>'hidden','name'=>'user_changed'));
+    $smarty->assign('user_dropdown', 1);
   }
 }
 
@@ -267,7 +288,7 @@ $table->setInteractive(false);
 $form->addInputElement($table);
 
 // Dropdown for clients in MODE_TIME. Use all active clients.
-if (MODE_TIME == $user->tracking_mode && $user->isPluginEnabled('cl')) {
+if (MODE_TIME == $trackingMode && $showClient) {
   $active_clients = ttGroupHelper::getActiveClients(true);
   $form->addInput(array('type'=>'combobox',
     'onchange'=>'fillProjectDropdown(this.value);',
@@ -280,7 +301,28 @@ if (MODE_TIME == $user->tracking_mode && $user->isPluginEnabled('cl')) {
   // Note: in other modes the client list is filtered to relevant clients only. See below.
 }
 
-if (MODE_PROJECTS == $user->tracking_mode || MODE_PROJECTS_AND_TASKS == $user->tracking_mode) {
+// Billable checkbox.
+if ($user->isPluginEnabled('iv'))
+  $form->addInput(array('type'=>'checkbox','name'=>'billable','value'=>$cl_billable));
+
+// If we have time custom fields - add controls for them.
+if ($custom_fields && $custom_fields->timeFields) {
+  foreach ($custom_fields->timeFields as $timeField) {
+    $field_name = 'time_field_'.$timeField['id'];
+    if ($timeField['type'] == CustomFields::TYPE_TEXT) {
+      $form->addInput(array('type'=>'text','name'=>$field_name,'style'=>'width: 250px;','value'=>$timeCustomFields[$timeField['id']]['value']));
+    } elseif ($timeField['type'] == CustomFields::TYPE_DROPDOWN) {
+      $form->addInput(array('type'=>'combobox','name'=>$field_name,
+      'style'=>'width: 250px;',
+      'data'=>CustomFields::getOptions($timeField['id']),
+      'value'=>$timeCustomFields[$timeField['id']]['value'],
+      'empty'=>array(''=>$i18n->get('dropdown.select'))));
+    }
+  }
+}
+
+// If we show project dropdown, add controls for project and client.
+if ($showProject) {
   // Dropdown for projects assigned to user.
   $project_list = $user->getAssignedProjects();
   $form->addInput(array('type'=>'combobox',
@@ -293,7 +335,7 @@ if (MODE_PROJECTS == $user->tracking_mode || MODE_PROJECTS_AND_TASKS == $user->t
     'empty'=>array(''=>$i18n->get('dropdown.select'))));
 
   // Dropdown for clients if the clients plugin is enabled.
-  if ($user->isPluginEnabled('cl')) {
+  if ($showClient) {
     $active_clients = ttGroupHelper::getActiveClients(true);
     // We need an array of assigned project ids to do some trimming.
     foreach($project_list as $project)
@@ -321,7 +363,8 @@ if (MODE_PROJECTS == $user->tracking_mode || MODE_PROJECTS_AND_TASKS == $user->t
   }
 }
 
-if (MODE_PROJECTS_AND_TASKS == $user->tracking_mode) {
+// Task dropdown.
+if ($showTask) {
   $task_list = ttGroupHelper::getActiveTasks();
   $form->addInput(array('type'=>'combobox',
     'name'=>'task',
@@ -331,32 +374,22 @@ if (MODE_PROJECTS_AND_TASKS == $user->tracking_mode) {
     'datakeys'=>array('id','name'),
     'empty'=>array(''=>$i18n->get('dropdown.select'))));
 }
-if (!defined('NOTE_INPUT_HEIGHT'))
-  define('NOTE_INPUT_HEIGHT', 40);
-$form->addInput(array('type'=>'textarea','name'=>'note','style'=>'width: 250px; height:'.NOTE_INPUT_HEIGHT.'px;','value'=>$cl_note));
 
-// Add other controls.
-$form->addInput(array('type'=>'calendar','name'=>'date','value'=>$cl_date)); // calendar
-if ($user->isPluginEnabled('iv'))
-  $form->addInput(array('type'=>'checkbox','name'=>'billable','value'=>$cl_billable));
-$form->addInput(array('type'=>'hidden','name'=>'browser_today','value'=>'get_date()')); // User current date, which gets filled in on btn_submit click.
-$form->addInput(array('type'=>'submit','name'=>'btn_submit','onclick'=>'browser_today.value=get_date()','value'=>$i18n->get('button.submit')));
-
-// If we have time custom fields - add controls for them.
-if ($custom_fields && $custom_fields->timeFields) {
-  foreach ($custom_fields->timeFields as $timeField) {
-    $field_name = 'time_field_'.$timeField['id'];
-    if ($timeField['type'] == CustomFields::TYPE_TEXT) {
-      $form->addInput(array('type'=>'text','name'=>$field_name,'style'=>'width: 250px;','value'=>$timeCustomFields[$timeField['id']]['value']));
-    } elseif ($timeField['type'] == CustomFields::TYPE_DROPDOWN) {
-      $form->addInput(array('type'=>'combobox','name'=>$field_name,
-      'style'=>'width: 250px;',
-      'data'=>CustomFields::getOptions($timeField['id']),
-      'value'=>$timeCustomFields[$timeField['id']]['value'],
-      'empty'=>array(''=>$i18n->get('dropdown.select'))));
-    }
-  }
+// Week note control.
+if ($showWeekNote) {
+  if (!defined('NOTE_INPUT_HEIGHT'))
+    define('NOTE_INPUT_HEIGHT', 40);
+  $form->addInput(array('type'=>'textarea','name'=>'note','style'=>'width: 250px; height:'.NOTE_INPUT_HEIGHT.'px;','value'=>$cl_note));
 }
+
+// Calendar.
+$form->addInput(array('type'=>'calendar','name'=>'date','value'=>$cl_date));
+
+// A hidden control for today's date from user's browser.
+$form->addInput(array('type'=>'hidden','name'=>'browser_today','value'=>'get_date()')); // User current date, which gets filled in on btn_submit click.
+
+// Submit button.
+$form->addInput(array('type'=>'submit','name'=>'btn_submit','onclick'=>'browser_today.value=get_date()','value'=>$i18n->get('button.submit')));
 
 // Submit.
 if ($request->isPost()) {
@@ -372,7 +405,7 @@ if ($request->isPost()) {
       }
     }
     if ($newEntryPosted) {
-      if ($user->isPluginEnabled('cl') && $user->isOptionEnabled('client_required') && !$cl_client)
+      if ($showClient && $user->isOptionEnabled('client_required') && !$cl_client)
         $err->add($i18n->get('error.client'));
       // Validate input in time custom fields.
       if ($custom_fields && $custom_fields->timeFields) {
@@ -381,10 +414,10 @@ if ($request->isPost()) {
           if (!ttValidString($timeField['value'], !$timeField['required'])) $err->add($i18n->get('error.field'), htmlspecialchars($timeField['label']));
         }
       }
-      if (MODE_PROJECTS == $user->tracking_mode || MODE_PROJECTS_AND_TASKS == $user->tracking_mode) {
+      if ($showProject) {
         if (!$cl_project) $err->add($i18n->get('error.project'));
       }
-      if (MODE_PROJECTS_AND_TASKS == $user->tracking_mode && $user->task_required) {
+      if ($showTask && $taskRequired) {
         if (!$cl_task) $err->add($i18n->get('error.task'));
       }
     }
@@ -505,10 +538,10 @@ if ($request->isPost()) {
               $fields['comment'] = $postedComment;
               $result = ttWeekViewHelper::modifyCommentFromWeekView($fields);
             }
-            if (!$result) break; // Break out of the loop in case of first error.
+            if (!$result) break; // Break out of the loop on first error.
           }
         }
-        if (!$result) break; // Break out of the loop in case of first error.
+        if (!$result) break; // Break out of the loop on first error.
         $rowNumber++;
       }
       if ($result) {
@@ -517,26 +550,12 @@ if ($request->isPost()) {
       }
     }
   }
-  elseif ($request->getParameter('onBehalfUser')) {
-    if($user->can('track_time')) {
-      unset($_SESSION['behalf_id']);
-      unset($_SESSION['behalf_name']);
-
-      if($on_behalf_id != $user->id) {
-        $_SESSION['behalf_id'] = $on_behalf_id;
-        $_SESSION['behalf_name'] = ttUserHelper::getUserName($on_behalf_id);
-      }
-      header('Location: week.php');
-      exit();
-    }
-  }
 } // isPost
 
 $week_total = ttTimeHelper::getTimeForWeek($selected_date);
 
 $smarty->assign('selected_date', $selected_date);
 $smarty->assign('week_total', $week_total);
-
 $smarty->assign('client_list', $client_list);
 $smarty->assign('project_list', $project_list);
 $smarty->assign('task_list', $task_list);
@@ -546,10 +565,13 @@ $smarty->assign('timestring', $startDate->toString($user->date_format).' - '.$en
 $smarty->assign('time_records', $records);
 $smarty->assign('show_navigation', !$user->isOptionEnabled('week_menu'));
 $smarty->assign('show_client', $showClient);
+$smarty->assign('show_billable', $showBillable);
 $smarty->assign('show_project', $showProject);
 $smarty->assign('show_task', $showTask);
+$smarty->assign('task_required', $taskRequired);
 $smarty->assign('show_week_note', $showWeekNote);
 $smarty->assign('show_week_list', $user->isOptionEnabled('week_list'));
+$smarty->assign('show_start', $showStart);
 $smarty->assign('show_files', $showFiles);
 $smarty->assign('title', $i18n->get('menu.week'));
 $smarty->assign('content_page_name', 'week.tpl');

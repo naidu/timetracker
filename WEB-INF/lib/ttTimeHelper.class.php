@@ -491,7 +491,7 @@ class ttTimeHelper {
 
   // update - updates a record in log table. Does not update its custom fields.
   static function update($fields)
-  {
+  {  
     global $user;
     $mdb2 = getConnection();
 
@@ -504,6 +504,7 @@ class ttTimeHelper {
     $start = $fields['start'];
     $finish = $fields['finish'];
     $duration = $fields['duration'];
+  
     if ($duration) {
       $minutes = ttTimeHelper::postedDurationToMinutes($duration);
       $duration = ttTimeHelper::minutesToDuration($minutes);
@@ -525,7 +526,7 @@ class ttTimeHelper {
     if ('00:00' == $finish) $finish = '24:00';
     
     if ($start) $duration = '';
-
+       
     if ($duration) {
       $sql = "UPDATE tt_log set start = NULL, duration = '$duration', client_id = ".$mdb2->quote($client).", project_id = ".$mdb2->quote($project).", task_id = ".$mdb2->quote($task).", ".
         "comment = ".$mdb2->quote($note)."$billable_part $paid_part $modified_part, date = '$date' WHERE id = $id";
@@ -548,7 +549,7 @@ class ttTimeHelper {
     }
     return true;
   }
-
+  
   // delete - deletes a record from tt_log table and its associated custom field values.
   static function delete($id) {
     global $user;
@@ -583,7 +584,38 @@ class ttTimeHelper {
 
     return true;
   }
+  static function deleteEntry($id) {
+    global $user;
+    $mdb2 = getConnection();
 
+    // Delete associated files.
+    if ($user->isPluginEnabled('at')) {
+      import('ttFileHelper');
+      global $err;
+      $fileHelper = new ttFileHelper($err);
+      if (!$fileHelper->deleteEntityFiles($id, 'time'))
+        return false;
+    }
+
+    $user_id = $user->getUser();
+    $group_id = $user->getGroup();
+    $org_id = $user->org_id;
+
+    
+  
+    $sql = "delete from tt_log  where id = $id";
+    $affected = $mdb2->exec($sql);
+    if ($affected==0)
+      return "entry with this id doesn't exist";
+
+    $sql = "update tt_custom_field_log set status = null".
+      " where log_id = $id and group_id = $group_id and org_id = $org_id";
+    $affected = $mdb2->exec($sql);
+    if (is_a($affected, 'PEAR_Error'))
+      return false;
+
+    return true;
+  }
   // getTimeForDay - gets total time for a user for a specific date.
   static function getTimeForDay($date) {
     global $user;

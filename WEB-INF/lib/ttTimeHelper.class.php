@@ -61,20 +61,20 @@ class ttTimeHelper {
   // holidayMatch determines if $date matches a single $holiDateSpec.
   static function holidayMatch($date, $holiDateSpec) {
 
-   $dateArray = explode('-', $date);
-   $holiDateSpecArray = explode('-', $holiDateSpec);
+    $dateArray = explode('-', $date);
+    $holiDateSpecArray = explode('-', $holiDateSpec);
 
-   // Check year.
-   for($i = 0; $i < 4; $i++) {
-     if ($dateArray[0][$i] != $holiDateSpecArray[0][$i] && $holiDateSpecArray[0][$i] != '*') // * means any digit matches
-       return false;
-   }
-   // Check month.
-   if ($dateArray[1] != $holiDateSpecArray[1])
-     return false;
-   // Check day.
-   if ($dateArray[2] != $holiDateSpecArray[2])
-     return false;
+    // Check year.
+    for($i = 0; $i < 4; $i++) {
+      if ($dateArray[0][$i] != $holiDateSpecArray[0][$i] && $holiDateSpecArray[0][$i] != '*') // * means any digit matches
+        return false;
+    }
+    // Check month.
+    if ($dateArray[1] != $holiDateSpecArray[1])
+      return false;
+    // Check day.
+    if ($dateArray[2] != $holiDateSpecArray[2])
+      return false;
 
     return true;
   }
@@ -189,11 +189,11 @@ class ttTimeHelper {
     global $user;
     $localizedPattern = '/^(\d{1,3})?['.$user->getDecimalMark().'][0-9]{1,4}h?$/';
     if (preg_match($localizedPattern, $duration )) { // decimal values like .5, 1.25h, ... .. 999.9999h (or with comma)
-        if ($user->getDecimalMark() == ',')
-          $duration = str_replace (',', '.', $duration);
+      if ($user->getDecimalMark() == ',')
+        $duration = str_replace (',', '.', $duration);
 
-        $minutes = (int)round(60 * floatval($duration));
-        return $minutes > $max ? false : $signMultiplier * $minutes;
+      $minutes = (int)round(60 * floatval($duration));
+      return $minutes > $max ? false : $signMultiplier * $minutes;
     }
 
     // Handle minutes. Some users enter durations like 10m (meaning 10 minutes).
@@ -523,7 +523,7 @@ class ttTimeHelper {
     $start = ttTimeHelper::to24HourFormat($start);
     $finish = ttTimeHelper::to24HourFormat($finish);
     if ('00:00' == $finish) $finish = '24:00';
-    
+
     if ($start) $duration = '';
 
     if ($duration) {
@@ -806,7 +806,7 @@ class ttTimeHelper {
     $left_joins .= ' left join tt_roles r on (u.role_id = r.id)';
 
     $where_part = " where l.id = $id and l.group_id = $group_id and l.org_id = $org_id and l.status = 1".
-    $where_part .= " and r.rank <= $max_rank";
+      $where_part .= " and r.rank <= $max_rank";
 
     $sql = "select l.id, l.user_id, l.timesheet_id, l.invoice_id, l.approved".
       " from tt_log l $left_joins $where_part";
@@ -880,19 +880,19 @@ class ttTimeHelper {
       }
       $time_fields = ", ".join(', ', $time_fields_array);
     }
-    
+
     if ($includeFiles) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
-      " where entity_type = 'time' and group_id = $group_id and org_id = $org_id and status = 1) Sub1".
-      " on (l.id = Sub1.entity_id)";
+        " where entity_type = 'time' and group_id = $group_id and org_id = $org_id and status = 1) Sub1".
+        " on (l.id = Sub1.entity_id)";
     }
 
     $left_joins = " left join tt_projects p on (l.project_id = p.id)".
       " left join tt_tasks t on (l.task_id = t.id)";
     if ($user->isPluginEnabled('cl'))
       $left_joins .= " left join tt_clients c on (l.client_id = c.id)";
-      
+
     if ($custom_fields && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
@@ -942,5 +942,57 @@ class ttTimeHelper {
       return true; // Expiration date exists but not reached.
 
     return false;
+  }
+  static function getAllDateRecords($from_date,$to_date) {
+    $result = array();
+
+    $mdb2 = getConnection();
+    global $user;
+    $user_id = $user->getUser();
+    $sql = "select l.id, l.user_id, l.date, TIME_FORMAT(l.start, '%k:%i') as start,
+      TIME_FORMAT(sec_to_time(time_to_sec(l.start) + time_to_sec(l.duration)), '%k:%i') as finish,
+      TIME_FORMAT(l.duration, '%k:%i') as duration,
+      l.client_id, l.project_id, l.task_id, l.invoice_id, l.comment, l.billable, l.paid, l.status
+      from tt_log l where l.user_id = $user_id and l.date between $from_date and $to_date order by l.id";
+    $res = $mdb2->query($sql);
+    if (!is_a($res, 'PEAR_Error')) {
+      while ($val = $res->fetchRow()) {
+        $result[] = $val;
+      }
+    } else return false;
+
+    return $result;
+  }
+  static function deleteEntry($id) {
+    global $user;
+    $mdb2 = getConnection();
+
+    // Delete associated files.
+    if ($user->isPluginEnabled('at')) {
+      import('ttFileHelper');
+      global $err;
+      $fileHelper = new ttFileHelper($err);
+      if (!$fileHelper->deleteEntityFiles($id, 'time'))
+        return false;
+    }
+
+    $user_id = $user->getUser();
+    $group_id = $user->getGroup();
+    $org_id = $user->org_id;
+
+
+
+    $sql = "delete from tt_log  where id = $id";
+    $affected = $mdb2->exec($sql);
+    if ($affected==0)
+      return "entry with this id doesn't exist";
+
+    $sql = "update tt_custom_field_log set status = null".
+      " where log_id = $id and group_id = $group_id and org_id = $org_id";
+    $affected = $mdb2->exec($sql);
+    if (is_a($affected, 'PEAR_Error'))
+      return false;
+
+    return true;
   }
 }

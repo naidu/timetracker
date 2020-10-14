@@ -192,8 +192,8 @@ class ttTimeHelper {
         if ($user->getDecimalMark() == ',')
           $duration = str_replace (',', '.', $duration);
 
-       $minutes = (int)round(60 * floatval($duration));
-       return $minutes > $max ? false : $signMultiplier * $minutes;
+        $minutes = (int)round(60 * floatval($duration));
+        return $minutes > $max ? false : $signMultiplier * $minutes;
     }
 
     // Handle minutes. Some users enter durations like 10m (meaning 10 minutes).

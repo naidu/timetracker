@@ -880,6 +880,7 @@ class ttTimeHelper {
       }
       $time_fields = ", ".join(', ', $time_fields_array);
     }
+    
     if ($includeFiles) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".

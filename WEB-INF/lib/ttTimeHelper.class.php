@@ -523,6 +523,7 @@ class ttTimeHelper {
     $start = ttTimeHelper::to24HourFormat($start);
     $finish = ttTimeHelper::to24HourFormat($finish);
     if ('00:00' == $finish) $finish = '24:00';
+    
     if ($start) $duration = '';
 
     if ($duration) {

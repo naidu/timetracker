@@ -523,7 +523,6 @@ class ttTimeHelper {
     $start = ttTimeHelper::to24HourFormat($start);
     $finish = ttTimeHelper::to24HourFormat($finish);
     if ('00:00' == $finish) $finish = '24:00';
-
     if ($start) $duration = '';
 
     if ($duration) {
@@ -880,7 +879,6 @@ class ttTimeHelper {
       }
       $time_fields = ", ".join(', ', $time_fields_array);
     }
-
     if ($includeFiles) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
@@ -892,7 +890,6 @@ class ttTimeHelper {
       " left join tt_tasks t on (l.task_id = t.id)";
     if ($user->isPluginEnabled('cl'))
       $left_joins .= " left join tt_clients c on (l.client_id = c.id)";
-
     if ($custom_fields && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];

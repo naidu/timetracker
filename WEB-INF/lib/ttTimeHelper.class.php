@@ -882,8 +882,8 @@ class ttTimeHelper {
     if ($includeFiles) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
-        " where entity_type = 'time' and group_id = $group_id and org_id = $org_id and status = 1) Sub1".
-        " on (l.id = Sub1.entity_id)";
+       " where entity_type = 'time' and group_id = $group_id and org_id = $org_id and status = 1) Sub1".
+       " on (l.id = Sub1.entity_id)";
     }
 
     $left_joins = " left join tt_projects p on (l.project_id = p.id)".

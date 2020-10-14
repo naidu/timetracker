@@ -189,8 +189,8 @@ class ttTimeHelper {
     global $user;
     $localizedPattern = '/^(\d{1,3})?['.$user->getDecimalMark().'][0-9]{1,4}h?$/';
     if (preg_match($localizedPattern, $duration )) { // decimal values like .5, 1.25h, ... .. 999.9999h (or with comma)
-    if ($user->getDecimalMark() == ',')
-      $duration = str_replace (',', '.', $duration);
+        if ($user->getDecimalMark() == ',')
+          $duration = str_replace (',', '.', $duration);
 
       $minutes = (int)round(60 * floatval($duration));
       return $minutes > $max ? false : $signMultiplier * $minutes;

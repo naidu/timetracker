@@ -192,8 +192,8 @@ class ttTimeHelper {
         if ($user->getDecimalMark() == ',')
           $duration = str_replace (',', '.', $duration);
 
-      $minutes = (int)round(60 * floatval($duration));
-      return $minutes > $max ? false : $signMultiplier * $minutes;
+       $minutes = (int)round(60 * floatval($duration));
+       return $minutes > $max ? false : $signMultiplier * $minutes;
     }
 
     // Handle minutes. Some users enter durations like 10m (meaning 10 minutes).
@@ -805,7 +805,7 @@ class ttTimeHelper {
     $left_joins .= ' left join tt_roles r on (u.role_id = r.id)';
 
     $where_part = " where l.id = $id and l.group_id = $group_id and l.org_id = $org_id and l.status = 1".
-      $where_part .= " and r.rank <= $max_rank";
+    $where_part .= " and r.rank <= $max_rank";
 
     $sql = "select l.id, l.user_id, l.timesheet_id, l.invoice_id, l.approved".
       " from tt_log l $left_joins $where_part";

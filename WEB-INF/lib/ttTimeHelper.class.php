@@ -61,20 +61,20 @@ class ttTimeHelper {
   // holidayMatch determines if $date matches a single $holiDateSpec.
   static function holidayMatch($date, $holiDateSpec) {
 
-    $dateArray = explode('-', $date);
-    $holiDateSpecArray = explode('-', $holiDateSpec);
+   $dateArray = explode('-', $date);
+   $holiDateSpecArray = explode('-', $holiDateSpec);
 
-    // Check year.
-    for($i = 0; $i < 4; $i++) {
-      if ($dateArray[0][$i] != $holiDateSpecArray[0][$i] && $holiDateSpecArray[0][$i] != '*') // * means any digit matches
-        return false;
-    }
-    // Check month.
-    if ($dateArray[1] != $holiDateSpecArray[1])
-      return false;
-    // Check day.
-    if ($dateArray[2] != $holiDateSpecArray[2])
-      return false;
+   // Check year.
+   for($i = 0; $i < 4; $i++) {
+     if ($dateArray[0][$i] != $holiDateSpecArray[0][$i] && $holiDateSpecArray[0][$i] != '*') // * means any digit matches
+       return false;
+   }
+   // Check month.
+   if ($dateArray[1] != $holiDateSpecArray[1])
+     return false;
+   // Check day.
+   if ($dateArray[2] != $holiDateSpecArray[2])
+     return false;
 
     return true;
   }

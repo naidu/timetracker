@@ -270,7 +270,9 @@ $i18n_key_words = array(
 'label.how_to_pay' => 'How to pay', // Label for the "How to pay" field on offers, which allows contractors to specify
                                     // how to pay them, for example: paypal email, check by mail to a specific address, etc.
 'label.moderator_comment' => 'Moderator comment', // Label for "Moderator comment" field that explains something.
-
+  'label.csv' => 'csv',
+  'label.html' => 'html',
+  'label.send_format' => 'send data in the format',
 // Entity names. We use lower case (in English) because they are used in dropdowns, too.
 // They are used to associate a custom field with an entity type.
 'entity.time' => 'time',

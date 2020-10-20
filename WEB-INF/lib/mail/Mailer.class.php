@@ -67,10 +67,16 @@ class Mailer {
     $this->mSender = $value;
   }
 
-  function send($subject, $data) {
+  function send($subject, $data,$cl_checkbox1,$cl_checkbox2) {
     $data = chunk_split(base64_encode($data));
+    $uid = md5(uniqid(time()));
     $subject = Mailer::mimeEncode($subject, $this->mCharSet);
-
+    $myfile = "myfile.csv";
+    import('ttReportHelper');
+    $bean = new ActionForm('reportBean', new Form('reportForm'));
+    $options = ttReportHelper::getReportOptions($bean);
+    $items = ttReportHelper::getItems($options);
+    
     $headers = array('From' => $this->mSender, 'To' => $this->mReceiver);
     if (isset($this->mReceiverCC)) $headers = array_merge($headers, array('CC' => $this->mReceiverCC));
     if (isset($this->mReceiverBCC)) $headers = array_merge($headers, array('BCC' => $this->mReceiverBCC));
@@ -79,7 +85,24 @@ class Mailer {
       'MIME-Version' => '1.0',
       'Content-Type' => $this->mContentType.'; charset='.$this->mCharSet,
       'Content-Transfer-Encoding' => 'BASE64'));
+    
+    $header = array_merge($headers, array(
+      'Subject' => $subject,
+      'MIME-Version' => '1.0',
+      'Content-Type'=>'text/csv; charset=utf-8)',
+      'Content-Disposition'=> 'attachment; filename='.$myfile.';--'.$uid.'--',
+    ));
+    $output = fopen('php://output', 'w');
+    fputcsv($output, array('Id', 'User_Id', 'Group_id','Date', 'User', 'Project', 'Start', 'Start', 'Finish','Duration','Note'));
 
+
+    foreach( $items as $row )
+    {
+      fputcsv($output, $row, ',', '"');
+    }
+    fclose($output);
+
+    $output = ob_get_flush();
     // PEAR::Mail
     require_once('Mail.php');
 
@@ -119,7 +142,15 @@ class Mailer {
     if (isTrue('MAIL_SMTP_DEBUG'))
       PEAR::setErrorHandling(PEAR_ERROR_PRINT);
 
-    $res = $mail->send($recipients, $headers, $data);
+    //$res = $mail->send($recipients, $headers, $data);
+   // return (!is_a($res, 'PEAR_Error'));
+    if($cl_checkbox1){
+      $res = $mail->send($recipients, $headers, $data);
+    
+    }
+    if($cl_checkbox2){
+      $res = $mail->send($recipients, $header, $output);
+    }
     return (!is_a($res, 'PEAR_Error'));
   }
 

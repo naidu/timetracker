@@ -102,14 +102,12 @@ define('SENDER', '"Anuko Time Tracker" <no-reply@timetracker.anuko.com>');
 // 'mail' - sending through php mail() function.
 // 'smtp' - sending directly through SMTP server.
 // See https://www.anuko.com/time_tracker/install_guide/mail.htm
-//
-define('MAIL_MODE', 'smtp');
-define('MAIL_SMTP_HOST', 'localhost'); // For gmail use 'ssl://smtp.gmail.com' instead of 'localhost' and port 465.
-// define('MAIL_SMTP_PORT', '465');
-// define('MAIL_SMTP_USER', 'yourname@yourdomain.com');
-// define('MAIL_SMTP_PASSWORD', 'yourpassword');
-// define('MAIL_SMTP_AUTH', true);
-// define('MAIL_SMTP_DEBUG', true);
+define('MAIL_SMTP_HOST', 'ssl://smtp.gmail.com'); // For gmail use 'ssl://smtp.gmail.com' instead of 'localhost' and port 465.
+define('MAIL_SMTP_PORT', '465');
+define('MAIL_SMTP_USER', 'biometricsprojectcitech@gmail.com'); //riskwatchtimetracker@gmail.com
+define('MAIL_SMTP_PASSWORD', 'citech@123');  //notthepassword1234
+define('MAIL_SMTP_AUTH', true);
+define('MAIL_SMTP_DEBUG', true);
 
 
 // CSS files. They are located in the root of Time Tracker installation.

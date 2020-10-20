@@ -45,10 +45,14 @@ if ($request->isPost()) {
   $cl_cc = trim($request->getParameter('cc'));
   $cl_subject = trim($request->getParameter('subject'));
   $cl_comment = trim($request->getParameter('comment'));
+  $cl_checkbox1= trim($request->getParameter('checkbox1'));
+  $cl_checkbox2= trim($request->getParameter('checkbox2'));
 } else {
   $cl_receiver = $uc->getValue(SYSC_LAST_REPORT_EMAIL);
   $cl_cc = $uc->getValue(SYSC_LAST_REPORT_CC);
   $cl_subject = $i18n->get('form.mail.report_subject');
+  $cl_checkbox1= trim($request->getParameter('checkbox1'));
+  $cl_checkbox2= trim($request->getParameter('checkbox2'));
 }
 
 $form = new Form('mailForm');
@@ -56,6 +60,8 @@ $form->addInput(array('type'=>'text','name'=>'receiver','style'=>'width: 300px;'
 $form->addInput(array('type'=>'text','name'=>'cc','style'=>'width: 300px;','value'=>$cl_cc));
 $form->addInput(array('type'=>'text','name'=>'subject','style'=>'width: 300px;','value'=>$cl_subject));
 $form->addInput(array('type'=>'textarea','name'=>'comment','maxlength'=>'250','style'=>'width: 300px; height: 60px;'));
+$form->addInput(array('type'=>'checkbox','name'=>'checkbox1','value'=>'true'));
+$form->addInput(array('type'=>'checkbox','name'=>'checkbox2','value'=>'true'));
 $form->addInput(array('type'=>'submit','name'=>'btn_send','value'=>$i18n->get('button.send')));
 
 if ($request->isPost()) {
@@ -88,7 +94,7 @@ if ($request->isPost()) {
     if (!empty($user->bcc_email))
       $mailer->setReceiverBCC($user->bcc_email);
     $mailer->setMailMode(MAIL_MODE);
-    if ($mailer->send($cl_subject, $body))
+    if ($mailer->send($cl_subject, $body,$cl_checkbox1,$cl_checkbox2))
       $msg->add($i18n->get('form.mail.report_sent'));
     else
       $err->add($i18n->get('error.mail_send'));

@@ -1,11 +1,13 @@
 <?php
-
+// +----------------------------------------------------------------------+
+// | Author: Yogesh M
+// +----------------------------------------------------------------------+
 require __DIR__ . '/../vendor/autoload.php';
 require_once('../initialize.php');
 import('../form.Form');
 import('../ttOrgHelper');
 import('../ttUser');
-import('../ttTimeHelper');
+import('../ttTimeClassHelper');
 
 use \Firebase\JWT\JWT;
 
@@ -44,7 +46,7 @@ if ($jwt) {
     if ($isLoggedIn) {
       if ($id!= "") {
         //delete entry
-        $record = ttTimeHelper::deleteEntry($id);
+        $record = ttTimeClassHelper::deleteEntry($id);
          if($record=="true"){
            $success_response = ['success' => true, 'deleted data id' => $id];
            $response = json_encode($success_response);

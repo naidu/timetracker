@@ -1,11 +1,13 @@
 <?php
-
+// +----------------------------------------------------------------------+
+// | Author: Yogesh M
+// +----------------------------------------------------------------------+
 require __DIR__ . '/../vendor/autoload.php';
 require_once('../initialize.php');
 import('../form.Form');
 import('../ttOrgHelper');
 import('../ttUser');
-import('../ttTimeHelper');
+import('../ttTimeClassHelper');
 
 use \Firebase\JWT\JWT;
 
@@ -67,7 +69,7 @@ if ($jwt) {
           }
           else{
             //update the record
-            $record=ttTimeHelper::update(array(
+            $record=ttTimeClassHelper::update(array(
               'id' => $id,
               'date' => $date,
               'user_id' => $user_id,
@@ -91,7 +93,7 @@ if ($jwt) {
           print_r($response);
         }
         else{
-          $record=ttTimeHelper::update(array(
+          $record=ttTimeClassHelper::update(array(
             'id' => $id,
             'date' => $date,
             'user_id' => $user_id,

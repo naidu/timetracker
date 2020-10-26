@@ -39,7 +39,7 @@ if ($auth->isPasswordExternal()) {
 $cl_login = $request->getParameter('login');
 
 $form = new Form('resetPasswordForm');
-$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'login','style'=>'width: 300px;','value'=>$cl_login));
+$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'login','value'=>$cl_login));
 $form->addInput(array('type'=>'submit','name'=>'btn_submit','value'=>$i18n->get('button.reset_password')));
 
 if ($request->isPost()) {
@@ -64,6 +64,11 @@ if ($request->isPost()) {
   if ($err->no()) {
     $user = new ttUser($cl_login); // Note: reusing $user from initialize.php here.
 
+    // Protection against flooding user mailbox with too many password reset emails.
+    if (ttUserHelper::recentRefExists($user->id)) $err->add($i18n->get('error.access_denied'));
+  }
+
+  if ($err->no()) {
     // Prepare and save a temporary reference for user.
     $temp_ref = md5(uniqid());
     ttUserHelper::saveTmpRef($temp_ref, $user->id);
@@ -88,10 +93,10 @@ if ($request->isPost()) {
 
     if ($receiver) {
       import('mail.Mailer');
-      $sender = new Mailer();
-      $sender->setCharSet(CHARSET);
-      $sender->setSender(SENDER);
-      $sender->setReceiver("$receiver");
+      $mailer = new Mailer();
+      $mailer->setCharSet(CHARSET);
+      $mailer->setSender(SENDER);
+      $mailer->setReceiver("$receiver");
       if ((!empty($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] !== 'off')) || ($_SERVER['SERVER_PORT'] == 443))
         $secure_connection = true;
       if($secure_connection)
@@ -105,9 +110,11 @@ if ($request->isPost()) {
       else
         $pass_edit_url = $http.'://'.$_SERVER['HTTP_HOST'].'/password_change.php?ref='.$temp_ref;
 
-      $sender->setMailMode(MAIL_MODE);
-      $res = $sender->send($cl_subject, sprintf($user_i18n->get('form.reset_password.email_body'), $_SERVER['REMOTE_ADDR'], $pass_edit_url));
-      $smarty->assign('result_message', $res ? $i18n->get('form.reset_password.message') : $i18n->get('error.mail_send'));
+      $mailer->setMailMode(MAIL_MODE);
+      if ($mailer->send($cl_subject, sprintf($user_i18n->get('form.reset_password.email_body'), $_SERVER['REMOTE_ADDR'], $pass_edit_url)))
+        $msg->add($i18n->get('form.reset_password.message'));
+      else
+        $err->add($i18n->get('error.mail_send'));
     }
   }
 } // isPost
@@ -115,5 +122,5 @@ if ($request->isPost()) {
 $smarty->assign('forms', array($form->getName()=>$form->toArray()));
 $smarty->assign('onload', 'onLoad="document.resetPasswordForm.login.focus()"');
 $smarty->assign('title', $i18n->get('title.reset_password'));
-$smarty->assign('content_page_name', 'password_reset.tpl');
-$smarty->display('index.tpl');
+$smarty->assign('content_page_name', 'password_reset2.tpl');
+$smarty->display('index2.tpl');

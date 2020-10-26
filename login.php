@@ -32,12 +32,12 @@ import('ttOrgHelper');
 import('ttUser');
 
 $cl_login = $request->getParameter('login');
-if ($cl_login == null && $request->isGet()) $cl_login = @$_COOKIE['tt_login'];
+if ($cl_login == null && $request->isGet()) $cl_login = @$_COOKIE[LOGIN_COOKIE_NAME];
 $cl_password = $request->getParameter('password');
 
 $form = new Form('loginForm');
-$form->addInput(array('type'=>'text','size'=>'25','maxlength'=>'100','name'=>'login','style'=>'width: 220px;','value'=>$cl_login));
-$form->addInput(array('type'=>'password','size'=>'25','maxlength'=>'50','name'=>'password','style'=>'width: 220px;','value'=>$cl_password));
+$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'login','value'=>$cl_login));
+$form->addInput(array('type'=>'password','maxlength'=>'50','name'=>'password','value'=>$cl_password));
 $form->addInput(array('type'=>'hidden','name'=>'browser_today','value'=>'')); // User current date, which gets filled in on btn_login click.
 $form->addInput(array('type'=>'submit','name'=>'btn_login','onclick'=>'browser_today.value=get_date()','value'=>$i18n->get('button.login')));
 
@@ -58,7 +58,7 @@ if ($request->isPost()) {
         $_SESSION['date'] = $current_user_date;
 
       // Remember user login in a cookie.
-      setcookie('tt_login', $cl_login, time() + COOKIE_EXPIRE, '/');
+      setcookie(LOGIN_COOKIE_NAME, $cl_login, time() + COOKIE_EXPIRE, '/');
 
       $user = new ttUser(null, $auth->getUserId());
       // Redirect, depending on user role.
@@ -85,6 +85,6 @@ $smarty->assign('forms', array($form->getName()=>$form->toArray()));
 $smarty->assign('show_hint', $show_hint);
 $smarty->assign('onload', 'onLoad="document.loginForm.'.(!$cl_login?'login':'password').'.focus()"');
 $smarty->assign('title', $i18n->get('title.login'));
-$smarty->assign('content_page_name', 'login.tpl');
+$smarty->assign('content_page_name', 'login2.tpl');
 $smarty->assign('about_text', $i18n->get('form.login.about'));
-$smarty->display('index.tpl');
+$smarty->display('index2.tpl');

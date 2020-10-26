@@ -53,9 +53,6 @@ $recordType = $user->getRecordType();
 $showStart = TYPE_START_FINISH == $recordType || TYPE_ALL == $recordType;
 $showDuration = TYPE_DURATION == $recordType || TYPE_ALL == $recordType;
 
-// Escape comment for presentation.
-$time_rec['comment'] = htmlspecialchars($time_rec['comment']);
-
 if ($request->isPost()) {
   if ($request->getParameter('delete_button')) { // Delete button pressed.
 
@@ -96,5 +93,5 @@ $smarty->assign('show_start', $showStart);
 $smarty->assign('show_duration', $showDuration);
 $smarty->assign('forms', array($form->getName() => $form->toArray()));
 $smarty->assign('title', $i18n->get('title.delete_time_record'));
-$smarty->assign('content_page_name', 'time_delete.tpl');
-$smarty->display('index.tpl');
+$smarty->assign('content_page_name', 'time_delete2.tpl');
+$smarty->display('index2.tpl');

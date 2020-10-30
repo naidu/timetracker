@@ -221,6 +221,12 @@ input[type=submit] {
   appearance: none;
 }
 
+input[type=button] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
 input.text-field {
   width: 220px;
 }
@@ -253,7 +259,7 @@ input.password-field {
   width: 210px;
   margin-top: 1rem;
   margin-left: auto;
-  margin-right: auto
+  margin-right: auto;
 }
 
 .large-screen-calendar {
@@ -313,6 +319,12 @@ input.password-field {
 .button-set {
   margin-top: .5rem;
   margin-bottom: 1rem;
+}
+
+.section-header {
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @media screen and (max-width: 600px) {

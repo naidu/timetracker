@@ -50,12 +50,10 @@ if ($jwt) {
       if($to_date!="''")
       {
         $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date );
-        foreach ($record as $rec)
-        {
-          $success_response = [$rec];
+          $success_response = ['success'=>'true','data'=>$record];
           $response = json_encode($success_response);
           print_r($response);
-        }
+        
       }
       //if no values entered
       else
@@ -68,12 +66,10 @@ if ($jwt) {
           $response = json_encode($success_response);
           print_r($response);
         }
-        foreach($record as $rec)
-        {
-          $success_response = [$rec];
+          $success_response = ['success'=>'true','data'=>$record];
           $response = json_encode($success_response);
           print_r($response);
-        }
+        
       }
     }
   } catch (Exception $e) {

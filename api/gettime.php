@@ -1,10 +1,14 @@
 <?php
+// +----------------------------------------------------------------------+
+// | Author: Yogesh M
+// +----------------------------------------------------------------------+
 require __DIR__ . '/../vendor/autoload.php';
 require_once('../initialize.php');
 import('../form.Form');
 import('../ttOrgHelper');
 import('../ttUser');
 import('../ttTimeHelper');
+import('../ttTimeClassHelper');
 
 use \Firebase\JWT\JWT;
 
@@ -45,7 +49,7 @@ if ($jwt) {
     if ($isLoggedIn) {
       if($to_date!="''")
       {
-        $record = ttTimeHelper::getAllDateRecords($from_date,$to_date );
+        $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date );
         foreach ($record as $rec)
         {
           $success_response = [$rec];
@@ -57,7 +61,7 @@ if ($jwt) {
       else
       {
         $to_date=$from_date;
-        $record = ttTimeHelper::getAllDateRecords($from_date,$to_date);
+        $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date);
         if(sizeof($record)==0)
         {
           $success_response = ['error'=>'check the entered date'];

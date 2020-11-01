@@ -22,6 +22,14 @@
           <td align="right">{$i18n.label.comment}:</td>
           <td>{$forms.mailForm.comment.control}</td>
         </tr>
+          <td align="right">{$i18n.label.comment}:</td>
+          <td>{$forms.mailForm.comment.control}</td>
+          </tr>
+          <tr>
+            <td align="right">{$i18n.label.send_format} (*):</td>
+            <td>{$i18n.label.html}{$forms.mailForm.checkbox1.control}{$i18n.label.csv}{$forms.mailForm.checkbox2.control}</td>
+          </tr>
+          <tr>
         <tr>
           <td></td>
           <td>{$i18n.label.required_fields}</td>

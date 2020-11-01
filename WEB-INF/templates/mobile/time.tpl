@@ -25,8 +25,8 @@
           <td valign="top">{$record.project|escape}</td>
     {/if}
           <td align="right" valign="top">{if ($record.duration == '0:00' && $record.start <> '')}<font color="#ff0000">{/if}{$record.duration}{if ($record.duration == '0:00' && $record.start <> '')}</font>{/if}</td>
-          <td align="center">{if $record.approved || $record.timesheet_id || $record.invoice_id}&nbsp;{else}<a href="time_edit.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="../img/icon_edit.png"></a>{/if}</td>
-          <td align="center">{if $record.approved || $record.timesheet_id || $record.invoice_id}&nbsp;{else}<a href="time_delete.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.delete}" src="../img/icon_delete.png"></a>{/if}</td>
+          <td align="center">{if $record.approved || $record.timesheet_id || $record.invoice_id}&nbsp;{else}<a href="time_edit.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="../img/icon-edit.png"></a>{/if}</td>
+          <td align="center">{if $record.approved || $record.timesheet_id || $record.invoice_id}&nbsp;{else}<a href="time_delete.php?id={$record.id}"><img class="table_icon" alt="{$i18n.label.delete}" src="../img/icon-delete.png"></a>{/if}</td>
         </tr>
   {/foreach}
       </table>
@@ -34,6 +34,10 @@
         <tr>
           <td align="right">{$i18n.label.day_total}:</td>
           <td>{$day_total}</td>
+        </tr>
+        <tr>
+          <td align="right">{$i18n.label.week_total}:</td>
+          <td>{$week_total}</td>
         </tr>
       </table>
 {/if}

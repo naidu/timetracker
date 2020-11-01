@@ -297,8 +297,8 @@ class ttUser {
     return $config->getDefinedValue($name);
   }
 
-  // getConfigInt retruns an integer value defined in a group, or false.
-  function getConfigInt($name, $defaultVal) {
+  // getConfigInt returns an integer value defined in a group, or false.
+  function getConfigInt($name, $defaultVal = 0) {
     $config = new ttConfigHelper($this->getConfig());
     return $config->getIntValue($name, $defaultVal);
   }
@@ -774,34 +774,6 @@ class ttUser {
       return false;
 
 
-
-    return true;
-  }
-
-  // enablePlugin either enables or disables a specific plugin for group.
-  function enablePlugin($plugin, $enable = true)
-  {
-    if (!$this->can('manage_advanced_settings'))
-      return false; // Note: enablePlugin is currently only used on week_view.php.
-                    // So, it's not really a plugin we are enabling, but rather week view display options.
-                    // Therefore, a check for manage_advanced_settings, not manage_features.
-
-    $plugin_array = explode(',', $this->plugins);
-    if ($enable && !in_array($plugin, $plugin_array))
-      $plugin_array[] = $plugin; // Add plugin to array.
-
-    if (!$enable && in_array($plugin, $plugin_array)) {
-      $key = array_search($plugin, $plugin_array);
-      if ($key !== false)
-        unset($plugin_array[$key]); // Remove plugin from array.
-    }
-
-    $plugins = implode(',', $plugin_array);
-    if ($plugins != $this->plugins) {
-      if (!$this->updateGroup(array('plugins' => $plugins)))
-        return false;
-      $this->plugins = $plugins;
-    }
 
     return true;
   }

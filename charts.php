@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 // Note: This script uses Lichart PHP library and requires GD 2.0.1 or later.
 
@@ -112,8 +88,9 @@ if ($request->isPost()) {
 
 // Elements of chartForm.
 $chart_form = new Form('chartForm');
+$largeScreenCalendarRowSpan = 1; // Number of rows calendar spans on large screens.
 
-// User dropdown. Changes the user "on behalf" of whom we are working. 
+// User dropdown. Changes the user "on behalf" of whom we are working.
 if ($user->can('view_charts')) {
   $rank = $user->getMaxRankForGroup($user->getGroup());
   if ($user->can('view_own_charts'))
@@ -130,6 +107,7 @@ if ($user->can('view_charts')) {
       'datakeys'=>array('id','name'),
     ));
     $chart_form->addInput(array('type'=>'hidden','name'=>'user_changed'));
+    $largeScreenCalendarRowSpan += 2;
     $smarty->assign('user_dropdown', 1);
   }
 }
@@ -149,6 +127,7 @@ $chart_form->addInput(array('type' => 'combobox',
   'value' => $cl_interval,
   'data' => $intervals
 ));
+$largeScreenCalendarRowSpan += 2;
 
 // Chart type options.
 $chart_selector = (MODE_PROJECTS_AND_TASKS == $tracking_mode || $user->isPluginEnabled('cl'));
@@ -168,6 +147,7 @@ if ($chart_selector) {
     'value' => $cl_type,
     'data' => $types
   ));
+  $largeScreenCalendarRowSpan += 2;
 }
 
 // Calendar.
@@ -196,13 +176,13 @@ $data_set = new XYDataSet();
 foreach($totals as $total) {
   $data_set->addPoint(new Point( $total['name'], $total['time']));
 }
-$chart->setDataSet($data_set); 
+$chart->setDataSet($data_set);
 
 // Prepare a file name.
 $img_dir = TEMPLATE_DIR.'_c/'; // Directory.
 $file_name = uniqid('chart_').'.png'; // Short file name. Unique ID here is to avoid problems with browser caching.
 $img_ref = 'WEB-INF/templates_c/'.$file_name; // Image reference for html.
-$file_name = $img_dir.$file_name; // Full file name. 
+$file_name = $img_dir.$file_name; // Full file name.
 
 // Clean up the file system from older images.
 $img_files = glob($img_dir.'chart_*.png');
@@ -219,9 +199,11 @@ if (is_array($img_files)) {
 $chart->renderEx(array('fileName'=>$file_name,'hideLogo'=>true,'hideTitle'=>true,'hideLabel'=>true));
 // At this point libchart usage is complete and we have chart image on disk.
 
+$smarty->assign('large_screen_calendar_row_span', $largeScreenCalendarRowSpan);
 $smarty->assign('img_file_name', $img_ref);
 $smarty->assign('chart_selector', $chart_selector);
+$smarty->assign('onload', 'onLoad="adjustTodayLinks()"');
 $smarty->assign('forms', array($chart_form->getName() => $chart_form->toArray()));
 $smarty->assign('title', $i18n->get('title.charts'));
-$smarty->assign('content_page_name', 'charts.tpl');
-$smarty->display('index.tpl');
+$smarty->assign('content_page_name', 'charts2.tpl');
+$smarty->display('index2.tpl');

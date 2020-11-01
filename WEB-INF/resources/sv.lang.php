@@ -152,6 +152,8 @@ $i18n_key_words = array(
 // 'button.disapprove' => 'Disapprove',
 
 // Labels for controls on forms. Labels in this section are used on multiple forms.
+// TODO: translate the following.
+// 'label.menu' => 'Menu',
 'label.group_name' => 'Namn på grupp',
 'label.address' => 'Adress',
 'label.currency' => 'Valuta',
@@ -627,7 +629,6 @@ $i18n_key_words = array(
 // 'form.group_delete.hint' => 'Are you sure you want to delete the entire group?',
 
 // Mail form. See example at https://timetracker.anuko.com/report_send.php when emailing a report.
-'form.mail.from' => 'Från',
 'form.mail.to' => 'Till',
 'form.mail.report_subject' => 'Tidsrapport',
 'form.mail.footer' => 'Anuko Time Tracker är en lättanvänd applikation byggd med öppen källkod för att enkelt spåra och hålla koll på arbetstider. Besök <a href="https://www.anuko.com">www.anuko.com</a> för mer information.',
@@ -685,7 +686,6 @@ $i18n_key_words = array(
 
 // Display Options form. See example at https://timetracker.anuko.com/display_options.php.
 // TODO: translate the following.
-// 'form.display_options.menu' => 'Menu',
 // 'form.display_options.note_on_separate_row' => 'Note on separate row',
 // 'form.display_options.not_complete_days' => 'Not complete days',
 // 'form.display_options.custom_css' => 'Custom CSS',

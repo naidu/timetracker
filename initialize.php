@@ -1,42 +1,19 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 // Report all errors except E_NOTICE and E_STRICT.
 // Ignoring E_STRICT is here because PEAR 1.9.4 that we use is not E_STRICT compliant.
 if (!defined('E_STRICT')) define('E_STRICT', 2048);
 // if (!defined('E_DEPRECATED')) define('E_DEPRECATED', 8192);
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT); // & ~E_DEPRECATED);
-// E_ALL tends to change as PHP evloves, therefore we use & here instead of exclusive OR (^).
+// E_ALL tends to change as PHP evolves, therefore we use & here instead of exclusive OR (^).
 
 // Disable displaying errors on screen.
 ini_set('display_errors', 'Off');
 
 // require_once('init_auth.php');
+define("APP_VERSION", "1.19.23.5348");
 define("APP_DIR", dirname(__FILE__));
 define("LIBRARY_DIR", APP_DIR."/WEB-INF/lib");
 define("TEMPLATE_DIR", APP_DIR."/WEB-INF/templates");
@@ -90,16 +67,20 @@ if (defined('PHP_SESSION_PATH') && realpath(PHP_SESSION_PATH)) {
   ini_set('session.gc_probability', 1);
 }
 
+// "tt_" prefix is to avoid sharing session with other PHP apps that do not name session.
+if (!defined('SESSION_COOKIE_NAME')) define('SESSION_COOKIE_NAME', 'tt_PHPSESSID');
+if (!defined('LOGIN_COOKIE_NAME')) define('LOGIN_COOKIE_NAME', 'tt_login');
+
 // Set session cookie lifetime.
 session_set_cookie_params($phpsessid_ttl);
-if (isset($_COOKIE['tt_PHPSESSID'])) {
+if (isset($_COOKIE[SESSION_COOKIE_NAME])) {
   // Extend PHP session cookie lifetime by PHPSESSID_TTL (if defined, otherwise 24 hours) 
   // so that users don't have to re-login during this period from now. 
-  setcookie('tt_PHPSESSID', $_COOKIE['tt_PHPSESSID'],  time() + $phpsessid_ttl, '/');
+  setcookie(SESSION_COOKIE_NAME, $_COOKIE[SESSION_COOKIE_NAME],  time() + $phpsessid_ttl, '/');
 }
 
 // Start or resume PHP session.
-session_name('tt_PHPSESSID'); // "tt_" prefix is to avoid sharing session with other PHP apps that do not name session.
+session_name(SESSION_COOKIE_NAME);
 @session_start();
 
 // Authorization.
@@ -129,10 +110,6 @@ define('TYPE_DURATION', 2); // Time record has only duration, no start and finis
 define('CHARSET', 'utf-8');
 
 date_default_timezone_set(@date_default_timezone_get());
-
-// Strip auto-inserted extra slashes when magic_quotes ON for PHP versions prior to 5.4.0.
-if (get_magic_quotes_gpc())
-  magic_quotes_off();
 
 // Initialize global objects that are needed for the application.
 import('html.HttpRequest');

@@ -844,6 +844,28 @@ class ttTimeHelper {
     return $result;
   }
 
+  //return range of dates
+  static function getAllDateRecords($from_date,$to_date) {
+    $result = array();
+
+    $mdb2 = getConnection();
+    global $user;
+    $user_id = $user->getUser();
+    $sql = "select l.id, l.user_id, l.date, TIME_FORMAT(l.start, '%k:%i') as start,
+      TIME_FORMAT(sec_to_time(time_to_sec(l.start) + time_to_sec(l.duration)), '%k:%i') as finish,
+      TIME_FORMAT(l.duration, '%k:%i') as duration,
+      l.client_id, l.project_id, l.task_id, l.invoice_id, l.comment, l.billable, l.paid, l.status
+      from tt_log l where l.user_id = $user_id and l.date between $from_date and $to_date order by l.id";
+    $res = $mdb2->query($sql);
+    if (!is_a($res, 'PEAR_Error')) {
+      while ($val = $res->fetchRow()) {
+        $result[] = $val;
+      }
+    } else return false;
+
+    return $result;
+  } 
+  
   // getRecords - returns time records for a user for a given date.
   static function getRecords($date, $includeFiles = false) {
     global $user;

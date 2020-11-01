@@ -281,7 +281,7 @@ class ttReportHelper {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $checkbox_field_name = 'show_'.$field_name;
-        if ($options[$checkbox_field_name]) {
+        if ($options[$checkbox_field_name] || ttReportHelper::groupingBy($field_name, $options)) {
           if ($userField['type'] == CustomFields::TYPE_TEXT) {
             $ecfTableName = 'ecf'.$userField['id'];
             array_push($fields, "$ecfTableName.value as $field_name");
@@ -306,7 +306,7 @@ class ttReportHelper {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $checkbox_field_name = 'show_'.$field_name;
-        if ($options[$checkbox_field_name]) {
+        if ($options[$checkbox_field_name] || ttReportHelper::groupingBy($field_name, $options)) {
           if ($timeField['type'] == CustomFields::TYPE_TEXT) {
             $cflTable = 'cfl'.$timeField['id'];
             array_push($fields, "$cflTable.value as $field_name");
@@ -382,7 +382,7 @@ class ttReportHelper {
         $field_name = 'user_field_'.$userField['id'];
         $checkbox_field_name = 'show_'.$field_name;
         $entity_type = CustomFields::ENTITY_USER;
-        if ($options[$field_name] || $options[$checkbox_field_name]) {
+        if ($options[$field_name] || $options[$checkbox_field_name] || ttReportHelper::groupingBy($field_name, $options)) {
           $ecfTable = 'ecf'.$userField['id'];
           if ($userField['type'] == CustomFields::TYPE_TEXT) {
             // Add one join for each text field.
@@ -411,7 +411,7 @@ class ttReportHelper {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $checkbox_field_name = 'show_'.$field_name;
-        if ($options[$field_name] || $options[$checkbox_field_name]) {
+        if ($options[$field_name] || $options[$checkbox_field_name] || ttReportHelper::groupingBy($field_name, $options)) {
           $cflTable = 'cfl'.$timeField['id'];
           if ($timeField['type'] == CustomFields::TYPE_TEXT) {
             // Add one join for each text field.
@@ -469,7 +469,7 @@ class ttReportHelper {
         foreach ($custom_fields->userFields as $userField) {
           $field_name = 'user_field_'.$userField['id'];
           $checkbox_field_name = 'show_'.$field_name;
-          if ($options[$checkbox_field_name]) {
+          if ($options[$checkbox_field_name] || ttReportHelper::groupingBy($field_name, $options)) {
             if ($userField['type'] == CustomFields::TYPE_TEXT) {
               $ecfTableName = 'ecf'.$userField['id'];
               array_push($fields, "$ecfTableName.value as $field_name");
@@ -493,7 +493,7 @@ class ttReportHelper {
         foreach ($custom_fields->timeFields as $timeField) {
           $field_name = 'time_field_'.$timeField['id'];
           $checkbox_field_name = 'show_'.$field_name;
-          if ($options[$checkbox_field_name]) {
+          if ($options[$checkbox_field_name] || ttReportHelper::groupingBy($field_name, $options)) {
             array_push($fields, "null as $field_name"); // null for each time custom field.
           }
         }
@@ -537,13 +537,13 @@ class ttReportHelper {
 
       // Prepare sql query part for left joins.
       $left_joins = null;
-      // Left joins for custom fields.
+      // Left joins for user custom fields.
       if ($custom_fields && $custom_fields->userFields) {
         foreach ($custom_fields->userFields as $userField) {
           $field_name = 'user_field_'.$userField['id'];
           $checkbox_field_name = 'show_'.$field_name;
           $entity_type = CustomFields::ENTITY_USER;
-          if ($options[$field_name] || $options[$checkbox_field_name]) {
+          if ($options[$field_name] || $options[$checkbox_field_name] || ttReportHelper::groupingBy($field_name, $options)) {
             $ecfTable = 'ecf'.$userField['id'];
             if ($userField['type'] == CustomFields::TYPE_TEXT) {
               // Add one join for each text field.
@@ -635,19 +635,21 @@ class ttReportHelper {
     unset($_SESSION['report_item_ids']);
     unset($_SESSION['report_item_expense_ids']);
 
-    // Iterate through records and build 2 comma-separated lists.
-    foreach($report_items as $item) {
-      if ($item['type'] == 1)
-        $report_item_ids .= ','.$item['id'];
-      else if ($item['type'] == 2)
-         $report_item_expense_ids .= ','.$item['id'];
-    }
-    $report_item_ids = trim($report_item_ids, ',');
-    $report_item_expense_ids = trim($report_item_expense_ids, ',');
+    if (is_array($report_items)) {
+      // Iterate through records and build 2 comma-separated lists.
+      foreach($report_items as $item) {
+        if ($item['type'] == 1)
+          $report_item_ids .= ','.$item['id'];
+        else if ($item['type'] == 2)
+          $report_item_expense_ids .= ','.$item['id'];
+      }
+      $report_item_ids = trim($report_item_ids, ',');
+      $report_item_expense_ids = trim($report_item_expense_ids, ',');
 
-    // The lists are ready. Put them in session.
-    if ($report_item_ids) $_SESSION['report_item_ids'] = $report_item_ids;
-    if ($report_item_expense_ids) $_SESSION['report_item_expense_ids'] = $report_item_expense_ids;
+      // The lists are ready. Put them in session.
+      if ($report_item_ids) $_SESSION['report_item_ids'] = $report_item_ids;
+      if ($report_item_expense_ids) $_SESSION['report_item_expense_ids'] = $report_item_expense_ids;
+    }
   }
 
   // getFromSession obtains tt_log and tt_expense_items ids stored in user session.
@@ -665,18 +667,22 @@ class ttReportHelper {
   // getSubtotals calculates report items subtotals when a report is grouped by.
   // Without expenses, it's a simple select with group by.
   // With expenses, it becomes a select with group by from a combined set of records obtained with "union all".
+  // getSubtotals uses helper functions such as makeConcatPart and others to get parts to assemble an sql query from.
+  // Query may become quite complex depending on $options, whether custom fields are used, etc.
+  // This is the reason for having individual functions for parts (to keep getSubtotals easier to manage).
   static function getSubtotals($options) {
     global $user;
     $mdb2 = getConnection();
 
     $concat_part = ttReportHelper::makeConcatPart($options);
+    $group_by_fields_part = ttReportHelper::makeGroupByFieldsPart($options);
     $work_unit_part = ttReportHelper::makeWorkUnitPart($options);
     $join_part = ttReportHelper::makeJoinPart($options);
     $cost_part = ttReportHelper::makeCostPart($options);
     $where = ttReportHelper::getWhere($options);
     $group_by_part = ttReportHelper::makeGroupByPart($options);
 
-    $parts = "$concat_part, sum(time_to_sec(l.duration)) as time, null as expenses".$work_unit_part.$cost_part;
+    $parts = $concat_part.$group_by_fields_part.", sum(time_to_sec(l.duration)) as time, null as expenses".$work_unit_part.$cost_part;
     $sql = "select $parts from tt_log l $join_part $where $group_by_part";
     // By now we have sql for time items.
 
@@ -684,12 +690,14 @@ class ttReportHelper {
     if ($options['show_cost'] && $user->isPluginEnabled('ex')) { // if ex(penses) plugin is enabled
 
       $concat_part = ttReportHelper::makeConcatExpensesPart($options);
+      $group_by_fields_part = ttReportHelper::makeGroupByFieldsExpensesPart($options);
       $join_part = ttReportHelper::makeJoinExpensesPart($options);
       $where = ttReportHelper::getExpenseWhere($options);
       $group_by_expenses_part = ttReportHelper::makeGroupByExpensesPart($options);
-      $sql_for_expenses = "select $concat_part, null as time";
-      if ($options['show_work_units']) $sql_for_expenses .= ", null as units";
-      $sql_for_expenses .= ", sum(ei.cost) as cost, sum(ei.cost) as expenses from tt_expense_items ei $join_part $where $group_by_expenses_part";
+      $parts = $concat_part.$group_by_fields_part.", null as time";
+      if ($options['show_work_units']) $parts .= ", null as units";
+      $parts .= ", sum(ei.cost) as cost, sum(ei.cost) as expenses";
+      $sql_for_expenses = "select $parts from tt_expense_items ei $join_part $where $group_by_expenses_part";
 
       // Create a combined query.
       $fields = ttReportHelper::makeCombinedSelectPart($options);
@@ -1641,284 +1649,330 @@ class ttReportHelper {
     return $group_by_key;
   }
 
+  // makeSingleDropdownGroupByPart is a helper function for makeGroupByPart.
+  // It prepates a group by part corresponding to a single dropdown control.
+  static function makeSingleDropdownGroupByPart($dropdown_value, $options) {
+    if ($dropdown_value == null || $dropdown_value == 'no_grouping')
+      return null;
+    if ('date' == $dropdown_value)
+      return (', l.date');
+    if ('user' == $dropdown_value)
+      return (', u.name');
+    if ('client' == $dropdown_value)
+      return (', c.name');
+    if ('project' == $dropdown_value)
+      return (', p.name');
+    if ('task' == $dropdown_value)
+      return (', t.name');
+    if (ttReportHelper::groupingBy($dropdown_value, $options))
+      return (", $dropdown_value");
+  }
+
   // makeGroupByPart builds a combined group by part for sql query for time items using group_by1,
   // group_by2, and group_by3 values passed in $options.
   static function makeGroupByPart($options) {
     if (!ttReportHelper::grouping($options)) return null;
 
-    $group_by1 = $options['group_by1'];
-    $group_by2 = $options['group_by2'];
-    $group_by3 = $options['group_by3'];
-
-    // TODO: redo this using the if instead so that we can include custom fields properly.
-    switch ($group_by1) {
-      case 'date':
-        $group_by_parts .= ', l.date';
-        break;
-      case 'user':
-        $group_by_parts .= ', u.name';
-        break;
-      case 'client':
-        $group_by_parts .= ', c.name';
-        break;
-      case 'project':
-        $group_by_parts .= ', p.name';
-        break;
-      case 'task':
-        $group_by_parts .= ', t.name';
-        break;
-    }
-    switch ($group_by2) {
-      case 'date':
-        $group_by_parts .= ', l.date';
-        break;
-      case 'user':
-        $group_by_parts .= ', u.name';
-        break;
-      case 'client':
-        $group_by_parts .= ', c.name';
-        break;
-      case 'project':
-        $group_by_parts .= ', p.name';
-        break;
-      case 'task':
-        $group_by_parts .= ', t.name';
-        break;
-    }
-    switch ($group_by3) {
-      case 'date':
-        $group_by_parts .= ', l.date';
-        break;
-      case 'user':
-        $group_by_parts .= ', u.name';
-        break;
-      case 'client':
-        $group_by_parts .= ', c.name';
-        break;
-      case 'project':
-        $group_by_parts .= ', p.name';
-        break;
-      case 'task':
-        $group_by_parts .= ', t.name';
-        break;
-    }
+    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by1'], $options);
+    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by2'], $options);
+    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by3'], $options);
     // Remove garbage from the beginning.
     $group_by_parts = ltrim($group_by_parts, ', ');
     $group_by_part = "group by $group_by_parts";
     return $group_by_part;
   }
 
+  // makeSingleDropdownGroupByExpensesPart is a helper function for makeGroupByExpensesPart.
+  // It prepates a group by part corresponding to a single dropdown control.
+  static function makeSingleDropdownGroupByExpensesPart($dropdown_value, $options) {
+    if ($dropdown_value == null || $dropdown_value == 'no_grouping')
+      return null;
+    if ('date' == $dropdown_value)
+      return (', ei.date');
+    if ('user' == $dropdown_value)
+      return (', u.name');
+    if ('client' == $dropdown_value)
+      return (', c.name');
+    if ('project' == $dropdown_value)
+      return (', p.name');
+    if (ttReportHelper::groupingBy($dropdown_value, $options))
+      return (", $dropdown_value");
+  }
+
   // makeGroupByExpensesPart builds a combined group by part for sql query for expense items using
   // group_by1, group_by2, and group_by3 values passed in $options.
   static function makeGroupByExpensesPart($options) {
-    $no_grouping = ($options['group_by1'] == null || $options['group_by1'] == 'no_grouping') &&
-      ($options['group_by2'] == null || $options['group_by2'] == 'no_grouping') &&
-      ($options['group_by3'] == null || $options['group_by3'] == 'no_grouping');
-    if ($no_grouping) return null;
+    if (!ttReportHelper::grouping($options)) return null;
 
-    $group_by1 = $options['group_by1'];
-    $group_by2 = $options['group_by2'];
-    $group_by3 = $options['group_by3'];
-
-    switch ($group_by1) {
-      case 'date':
-        $group_by_parts .= ', ei.date';
-        break;
-      case 'user':
-        $group_by_parts .= ', u.name';
-        break;
-      case 'client':
-        $group_by_parts .= ', c.name';
-        break;
-      case 'project':
-        $group_by_parts .= ', p.name';
-        break;
-    }
-    switch ($group_by2) {
-      case 'date':
-        $group_by_parts .= ', ei.date';
-        break;
-      case 'user':
-        $group_by_parts .= ', u.name';
-        break;
-      case 'client':
-        $group_by_parts .= ', c.name';
-        break;
-      case 'project':
-        $group_by_parts .= ', p.name';
-        break;
-    }
-    switch ($group_by3) {
-      case 'date':
-        $group_by_parts .= ', ei.date';
-        break;
-      case 'user':
-        $group_by_parts .= ', u.name';
-        break;
-      case 'client':
-        $group_by_parts .= ', c.name';
-        break;
-      case 'project':
-        $group_by_parts .= ', p.name';
-        break;
-    }
+    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByExpensesPart($options['group_by1'], $options);
+    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByExpensesPart($options['group_by2'], $options);
+    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByExpensesPart($options['group_by3'], $options);
     // Remove garbage from the beginning.
     $group_by_parts = ltrim($group_by_parts, ', ');
-    if ($group_by_parts)
-      $group_by_part = "group by $group_by_parts";
+    $group_by_part = "group by $group_by_parts";
     return $group_by_part;
+  }
+
+  // makeSingleDropdownConcatPart is a helper function for makeConcatPart.
+  // It make a concatenation part for getSubtotals query for time items
+  // corresponding to a single dropdown control.
+  static function makeSingleDropdownConcatPart($dropdown_value, $options) {
+    if ($dropdown_value == null || $dropdown_value == 'no_grouping')
+      return null;
+    if ('date' == $dropdown_value)
+      return (", ' - ', l.date");
+    if ('user' == $dropdown_value)
+      return (", ' - ', u.name");
+    if ('client' == $dropdown_value)
+      return (", ' - ', coalesce(c.name, 'Null')");
+    if ('project' == $dropdown_value)
+      return (", ' - ', coalesce(p.name, 'Null')");
+    if ('task' == $dropdown_value)
+      return (", ' - ', coalesce(t.name, 'Null')");
+    if (ttReportHelper::groupingBy($dropdown_value, $options)) {
+      return ttReportHelper::makeSingleDropdownConcatCustomFieldPart($dropdown_value);
+    }
+  }
+
+  // makeSingleDropdownConcatCustomFieldPart is a helper function for makeSingleDropdownConcatPart.
+  // It prepares the part when a custom field is selected.
+  static function makeSingleDropdownConcatCustomFieldPart($dropdown_value) {
+    global $custom_fields;
+
+    // Iterate through user custom fields.
+    if ($custom_fields && $custom_fields->userFields) {
+      foreach ($custom_fields->userFields as $userField) {
+        $field_name = 'user_field_'.$userField['id'];
+        if ($dropdown_value == $field_name) {
+          if ($userField['type'] == CustomFields::TYPE_TEXT) {
+            return (", ' - ', coalesce(ecf".$userField['id'].".value, 'Null')");
+          } elseif ($userField['type'] == CustomFields::TYPE_DROPDOWN) {
+            return (", ' - ', coalesce(cfo".$userField['id'].".value, 'Null')");
+          }
+        }
+      }
+    }
+    // Iterate through time custom fields.
+    if ($custom_fields && $custom_fields->timeFields) {
+      foreach ($custom_fields->timeFields as $timeField) {
+        $field_name = 'time_field_'.$timeField['id'];
+        if ($dropdown_value == $field_name) {
+          if ($timeField['type'] == CustomFields::TYPE_TEXT) {
+            return (", ' - ', coalesce(cfl".$timeField['id'].".value, 'Null')");
+          } elseif ($timeField['type'] == CustomFields::TYPE_DROPDOWN) {
+            return (", ' - ', coalesce(cfo".$timeField['id'].".value, 'Null')");
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // makeSingleDropdownConcatCustomFieldExpensesPart is a helper function for makeSingleDropdownConcatExpensesPart.
+  // It prepares the part when a custom field is selected.
+  static function makeSingleDropdownConcatCustomFieldExpensesPart($dropdown_value) {
+    global $custom_fields;
+
+    // Iterate through user custom fields.
+    if ($custom_fields && $custom_fields->userFields) {
+      foreach ($custom_fields->userFields as $userField) {
+        $field_name = 'user_field_'.$userField['id'];
+        if ($dropdown_value == $field_name) {
+          if ($userField['type'] == CustomFields::TYPE_TEXT) {
+            return (", ' - ', coalesce(ecf".$userField['id'].".value, 'Null')");
+          } elseif ($userField['type'] == CustomFields::TYPE_DROPDOWN) {
+            return (", ' - ', coalesce(cfo".$userField['id'].".value, 'Null')");
+          }
+        }
+      }
+    }
+    // Iterate through time custom fields.
+    if ($custom_fields && $custom_fields->timeFields) {
+      foreach ($custom_fields->timeFields as $timeField) {
+        $field_name = 'time_field_'.$timeField['id'];
+        if ($dropdown_value == $field_name) {
+          if ($timeField['type'] == CustomFields::TYPE_TEXT) {
+            return (", ' - ', 'Null'");
+          } elseif ($timeField['type'] == CustomFields::TYPE_DROPDOWN) {
+            return (", ' - ', 'Null'");
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // makeSingleDropdownGroupByFieldPart is a helper function for makeGroupByFieldsPart.
+  // It make a fields part for getSubtotals query for time items
+  // corresponding to a single group by dropdown control.
+  static function makeSingleDropdownGroupByFieldPart($dropdown_value, $options) {
+    if ($dropdown_value == null || $dropdown_value == 'no_grouping')
+      return null;
+    if ('user' == $dropdown_value)
+      return (', u.name as user');
+    if ('client' == $dropdown_value)
+      return (', c.name as client');
+    if ('project' == $dropdown_value)
+      return (', p.name as project');
+    if ('task' == $dropdown_value)
+      return (', t.name as task');
+    if (ttReportHelper::groupingBy($dropdown_value, $options)) {
+      return ttReportHelper::makeSingleDropdownGroupByCustomFieldPart($dropdown_value);
+    }
+  }
+
+  // makeSingleDropdownGroupByCustomFieldPart is a helper function for makeGroupByFieldsPart.
+  // It prepares the part when a custom field is selected.
+  static function makeSingleDropdownGroupByCustomFieldPart($dropdown_value) {
+    global $custom_fields;
+
+    // Iterate through user custom fields.
+    if ($custom_fields && $custom_fields->userFields) {
+      foreach ($custom_fields->userFields as $userField) {
+        $field_name = 'user_field_'.$userField['id'];
+        if ($dropdown_value == $field_name) {
+          if ($userField['type'] == CustomFields::TYPE_TEXT) {
+            return (", ecf".$userField['id'].".value as $field_name");
+          } elseif ($userField['type'] == CustomFields::TYPE_DROPDOWN) {
+            return (", cfo".$userField['id'].".value as $field_name");
+          }
+        }
+      }
+    }
+    // Iterate through time custom fields.
+    if ($custom_fields && $custom_fields->timeFields) {
+      foreach ($custom_fields->timeFields as $timeField) {
+        $field_name = 'time_field_'.$timeField['id'];
+        if ($dropdown_value == $field_name) {
+          if ($timeField['type'] == CustomFields::TYPE_TEXT) {
+            return (", cfl".$timeField['id'].".value as $field_name");
+          } elseif ($timeField['type'] == CustomFields::TYPE_DROPDOWN) {
+            return (", cfo".$timeField['id'].".value as $field_name");
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // makeSingleDropdownGroupByCustomFieldExpensesPart is a helper function for makeGroupByFieldsPart.
+  // It prepares the part when a custom field is selected.
+  static function makeSingleDropdownGroupByCustomFieldExpensesPart($dropdown_value) {
+    global $custom_fields;
+
+    // Iterate through user custom fields.
+    if ($custom_fields && $custom_fields->userFields) {
+      foreach ($custom_fields->userFields as $userField) {
+        $field_name = 'user_field_'.$userField['id'];
+        if ($dropdown_value == $field_name) {
+          if ($userField['type'] == CustomFields::TYPE_TEXT) {
+            return (", ecf".$userField['id'].".value as $field_name");
+          } elseif ($userField['type'] == CustomFields::TYPE_DROPDOWN) {
+            return (", cfo".$userField['id'].".value as $field_name");
+          }
+        }
+      }
+    }
+    // Iterate through time custom fields.
+    if ($custom_fields && $custom_fields->timeFields) {
+      foreach ($custom_fields->timeFields as $timeField) {
+        $field_name = 'time_field_'.$timeField['id'];
+        if ($dropdown_value == $field_name) {
+          return (", null as $field_name");
+        }
+      }
+    }
+    return null;
+  }
+
+  // makeGroupByFieldsPart builds a list of fields for sql query for time items using group_by1,
+  // group_by2, and group_by3 values passed in $options.
+  static function makeGroupByFieldsPart($options) {
+    if (!ttReportHelper::grouping($options)) return null;
+
+    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by1'], $options);
+    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by2'], $options);
+    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by3'], $options);
+    return $group_by_fields_parts;
+  }
+
+  // makeGroupByFieldsExpensesPart builds a list of fields for sql query for expense items using group_by1,
+  // group_by2, and group_by3 values passed in $options.
+  static function makeGroupByFieldsExpensesPart($options) {
+    if (!ttReportHelper::grouping($options)) return null;
+
+    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by1'], $options);
+    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by2'], $options);
+    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by3'], $options);
+    return $group_by_fields_parts;
   }
 
   // makeConcatPart builds a concatenation part for getSubtotals query (for time items).
   static function makeConcatPart($options) {
-    $group_by1 = $options['group_by1'];
-    $group_by2 = $options['group_by2'];
-    $group_by3 = $options['group_by3'];
+    if (!ttReportHelper::grouping($options)) return null;
 
-    switch ($group_by1) {
-      case 'date':
-        $what_to_concat .= ", ' - ', l.date";
-        break;
-      case 'user':
-        $what_to_concat .= ", ' - ', u.name";
-        $fields_part .= ', u.name as user';
-        break;
-      case 'client':
-        $what_to_concat .= ", ' - ', coalesce(c.name, 'Null')";
-        $fields_part .= ', c.name as client';
-        break;
-      case 'project':
-        $what_to_concat .= ", ' - ', coalesce(p.name, 'Null')";
-        $fields_part .= ', p.name as project';
-        break;
-      case 'task':
-        $what_to_concat .= ", ' - ', coalesce(t.name, 'Null')";
-        $fields_part .= ', t.name as task';
-        break;
+    $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by1'], $options);
+    $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by2'], $options);
+    $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by3'], $options);
+    // Remove garbage from the beginning.
+    if (ttStartsWith($concat_part, ", ' - ', "))
+      $concat_part = substr($concat_part, 9);
+    $concat_part = "concat($concat_part) as group_field";
+    return $concat_part;
+  }
+
+  // makeSingleDropdownConcatExpensesPart is a helper function for makeConcatExpensesPart.
+  // It make a concatenation part for getSubtotals query for expense items
+  // corresponding to a single dropdown control.
+  static function makeSingleDropdownConcatExpensesPart($dropdown_value, $options) {
+    if ($dropdown_value == null || $dropdown_value == 'no_grouping')
+      return null;
+    if ('date' == $dropdown_value)
+      return (", ' - ', ei.date");
+    if ('user' == $dropdown_value)
+      return (", ' - ', u.name");
+    if ('client' == $dropdown_value)
+      return (", ' - ', coalesce(c.name, 'Null')");
+    if ('project' == $dropdown_value)
+      return (", ' - ', coalesce(p.name, 'Null')");
+    if ('task' == $dropdown_value)
+      return (", ' - ', 'Null'");
+    if (ttReportHelper::groupingBy($dropdown_value, $options)) {
+      return ttReportHelper::makeSingleDropdownConcatCustomFieldExpensesPart($dropdown_value);
     }
-    switch ($group_by2) {
-      case 'date':
-        $what_to_concat .= ", ' - ', l.date";
-        break;
-      case 'user':
-        $what_to_concat .= ", ' - ', u.name";
-        $fields_part .= ', u.name as user';
-        break;
-      case 'client':
-        $what_to_concat .= ", ' - ', coalesce(c.name, 'Null')";
-        $fields_part .= ', c.name as client';
-        break;
-      case 'project':
-        $what_to_concat .= ", ' - ', coalesce(p.name, 'Null')";
-        $fields_part .= ', p.name as project';
-        break;
-      case 'task':
-        $what_to_concat .= ", ' - ', coalesce(t.name, 'Null')";
-        $fields_part .= ', t.name as task';
-        break;
-    }
-    switch ($group_by3) {
-      case 'date':
-        $what_to_concat .= ", ' - ', l.date";
-        break;
-      case 'user':
-        $what_to_concat .= ", ' - ', u.name";
-        $fields_part .= ', u.name as user';
-        break;
-      case 'client':
-        $what_to_concat .= ", ' - ', coalesce(c.name, 'Null')";
-        $fields_part .= ', c.name as client';
-        break;
-      case 'project':
-        $what_to_concat .= ", ' - ', coalesce(p.name, 'Null')";
-        $fields_part .= ', p.name as project';
-        break;
-      case 'task':
-        $what_to_concat .= ", ' - ', coalesce(t.name, 'Null')";
-        $fields_part .= ', t.name as task';
-        break;
-    }
-    // Remove garbage from both ends.
-    $what_to_concat = trim($what_to_concat, "', -");
-    $concat_part = "concat($what_to_concat) as group_field";
-    $concat_part = trim($concat_part, ' -');
-    return "$concat_part $fields_part";
   }
 
   // makeConcatPart builds a concatenation part for getSubtotals query (for expense items).
   static function makeConcatExpensesPart($options) {
-    $group_by1 = $options['group_by1'];
-    $group_by2 = $options['group_by2'];
-    $group_by3 = $options['group_by3'];
+    if (!ttReportHelper::grouping($options)) return null;
 
-    switch ($group_by1) {
-      case 'date':
-        $what_to_concat .= ", ' - ', ei.date";
-        break;
-      case 'user':
-        $what_to_concat .= ", ' - ', u.name";
-        $fields_part .= ', u.name as user';
-        break;
-      case 'client':
-        $what_to_concat .= ", ' - ', coalesce(c.name, 'Null')";
-        $fields_part .= ', c.name as client';
-        break;
-      case 'project':
-        $what_to_concat .= ", ' - ', coalesce(p.name, 'Null')";
-        $fields_part .= ', p.name as project';
-        break;
-      case 'task':
-        $what_to_concat .= ", ' - ', 'Null'";
-        $fields_part .= ', null as task';
-        break;
-    }
-    switch ($group_by2) {
-      case 'date':
-        $what_to_concat .= ", ' - ', ei.date";
-        break;
-      case 'user':
-        $what_to_concat .= ", ' - ', u.name";
-        $fields_part .= ', u.name as user';
-        break;
-      case 'client':
-        $what_to_concat .= ", ' - ', coalesce(c.name, 'Null')";
-        $fields_part .= ', c.name as client';
-        break;
-      case 'project':
-        $what_to_concat .= ", ' - ', coalesce(p.name, 'Null')";
-        $fields_part .= ', p.name as project';
-        break;
-      case 'task':
-        $what_to_concat .= ", ' - ', 'Null'";
-        $fields_part .= ', null as task';
-        break;
-    }
-    switch ($group_by3) {
-      case 'date':
-        $what_to_concat .= ", ' - ', ei.date";
-        break;
-      case 'user':
-        $what_to_concat .= ", ' - ', u.name";
-        $fields_part .= ', u.name as user';
-        break;
-      case 'client':
-        $what_to_concat .= ", ' - ', coalesce(c.name, 'Null')";
-        $fields_part .= ', c.name as client';
-        break;
-      case 'project':
-        $what_to_concat .= ", ' - ', coalesce(p.name, 'Null')";
-        $fields_part .= ', p.name as project';
-        break;
-      case 'task':
-        $what_to_concat .= ", ' - ', 'Null'";
-        $fields_part .= ', null as task';
-        break;
-    }
+    $concat_part .= ttReportHelper::makeSingleDropdownConcatExpensesPart($options['group_by1'], $options);
+    $concat_part .= ttReportHelper::makeSingleDropdownConcatExpensesPart($options['group_by2'], $options);
+    $concat_part .= ttReportHelper::makeSingleDropdownConcatExpensesPart($options['group_by3'], $options);
     // Remove garbage from the beginning.
-    if ($what_to_concat)
-        $what_to_concat = substr($what_to_concat, 8);
-    $concat_part = "concat($what_to_concat) as group_field";
-    return "$concat_part $fields_part";
+    if (ttStartsWith($concat_part, ", ' - ', "))
+      $concat_part = substr($concat_part, 9);
+    $concat_part = "concat($concat_part) as group_field";
+    return $concat_part;
+  }
+
+  // makeSingleDropdownGroupByFieldExpensesPart is a helper function for makeGroupByFieldsExpensesPart.
+  // It make a fields part for getSubtotals query for expense items
+  // corresponding to a single group by dropdown control.
+  static function makeSingleDropdownGroupByFieldExpensesPart($dropdown_value, $options) {
+    if ($dropdown_value == null || $dropdown_value == 'no_grouping')
+      return null;
+    if ('user' == $dropdown_value)
+      return (', u.name as user');
+    if ('client' == $dropdown_value)
+      return (', c.name as client');
+    if ('project' == $dropdown_value)
+      return (', p.name as project');
+    if ('task' == $dropdown_value)
+      return (', null as task');
+    if (ttReportHelper::groupingBy($dropdown_value, $options)) {
+      return ttReportHelper::makeSingleDropdownGroupByCustomFieldExpensesPart($dropdown_value);
+    }
   }
 
   // makeCombinedSelectPart builds a list of fields for a combined select on a union for getSubtotals.
@@ -2006,15 +2060,15 @@ class ttReportHelper {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $field_value = $options[$field_name];
-        if ($field_value) {
+        if ($field_value || ttReportHelper::groupingBy($field_name, $options)) {
           $cflTable = 'cfl'.$timeField['id'];
           if ($timeField['type'] == CustomFields::TYPE_TEXT) {
             // Add one join for each text field.
-            $left_joins .= " left join tt_custom_field_log $cflTable on ($cflTable.log_id = l.id and $cflTable.status = 1)";
+            $left_joins .= " left join tt_custom_field_log $cflTable on ($cflTable.log_id = l.id and $cflTable.status = 1 and $cflTable.field_id = ".$timeField['id'].")";
           } elseif ($timeField['type'] == CustomFields::TYPE_DROPDOWN) {
             $cfoTable = 'cfo'.$timeField['id'];
             // Add two joins for each dropdown field.
-            $left_joins .= " left join tt_custom_field_log $cflTable on ($cflTable.log_id = l.id and $cflTable.status = 1)";
+            $left_joins .= " left join tt_custom_field_log $cflTable on ($cflTable.log_id = l.id and $cflTable.status = 1 and $cflTable.field_id = ".$timeField['id'].")";
             $left_joins .= " left join tt_custom_field_options $cfoTable on ($cfoTable.field_id = $cflTable.field_id and $cfoTable.id = $cflTable.option_id)";
           }
         }
@@ -2026,7 +2080,7 @@ class ttReportHelper {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
         $entity_type = CustomFields::ENTITY_USER;
-        if ($field_value) {
+        if ($field_value || ttReportHelper::groupingBy($field_name, $options)) {
           // We need to add left joins when input is not null.
           $ecfTable = 'ecf'.$userField['id'];
           if ($userField['type'] == CustomFields::TYPE_TEXT) {
@@ -2114,7 +2168,7 @@ class ttReportHelper {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
         $entity_type = CustomFields::ENTITY_USER;
-        if ($field_value) {
+        if ($field_value || ttReportHelper::groupingBy($field_name, $options)) {
           // We need to add left joins when input is not null.
           $ecfTable = 'ecf'.$userField['id'];
           if ($userField['type'] == CustomFields::TYPE_TEXT) {
@@ -2150,12 +2204,47 @@ class ttReportHelper {
     return $grouping;
   }
 
-  // makeGroupByHeader builds a column header for a totals-only report using group_by1,
-  // group_by2, and group_by3 values passed in $options.
-  static function makeGroupByHeader($options) {
+  // makeGroupByHeaderdPart is a helper function for makeGroupByHeader.
+  // It obtains a part of the header associated with a single group by dropdown.
+  static function makeGroupByHeaderPart($dropdown_value) {
     global $i18n;
     global $custom_fields;
 
+    // First, try to get a label from a translation file, which is the most likely scenario
+    // such as grouping by date, user, project, or task.
+    $key = 'label.'.$dropdown_value;
+    $part = $i18n->get($key);
+    if ($part) return $part;
+
+    // If label is not found in translation file, we may be grouping by a custom field.
+    // Obtain custom field label if so.
+
+    // Process time custom fields.
+    if ($custom_fields && $custom_fields->timeFields) {
+      foreach ($custom_fields->timeFields as $timeField) {
+        $field_name = 'time_field_'.$timeField['id'];
+        if ($dropdown_value == $field_name) {
+          return $timeField['label'];
+        }
+      }
+    }
+    // Process user custom fields.
+    if ($custom_fields && $custom_fields->userFields) {
+      foreach ($custom_fields->userFields as $userField) {
+        $field_name = 'user_field_'.$userField['id'];
+        if ($dropdown_value == $field_name) {
+          return $userField['label'];
+        }
+      }
+    }
+
+    // Return null if nothing is found.
+    return null;
+  }
+
+  // makeGroupByHeader builds a column header for a totals-only report using group_by1,
+  // group_by2, and group_by3 values passed in $options.
+  static function makeGroupByHeader($options) {
     $no_grouping = ($options['group_by1'] == null || $options['group_by1'] == 'no_grouping') &&
       ($options['group_by2'] == null || $options['group_by2'] == 'no_grouping') &&
       ($options['group_by3'] == null || $options['group_by3'] == 'no_grouping');
@@ -2164,20 +2253,17 @@ class ttReportHelper {
     if ($options['group_by1'] != null && $options['group_by1'] != 'no_grouping') {
       // We have group_by1.
       $group_by1 = $options['group_by1'];
-      $key = 'label.'.$group_by1;
-      $group_by_header .= ' - '.$i18n->get($key);
+      $group_by_header .= ' - '.ttReportHelper::makeGroupByHeaderPart($group_by1);
     }
     if ($options['group_by2'] != null && $options['group_by2'] != 'no_grouping') {
       // We have group_by2.
       $group_by2 = $options['group_by2'];
-      $key = 'label.'.$group_by2;
-      $group_by_header .= ' - '.$i18n->get($key);
+      $group_by_header .= ' - '.ttReportHelper::makeGroupByHeaderPart($group_by2);
     }
     if ($options['group_by3'] != null && $options['group_by3'] != 'no_grouping') {
       // We have group_by3.
       $group_by3 = $options['group_by3'];
-      $key = 'label.'.$group_by3;
-      $group_by_header .= ' - '.$i18n->get($key);
+      $group_by_header .= ' - '.ttReportHelper::makeGroupByHeaderPart($group_by3);
     }
     $group_by_header = ltrim($group_by_header, ' -');
     return $group_by_header;

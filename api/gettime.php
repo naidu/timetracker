@@ -47,25 +47,10 @@ if ($jwt) {
     $userId = $decoded->data->id;
     $user = new ttUser(null, $userId);
     if ($isLoggedIn) {
-      if($to_date!="''")
-      {
-        $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date );
-        $success_response = ['success'=>'true','data'=>$record];
-        $response = json_encode($success_response);
-        print_r($response);
-
-      }
-      //if no values entered
-      else
+      if($to_date=="''")
       {
         $to_date=$from_date;
-        $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date);
-        if(sizeof($record)==0)
-        {
-          $success_response = ['error'=>'check the entered date'];
-          $response = json_encode($success_response);
-          print_r($response);
-        }
+        $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date );
         $success_response = ['success'=>'true','data'=>$record];
         $response = json_encode($success_response);
         print_r($response);

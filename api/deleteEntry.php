@@ -50,7 +50,7 @@ if ($jwt) {
         //delete entry
         $record = ttTimeClassHelper::deleteEntry($id);
         if($record=="true"){
-          $success_response = ['success' => true, 'deleted data id' => $id];
+          $success_response = ['success' => true, 'deleted id' => $id];
           $response = json_encode($success_response);
           print_r($response);
         }

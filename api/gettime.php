@@ -47,15 +47,13 @@ if ($jwt) {
     $userId = $decoded->data->id;
     $user = new ttUser(null, $userId);
     if ($isLoggedIn) {
-      if($to_date=="''")
-      {
-        $to_date=$from_date;
-        $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date );
-        $success_response = ['success'=>'true','data'=>$record];
-        $response = json_encode($success_response);
-        print_r($response);
-
+      if($to_date=="''") {
+        $to_date = $from_date;
       }
+      $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date );
+      $success_response = ['success'=>'true','data'=>$record];
+      $response = json_encode($success_response);
+      print_r($response);
     }
   } catch (Exception $e) {
     $isLoggedIn = false;

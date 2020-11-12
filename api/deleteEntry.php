@@ -1,11 +1,15 @@
 <?php
 
+// +----------------------------------------------------------------------+
+// | Author: Yogesh M
+// +----------------------------------------------------------------------+
 require __DIR__ . '/../vendor/autoload.php';
 require_once('../initialize.php');
 import('../form.Form');
 import('../ttOrgHelper');
 import('../ttUser');
 import('../ttTimeHelper');
+import('../ttTimeClassHelper');
 
 use \Firebase\JWT\JWT;
 
@@ -44,25 +48,25 @@ if ($jwt) {
     if ($isLoggedIn) {
       if ($id!= "") {
         //delete entry
-        $record = ttTimeHelper::deleteEntry($id);
-         if($record=="true"){
-           $success_response = ['success' => true, 'deleted data id' => $id];
-           $response = json_encode($success_response);
-           print_r($response);
-                             }
-         else {
-           //if entry doesnt exist
-           $success_response = ['success' => false, 'error' => $record];
-           $response = json_encode($success_response);
-           print_r($response);
-              }
-                     }
+        $record = ttTimeClassHelper::deleteEntry($id);
+        if($record=="true"){
+          $success_response = ['success' => true, 'deleted id' => $id];
+          $response = json_encode($success_response);
+          print_r($response);
+        }
+        else {
+          //if entry doesnt exist
+          $success_response = ['success' => false, 'error' => $record];
+          $response = json_encode($success_response);
+          print_r($response);
+        }
+      }
       //if no values entered
       else {
         $success_response = ['error' => 'check the entered key and value'];
         $response = json_encode($success_response);
         print_r($response);
-        
+
       }
     }
   } catch (Exception $e) {

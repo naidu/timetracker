@@ -9,6 +9,7 @@ require_once('../initialize.php');
 import('../form.Form');
 import('../ttOrgHelper');
 import('../ttUser');
+import('../ttTimeClassHelper');
 
 use \Firebase\JWT\JWT;
 
@@ -42,7 +43,7 @@ if ($jwt) {
     $userId = $decoded->data->id;
     $user = new ttUser(null, $userId);
     if ($isLoggedIn) {
-      $project_list = $user->getAssignedProjects();
+      $project_list = ttTimeClassHelper::getprojects();
       $success_response = ['success' => true, 'data' => $project_list];
       $response = json_encode($success_response);
       print_r($response);

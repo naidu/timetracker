@@ -55,4 +55,26 @@ class ttTimeClassHelper
 
     return true;
   }
+  static function getprojects() {
+    $result = array();
+
+    $mdb2 = getConnection();
+    global $user;
+    $group_id = $user->group_id;
+    $org_id = $user->org_id;
+    $sql = "select p.id,p.name as project_name,p.description,p.tasks,p.group_id,p.org_id,NULL as client_name,c.address,c.tax 
+                from tt_projects p,tt_clients c where p.id not in (select p.id from tt_projects p,tt_clients c where p.id=c.projects)  
+                union  
+                select p.id,p.name,p.description,p.tasks,p.group_id,p.org_id,c.name,c.address,c.tax 
+                from tt_projects p,tt_clients c 
+                where p.group_id=$group_id and p.org_id=$org_id and p.id=c.projects";
+    $res = $mdb2->query($sql);
+    if (!is_a($res, 'PEAR_Error')) {
+      while ($val = $res->fetchRow()) {
+        $result[] = $val;
+      }
+    } else return false;
+
+    return $result;
+  }
 }

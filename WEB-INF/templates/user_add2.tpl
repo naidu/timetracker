@@ -29,9 +29,9 @@ function setDefaultRate(element) {
   }
 }
 
-// handleClientControl - controls visibility of the client dropdown depending on the selected user role,
-// also hides and unselects projects when "Client" user role is selected.
-function handleClientControl() {
+// handleClientRole - manages visibility and content of controls related to client role,
+// also hides and unselects projects when client role is selected.
+function handleClientRole() {
   var selectedRoleId = document.getElementById("role").value;
   var clientControl = document.getElementById("client");
   var clientBlock = document.getElementById("client_block");
@@ -43,7 +43,6 @@ function handleClientControl() {
     if (selectedRoleId == roles[i][0]) {
       var isClient = roles[i][1];
       if (isClient == 1) {
-        clientControl.style.visibility = "visible";
         clientBlock.style.display = "";
         nonClientBlock.style.display = "none";
         projectsControl.style.display = "none";
@@ -56,7 +55,6 @@ function handleClientControl() {
         }
       } else {
         clientControl.value = "";
-        clientControl.style.visibility = "hidden";
         clientBlock.style.display = "none";
         nonClientBlock.style.display = "";
         projectsControl.style.display = "";

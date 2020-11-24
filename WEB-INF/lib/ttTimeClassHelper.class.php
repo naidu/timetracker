@@ -62,12 +62,7 @@ class ttTimeClassHelper
     global $user;
     $group_id = $user->group_id;
     $org_id = $user->org_id;
-    $sql = "select p.id,p.name as project_name,p.description,p.tasks,p.group_id,p.org_id,NULL as client_name,c.address,c.tax 
-                from tt_projects p,tt_clients c where p.id not in (select p.id from tt_projects p,tt_clients c where p.id=c.projects)  
-                union  
-                select p.id,p.name,p.description,p.tasks,p.group_id,p.org_id,c.name,c.address,c.tax 
-                from tt_projects p,tt_clients c 
-                where p.group_id=$group_id and p.org_id=$org_id and p.id=c.projects";
+    $sql = "select id,name,projects as project_id,NULL as project from tt_clients as c where group_id=$group_id and org_id=$org_id";
     $res = $mdb2->query($sql);
     if (!is_a($res, 'PEAR_Error')) {
       while ($val = $res->fetchRow()) {
@@ -76,5 +71,58 @@ class ttTimeClassHelper
     } else return false;
 
     return $result;
+  }
+  static function getprojectsname($id) {
+    
+    $mdb2 = getConnection();
+    global $user;
+    $group_id = $user->group_id;
+    $org_id = $user->org_id;
+    $projects= explode(',',$id);
+    
+    foreach($projects as $pro){
+      
+      $sql = "select id,name from tt_projects where group_id=$group_id and org_id=$org_id and id=$pro group by id";
+      $res = $mdb2->query($sql);
+      if (!is_a($res, 'PEAR_Error')) {
+      while ($val = $res->fetchRow()) {
+        $result[] = $val;
+      }
+    } else return false;
+      }
+    return $result;
+  }
+  static function getnullClientProjects() {
+
+    $mdb2 = getConnection();
+    global $user;
+    $group_id = $user->group_id;
+    $org_id = $user->org_id;
+    
+
+      $sql = "select projects from tt_clients where group_id=$group_id and org_id=$org_id";
+      $res = $mdb2->query($sql);
+    if (!is_a($res, 'PEAR_Error')) {
+      while ($val = $res->fetchRow()) {
+        $get_projects[] = $val;
+      }
+    } else return false;
+    
+        $var=array();
+        foreach ($get_projects as $pro){
+          $projects= explode(',',$pro[projects]);
+         $var=array_merge($var,$projects);
+        }
+          $var1=implode(',',$var);
+          $sql = 'select id,name from tt_projects where group_id=1 and org_id=1 and id not in'.'('. $var1.')';
+          $res = $mdb2->query($sql);
+         
+      
+      if (!is_a($res, 'PEAR_Error')) {
+        while ($val = $res->fetchRow()) {
+          $get_projects_for_null_clients[] = $val;
+        }
+      } else return false;
+    return $get_projects_for_null_clients;
   }
 }

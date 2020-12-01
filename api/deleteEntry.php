@@ -9,7 +9,7 @@ import('../form.Form');
 import('../ttOrgHelper');
 import('../ttUser');
 import('../ttTimeHelper');
-import('../ttTimeClassHelper');
+import('../ttTimeSweHelper');
 
 use \Firebase\JWT\JWT;
 
@@ -48,7 +48,7 @@ if ($jwt) {
     if ($isLoggedIn) {
       if ($id!= "") {
         //delete entry
-        $record = ttTimeClassHelper::deleteEntry($id);
+        $record = ttTimeSweHelper::deleteEntry($id);
         if($record=="true"){
           $success_response = ['success' => true, 'deleted id' => $id];
           $response = json_encode($success_response);

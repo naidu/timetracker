@@ -1,7 +1,7 @@
 <?php
 
 
-class ttTimeClassHelper
+class ttTimeSweHelper
 {
   static function getAllDateRecords($from_date,$to_date) {
     $result = array();
@@ -13,7 +13,7 @@ class ttTimeClassHelper
       TIME_FORMAT(sec_to_time(time_to_sec(l.start) + time_to_sec(l.duration)), '%k:%i') as finish,
       TIME_FORMAT(l.duration, '%k:%i') as duration,
       l.client_id, l.project_id, l.task_id, l.invoice_id, l.comment, l.billable, l.paid, l.status
-      from tt_log l where l.user_id = $user_id and l.date between $from_date and $to_date order by l.id";
+      from tt_log l where l.status is not NULL and l.user_id = $user_id and l.date between $from_date and $to_date order by l.id";
     $res = $mdb2->query($sql);
     if (!is_a($res, 'PEAR_Error')) {
       while ($val = $res->fetchRow()) {
@@ -42,7 +42,10 @@ class ttTimeClassHelper
 
 
 
-    $sql = "delete from tt_log  where id = $id";
+    $modified_part = ', modified = now(), modified_ip = '.$mdb2->quote($_SERVER['REMOTE_ADDR']).', modified_by = '.$user->id;
+
+    $sql = "update tt_log set status = null".$modified_part.
+      " where id = $id and user_id = $user_id and group_id = $group_id and org_id = $org_id";
     $affected = $mdb2->exec($sql);
     if ($affected==0)
       return "entry with this id doesn't exist";

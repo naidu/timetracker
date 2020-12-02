@@ -8,7 +8,7 @@ import('../form.Form');
 import('../ttOrgHelper');
 import('../ttUser');
 import('../ttTimeHelper');
-import('../ttTimeClassHelper');
+import('../ttTimeSweHelper');
 
 use \Firebase\JWT\JWT;
 
@@ -50,7 +50,7 @@ if ($jwt) {
       if($to_date=="''") {
         $to_date = $from_date;
       }
-      $record = ttTimeClassHelper::getAllDateRecords($from_date,$to_date );
+      $record = ttTimeSweHelper::getAllDateRecords($from_date,$to_date );
       $success_response = ['success'=>'true','data'=>$record];
       $response = json_encode($success_response);
       print_r($response);

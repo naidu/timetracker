@@ -1,7 +1,7 @@
 <?php
 
 
-class ttTimeClassHelper
+class ttTimeSweHelper
 {
   static function getAllDateRecords($from_date,$to_date) 
   {
@@ -14,7 +14,7 @@ class ttTimeClassHelper
       TIME_FORMAT(sec_to_time(time_to_sec(l.start) + time_to_sec(l.duration)), '%k:%i') as finish,
       TIME_FORMAT(l.duration, '%k:%i') as duration,
       l.client_id, l.project_id, l.task_id, l.invoice_id, l.comment, l.billable, l.paid, l.status
-      from tt_log l where l.user_id = $user_id and l.date between $from_date and $to_date order by l.id";
+      from tt_log l where l.status is not NULL and l.user_id = $user_id and l.date between $from_date and $to_date order by l.id";
     $res = $mdb2->query($sql);
     if (!is_a($res, 'PEAR_Error')) 
     {
@@ -49,7 +49,10 @@ class ttTimeClassHelper
     $group_id = $user->getGroup();
     $org_id = $user->org_id;
 
-    $sql = "delete from tt_log  where id = $id";
+    $modified_part = ', modified = now(), modified_ip = '.$mdb2->quote($_SERVER['REMOTE_ADDR']).', modified_by = '.$user->id;
+
+    $sql = "update tt_log set status = null".$modified_part.
+      " where id = $id and user_id = $user_id and group_id = $group_id and org_id = $org_id";
     $affected = $mdb2->exec($sql);
     if ($affected==0)
       return "entry with this id doesn't exist";
@@ -71,7 +74,7 @@ class ttTimeClassHelper
     global $user;
     $group_id = $user->group_id;
     $org_id = $user->org_id;
-    $sql = "select id,name,projects as project_id,NULL as project from tt_clients as c where group_id=$group_id and org_id=$org_id";
+    $sql = "select id,name,projects as project_id,NULL as project from tt_clients as c where status is not NULL and group_id=$group_id and org_id=$org_id";
     $res = $mdb2->query($sql);
     if (!is_a($res, 'PEAR_Error')) 
     {
@@ -98,7 +101,7 @@ class ttTimeClassHelper
     
     foreach($projects as $pro)
     {  
-      $sql = "select id,name from tt_projects where group_id=$group_id and org_id=$org_id and id=$pro group by id";
+      $sql = "select id,name from tt_projects where status is not NULL and group_id=$group_id and org_id=$org_id and id=$pro group by id";
       $res = $mdb2->query($sql);
       if (!is_a($res, 'PEAR_Error')) 
       {

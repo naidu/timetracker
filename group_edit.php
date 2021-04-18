@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 require_once('initialize.php');
 import('form.Form');
@@ -38,9 +14,9 @@ import('ttConfigHelper');
 //   2) Editing a subgroup in get or post.
 // We'll check access separately as it is about different right checks.
 if ($request->isGet()) {
-  $group_id = $request->getParameter('id') ? $request->getParameter('id') : $user->getGroup();
+  $group_id = $request->getParameter('id') ? (int)$request->getParameter('id') : $user->getGroup();
 } else {
-  $group_id = $request->getParameter('group') ? $request->getParameter('group') : $user->getGroup();
+  $group_id = $request->getParameter('group') ? (int)$request->getParameter('group') : $user->getGroup();
 }
 $home_group = $user->group_id == $group_id;
 if ($home_group) {
@@ -63,7 +39,7 @@ if ($home_group) {
 // End of access checks.
 
 // Set on behalf group accordingly.
-$groupChanged = $request->getParameter('group_changed');
+$groupChanged = (bool)$request->getParameter('group_changed');
 if ($request->isPost() && $groupChanged) {
  $user->setOnBehalfGroup($group_id);
 }
@@ -86,11 +62,11 @@ if ($request->isPost() && !$groupChanged) {
   $cl_tracking_mode = $request->getParameter('tracking_mode');
   $cl_project_required = $request->getParameter('project_required');
   $cl_record_type = $request->getParameter('record_type');
-  $cl_punch_mode = $request->getParameter('punch_mode');
-  $cl_allow_overlap = $request->getParameter('allow_overlap');
-  $cl_future_entries = $request->getParameter('future_entries');
-  $cl_uncompleted_indicators = $request->getParameter('uncompleted_indicators');
-  $cl_confirm_save = $request->getParameter('confirm_save');
+  $cl_punch_mode = (bool)$request->getParameter('punch_mode');
+  $cl_allow_overlap = (bool)$request->getParameter('allow_overlap');
+  $cl_future_entries = (bool)$request->getParameter('future_entries');
+  $cl_uncompleted_indicators = (bool)$request->getParameter('uncompleted_indicators');
+  $cl_confirm_save = (bool)$request->getParameter('confirm_save');
 } else {
   $cl_currency = ($group['currency'] == '' ? CURRENCY_DEFAULT : $group['currency']);
   $cl_lang = $group['lang'];

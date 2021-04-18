@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 require_once('initialize.php');
 import('form.Form');
@@ -56,8 +32,8 @@ if (!$user->behalf_id && !$user->can('track_own_time') && !$user->adjustBehalfId
   exit();
 }
 if ($request->isPost()) {
-  $userChanged = $request->getParameter('user_changed'); // Reused in multiple places below.
-  if ($userChanged && !($user->can('track_time') && $user->isUserValid($request->getParameter('user')))) {
+  $userChanged = (bool)$request->getParameter('user_changed'); // Reused in multiple places below.
+  if ($userChanged && !($user->can('track_time') && $user->isUserValid((int)$request->getParameter('user')))) {
     header('Location: access_denied.php'); // User changed, but no right or wrong user id.
     exit();
   }
@@ -66,7 +42,7 @@ if ($request->isPost()) {
 
 // Determine user for whom we display this page.
 if ($request->isPost() && $userChanged) {
-  $user_id = $request->getParameter('user');
+  $user_id = (int)$request->getParameter('user');
   $user->setOnBehalfUser($user_id);
 } else {
   $user_id = $user->getUser();
@@ -275,7 +251,8 @@ if ($user->can('track_time')) {
 }
 
 // Create week_durations table.
-$table = new Table('week_durations', 'week_view_table');
+$table = new Table('week_durations');
+// $table->setCssClass('week_view_table'); // Currently not used. Fix this.
 $table->setTableOptions(array('width'=>'100%','cellspacing'=>'1','cellpadding'=>'3','border'=>'0'));
 $table->setRowOptions(array('class'=>'tableHeaderCentered'));
 $table->setData($dataArray);

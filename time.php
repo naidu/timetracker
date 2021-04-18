@@ -26,8 +26,8 @@ if (!$user->behalf_id && !$user->can('track_own_time') && !$user->adjustBehalfId
   exit();
 }
 if ($request->isPost()) {
-  $userChanged = $request->getParameter('user_changed'); // Reused in multiple places below.
-  if ($userChanged && !($user->can('track_time') && $user->isUserValid($request->getParameter('user')))) {
+  $userChanged = (bool)$request->getParameter('user_changed'); // Reused in multiple places below.
+  if ($userChanged && !($user->can('track_time') && $user->isUserValid((int)$request->getParameter('user')))) {
     header('Location: access_denied.php'); // User changed, but no right or wrong user id.
     exit();
   }
@@ -36,7 +36,7 @@ if ($request->isPost()) {
 
 // Determine user for whom we display this page.
 if ($request->isPost() && $userChanged) {
-  $user_id = $request->getParameter('user');
+  $user_id = (int)$request->getParameter('user');
   $user->setOnBehalfUser($user_id);
 } else {
   $user_id = $user->getUser();
@@ -86,8 +86,7 @@ if ($showNoteRow) {
   }
   if ($showProject) $colspan++;
   if ($showTask) $colspan++;
-  if ($showStart) $colspan++;
-  if ($showFinish) $colspan++;
+  if ($showStart) $colspan += 2; // Another for show finish.
   $colspan++; // There is always a duration.
   if ($showFiles) $colspan++;
   $colspan++; // There is always an edit column.

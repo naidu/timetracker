@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 // Note: escape apostrophes with THREE backslashes, like here:  choisir l\\\'option.
 // Other characters (such as double-quotes in http links, etc.) do not have to be escaped.
@@ -415,12 +391,12 @@ $i18n_key_words = array(
 
 // Login form. See example at https://timetracker.anuko.com/login.php.
 'form.login.forgot_password' => 'Забыли пароль?',
-'form.login.about' => 'Anuko <a href="https://www.anuko.com/lp/tt_2.htm" target="_blank">Time Tracker</a> - это открытая (open source), простая и лёгкая в использовании система трекинга рабочего времени.',
+'form.login.about' => 'Anuko <a href="https://www.anuko.com/lp/tt_2.htm" target="_blank">Time Tracker</a> - это открытая (open source) система трекинга рабочего времени.',
 
 // Resetting Password form. See example at https://timetracker.anuko.com/password_reset.php.
 'form.reset_password.message' => 'Запрос на сброс пароля отослан по e-mail.',
 'form.reset_password.email_subject' => 'Сброс пароля к Anuko Time Tracker',
-'form.reset_password.email_body' => "Уважаемый пользователь,\n\nКто-то c IP %s попросил сбросить ваш пароль к системе Anuko Time Tracker. Пройдите по данной ссылке для сброса пароля.\n\n%s\n\nAnuko Time Tracker - это открытая (open source), простая и лёгкая в использовании система трекинга рабочего времени. Подробности - на сайте https://www.anuko.com.",
+'form.reset_password.email_body' => "Уважаемый пользователь,\n\nКто-то c IP %s попросил сбросить ваш пароль к системе Anuko Time Tracker. Пройдите по данной ссылке для сброса пароля.\n\n%s\n\nAnuko Time Tracker - это открытая (open source) система трекинга рабочего времени. Подробности - на сайте https://www.anuko.com.",
 
 // Changing Password form. See example at https://timetracker.anuko.com/password_change.php?ref=1.
 'form.change_password.tip' => 'Впечатайте новый пароль и нажмите Cохранить.',
@@ -567,7 +543,7 @@ $i18n_key_words = array(
 // Mail form. See example at https://timetracker.anuko.com/report_send.php when emailing a report.
 'form.mail.to' => 'Кому',
 'form.mail.report_subject' => 'Time Tracker отчёт',
-'form.mail.footer' => 'Anuko Time Tracker - это открытая (open source), простая и лёгкая в использовании система трекинга рабочего времени. Подробности на сайте <a href="https://www.anuko.com">www.anuko.com</a>.',
+'form.mail.footer' => 'Anuko Time Tracker - это открытая (open source) система трекинга рабочего времени. Подробности на сайте <a href="https://www.anuko.com">www.anuko.com</a>.',
 'form.mail.report_sent' => 'Отчёт отправлен.',
 'form.mail.invoice_sent' => 'Счёт отправлен.',
 

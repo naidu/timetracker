@@ -21,6 +21,7 @@ if (!$user->isPluginEnabled('ex')) {
 $cl_id = (int)$request->getParameter('id');
 // Get the expense item we are editing.
 $expense_item = ttExpenseHelper::getItem($cl_id);
+if (!$expense_item) $expense_item = ttExpenseHelper::getOnBehalfItem($cl_id);
 if (!$expense_item || $expense_item['approved'] || $expense_item['invoice_id']) {
   // Prohibit editing not ours, approved, or invoiced items.
   header('Location: access_denied.php');
@@ -42,14 +43,14 @@ if ($request->isPost()) {
   $cl_item_name = trim($request->getParameter('item_name'));
   $cl_cost = trim($request->getParameter('cost'));
   if ($user->isPluginEnabled('ps'))
-    $cl_paid = $request->getParameter('paid');
+    $cl_paid = (bool)$request->getParameter('paid');
 } else {
   $cl_date = $item_date->toString($user->getDateFormat());
   $cl_client = $expense_item['client_id'];
   $cl_project = $expense_item['project_id'];
   $cl_item_name = $expense_item['name'];
   $cl_cost = $expense_item['cost'];
-  $cl_paid = $expense_item['paid'];
+  $cl_paid = (bool)$expense_item['paid'];
 }
 
 // Initialize elements of 'expenseItemForm'.

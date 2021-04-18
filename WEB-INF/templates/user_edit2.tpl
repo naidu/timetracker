@@ -1,3 +1,6 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 <script>
 // Prepare an array of available roles. We need it for "is_client" property.
 // It is used to selectively display client selector for client roles.
@@ -182,6 +185,7 @@ function handleClientRole() {
 </tbody>
 {if $show_projects}
 <tbody id="projects_control">
+  <tr><td><div class="form-control-separator"></div></id></tr>
   <tr class = "small-screen-label"><td><label for="projects">{$i18n.label.projects}:</label></td></tr>
   <tr>
     <td class="large-screen-label"><label for="projects">{$i18n.label.projects}:</label></td>
@@ -191,10 +195,10 @@ function handleClientRole() {
 </tbody>
 {/if}
   <tr><td colspan="2">{$i18n.label.required_fields}</td></tr>
-  <tr><td><div class="form-control-separator"></div></td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
   <tr>
     <td colspan="2">{$forms.userForm.btn_submit.control}</td>
   </tr>
-  <tr><td><div class="form-control-separator"></div></td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 </table>
 {$forms.userForm.close}

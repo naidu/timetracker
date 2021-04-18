@@ -1,3 +1,6 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {if $show_hint}
 <div class="page-hint">{$i18n.label.ldap_hint}</div>
 {/if}
@@ -16,7 +19,7 @@
   <tr>
     <td colspan="2"><a href ="password_reset.php">{$i18n.form.login.forgot_password}</a></td>
   </tr>
-  <tr><td><div class="form-control-separator"></div></td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
   <tr>
     <td colspan="2">{$forms.loginForm.btn_login.control}</td>
   </tr>

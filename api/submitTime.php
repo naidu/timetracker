@@ -47,22 +47,27 @@ if ($jwt) {
     $user = new ttUser(null, $userId);
     if ($isLoggedIn) {
       $group_id = $user->getGroup();
-      $cl_date = date("Y-m-d");
+      $cl_date = $object->date;
       $cl_project = $object->projectId;
       $cl_duration = $object->duration;
       $cl_note = $object->note;
-
+      $start = $object->start;
+      $finish = $object->finish;
+      $cl_client=$object->client_Id;
+      $cl_task = $object->task_Id;
       // Insert record.
-      $id = ttTimeHelper::insert(array(
+      $id = ttTimeSweHelper::insert(array(
         'date' => $cl_date,
         'user_id' => $userId,
         'group_id' => $group_id,
+        'client'=>$cl_client,
+        'task'=> $cl_task,
         'org_id' => $user->org_id,
-        'client' => $cl_client,
         'project' => $cl_project,
-        'task' => $cl_task,
         'duration' => $cl_duration,
         'note' => $cl_note,
+        'start' => $start,
+        'finish'=>$finish,
         'billable' => true
       ));
       $result = true;

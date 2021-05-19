@@ -1,68 +1,69 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {$forms.templatesForm.open}
-<table cellspacing="0" cellpadding="7" border="0" width="720">
+{if $inactive_templates}
+<div class="section-header">{$i18n.form.templates.active_templates}</div>
+{/if}
+<table class="x-scrollable-table">
   <tr>
-    <td valign="top">
-      <table cellspacing="1" cellpadding="3" border="0" width="100%">
+    <th>{$i18n.label.thing_name}</th>
+    <th>{$i18n.label.description}</th>
+    <th></th>
+    <th></th>
+  </tr>
+  {foreach $active_templates as $template}
+  <tr>
+    <td class="text-cell">{$template['name']|escape}</td>
+    <td class="text-cell">{$template['description']|escape}</td>
+    <td><a href="template_edit.php?id={$template['id']}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon-edit.png"></a></td>
+    <td><a href="template_delete.php?id={$template['id']}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon-delete.png"></a></td>
+   </tr>
+  {/foreach}
+</table>
+<div class="button-set">{$forms.templatesForm.btn_add.control}</div>
+
 {if $inactive_templates}
-        <tr><td class="sectionHeaderNoBorder">{$i18n.form.templates.active_templates}</td></tr>
+<div class="section-header">{$i18n.form.templates.inactive_templates}</div>
+<table class="x-scrollable-table">
+  <tr>
+    <th>{$i18n.label.thing_name}</th>
+    <th>{$i18n.label.description}</th>
+    <th></th>
+    <th></th>
+  </tr>
+  {foreach $inactive_templates as $template}
+  <tr>
+    <td class="text-cell">{$template['name']|escape}</td>
+    <td class="text-cell">{$template['description']|escape}</td>
+    <td><a href="template_edit.php?id={$template['id']}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon-edit.png"></a></td>
+    <td><a href="template_delete.php?id={$template['id']}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon-delete.png"></a></td>
+   </tr>
+  {/foreach}
+</table>
+<div class="button-set">{$forms.templatesForm.btn_add.control}</div>
 {/if}
-        <tr>
-          <td class="tableHeader" width="45%">{$i18n.label.thing_name}</td>
-          <td class="tableHeader" width="45%">{$i18n.label.description}</td>
-          <td></td>
-          <td></td>
-        </tr>
-    {foreach $active_templates as $template}
-        <tr bgcolor="{cycle values="#f5f5f5,#ffffff"}">
-          <td>{$template['name']|escape}</td>
-          <td>{$template['description']|escape}</td>
-          <td><a href="template_edit.php?id={$template['id']}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon-edit.png"></a></td>
-          <td><a href="template_delete.php?id={$template['id']}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon-delete.png"></a></td>
-        </tr>
-    {/foreach}
-      </table>
-      <table width="100%">
-        <tr><td align="center"><br>{$forms.templatesForm.btn_add.control}</td></tr>
-      </table>
-{if $inactive_templates}
-      <table cellspacing="1" cellpadding="3" border="0" width="100%">
-        <tr><td class="sectionHeaderNoBorder">{$i18n.form.templates.inactive_templates}</td></tr>
-        <tr>
-          <td class="tableHeader" width="45%">{$i18n.label.thing_name}</td>
-          <td class="tableHeader" width="45%">{$i18n.label.description}</td>
-          <td></td>
-          <td></td>
-        </tr>
-    {foreach $inactive_templates as $template}
-        <tr bgcolor="{cycle values="#f5f5f5,#ffffff"}">
-          <td>{$template['name']|escape}</td>
-          <td>{$template['description']|escape}</td>
-          <td><a href="template_edit.php?id={$template['id']}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon-edit.png"></a></td>
-          <td><a href="template_delete.php?id={$template['id']}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon-delete.png"></a></td>
-        </tr>
-    {/foreach}
-      </table>
-      <table width="100%">
-        <tr><td align="center"><br>{$forms.templatesForm.btn_add.control}</td></tr>
-      </table>
-{/if}
-      <div class="table-divider"></div>
-      <table width="100%">
+<table class="centered-table">
 {if $show_bind_with_projects_checkbox}
-        <tr>
-          <td align="right" width="25%">{$forms.templatesForm.bind_templates_with_projects.control}</td>
-          <td><label for="bind_templates_with_projects">{$i18n.label.bind_templates_with_projects}</label> <a href="https://www.anuko.com/lp/tt_42.htm" target="_blank">{$i18n.label.what_is_it}</a></td>
-        </tr>
-{/if}
-        <tr>
-          <td align="right" width="25%">{$forms.templatesForm.prepopulate_note.control}</td>
-          <td><label for="prepopulate_note">{$i18n.label.prepopulate_note}</label> <a href="https://www.anuko.com/lp/tt_43.htm" target="_blank">{$i18n.label.what_is_it}</a></td>
-        </tr>
-        <tr>
-          <td colspan="2" height="50" align="center">{$forms.templatesForm.btn_save.control}</td>
-        </tr>
-      </table>
+  <tr class = "small-screen-label"><td><label for="bind_templates_with_projects">{$i18n.label.bind_templates_with_projects}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="bind_templates_with_projects">{$i18n.label.bind_templates_with_projects}:</label></td>
+    <td class="td-with-input">{$forms.templatesForm.bind_templates_with_projects.control}
+      <span class="what-is-it-img"><a href="https://www.anuko.com/lp/tt_42.htm" target="_blank"><img src="img/icon-question-mark.png" title="{$i18n.label.what_is_it}" alt="{$i18n.label.what_is_it}"></a></span>
+      <span class="what-is-it-text"><a href="https://www.anuko.com/lp/tt_42.htm" target="_blank">{$i18n.label.what_is_it}</a></span>
     </td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+  <tr class = "small-screen-label"><td><label for="prepopulate_note">{$i18n.label.prepopulate_note}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="prepopulate_note">{$i18n.label.prepopulate_note}:</label></td>
+    <td class="td-with-input">{$forms.templatesForm.prepopulate_note.control}
+      <span class="what-is-it-img"><a href="https://www.anuko.com/lp/tt_43.htm" target="_blank"><img src="img/icon-question-mark.png" title="{$i18n.label.what_is_it}" alt="{$i18n.label.what_is_it}"></a></span>
+      <span class="what-is-it-text"><a href="https://www.anuko.com/lp/tt_43.htm" target="_blank">{$i18n.label.what_is_it}</a></span>
+    </td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 </table>
+<div class="button-set">{$forms.templatesForm.btn_save.control}</div>
 {$forms.templatesForm.close}

@@ -26,6 +26,7 @@ $i18n_key_words = array(
 'menu.plugins' => 'Dodaci',
 'menu.time' => 'Vreme',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 'menu.expenses' => 'Troškovi',
 'menu.reports' => 'Izveštaji',
@@ -123,6 +124,8 @@ $i18n_key_words = array(
 'button.export' => 'Izvezi tim', // TODO: replace "team" with "group".
 'button.import' => 'Uvezi tim', // TODO: replace "team" with "group".
 'button.close' => 'Zatvori',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Stani',
 // TODO: translate the following.
 // 'button.approve' => 'Approve',
@@ -188,6 +191,7 @@ $i18n_key_words = array(
 // TODO: translate the following.
 // 'label.day_view' => 'Day view',
 // 'label.week_view' => 'Week view',
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Jezik',
 'label.decimal_mark' => 'Decimala',
@@ -235,7 +239,6 @@ $i18n_key_words = array(
 // 'label.paid_status' => 'Paid status',
 // 'label.paid' => 'Paid',
 // 'label.mark_paid' => 'Mark paid',
-// 'label.week_menu' => 'Week menu',
 // 'label.week_note' => 'Week note',
 // 'label.week_list' => 'Week list',
 // 'label.work_units' => 'Work units',
@@ -294,6 +297,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Obriši unos vremena',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Troškovi',
 'title.edit_expense' => 'Izmeni stavke troškova',
 'title.delete_expense' => 'Obriši stavke troškova',

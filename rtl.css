@@ -32,10 +32,26 @@ html {
   text-align: right;
 }
 
+.number-cell {
+  text-align: left;
+}
+
 .time-cell {
   text-align: left;
 }
 
+.money-value-cell {
+  text-align: left;
+}
+
 .note-header-cell {
+  text-align: left;
+}
+
+.label-cell {
+  text-align: left;
+}
+
+th.invoice-label {
   text-align: left;
 }

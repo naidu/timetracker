@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/content/time_tracker/open_source/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 // NOTES:
 //
@@ -105,6 +81,16 @@ class Auth_ldap extends Auth {
     if (isTrue('DEBUG')) {
       ldap_set_option($lc, LDAP_OPT_DEBUG_LEVEL, 7);
     }
+    // Additional options for secure ldap.
+    // This insert is based on https://www.anuko.com/forum/viewtopic.php?f=4&t=2091
+    // I can't test it at the moment. If things break please let us know!
+    if (isset($this->params['tls_cacertdir'])) {
+      ldap_set_option(null, LDAP_OPT_X_TLS_CACERTDIR, $this->params['tls_cacertdir']);
+    }
+    if (isset($this->params['tls_cacertfile'])) {
+      ldap_set_option(null, LDAP_OPT_X_TLS_CACERTFILE, $this->params['tls_cacertfile']);
+    }
+    // End of addiitional options for secure ldap.
 
     // We need to handle Windows AD and OpenLDAP differently.
     if ($this->params['type'] == 'ad') {

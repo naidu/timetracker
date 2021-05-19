@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 import('ttClientHelper');
 import('DateAndTime');
@@ -59,7 +35,7 @@ class ttReportHelper {
     }
 
     // A shortcut for timesheets.
-    if ($options['timesheet_id']) {
+    if (isset($options['timesheet_id']) && $options['timesheet_id']) {
       $where = " where l.timesheet_id = ".$options['timesheet_id']." and l.group_id = $group_id and l.org_id = $org_id";
       return $where;
     }
@@ -84,7 +60,7 @@ class ttReportHelper {
     if ($options['paid_status']=='2') $dropdown_parts .= ' and l.paid = 0';
 
     // Add time custom fields.
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $field_value = $options[$field_name];
@@ -97,7 +73,7 @@ class ttReportHelper {
 
     // Prepare part for text custom fields using LIKE operator.
     $cf_text_parts = null;
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $field_value = $options[$field_name];
@@ -109,7 +85,7 @@ class ttReportHelper {
     }
 
     // Add user custom fields.
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
@@ -121,7 +97,7 @@ class ttReportHelper {
     }
 
     // Continue preparing part for text custom fields using LIKE operator.
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
@@ -165,7 +141,7 @@ class ttReportHelper {
 
     if ($user->isPluginEnabled('cf')) {
       global $custom_fields;
-      if (!$custom_fields) $custom_fields = new CustomFields();
+      if (!isset($custom_fields)) $custom_fields = new CustomFields();
     }
 
     // Prepare dropdown parts.
@@ -190,7 +166,7 @@ class ttReportHelper {
     // This means that filtering by time custom fields applies only to time items, not expenses.
 
     // Add user custom fields.
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
@@ -203,7 +179,7 @@ class ttReportHelper {
 
     // Prepare part for text custom fields using LIKE operator.
     $cf_text_parts = null;
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
@@ -257,6 +233,7 @@ class ttReportHelper {
     }
 
     $grouping = ttReportHelper::grouping($options);
+    $grouping_by_date = $grouping_by_client = $grouping_by_project = $grouping_by_task = $grouping_by_user = false;
     if ($grouping) {
       $grouping_by_date = ttReportHelper::groupingBy('date', $options);
       $grouping_by_client = ttReportHelper::groupingBy('client', $options);
@@ -277,7 +254,7 @@ class ttReportHelper {
     if($canViewReports || $isClient)
       array_push($fields, 'u.name as user');
     // Add user custom fields.
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $checkbox_field_name = 'show_'.$field_name;
@@ -302,7 +279,7 @@ class ttReportHelper {
     if ($options['show_task'] || $grouping_by_task)
       array_push($fields, 't.name as task');
     // Add time custom fields.
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $checkbox_field_name = 'show_'.$field_name;
@@ -378,7 +355,7 @@ class ttReportHelper {
     $left_joins = null;
     // Left joins for custom fields.
     // 1 join is required for each text field, 2 joins for each dropdown.
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $checkbox_field_name = 'show_'.$field_name;
@@ -408,7 +385,7 @@ class ttReportHelper {
     if ($options['show_task'] || $grouping_by_task)
       $left_joins .= " left join tt_tasks t on (t.id = l.task_id)";
     // Left joins for time custom fields.
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $checkbox_field_name = 'show_'.$field_name;
@@ -466,7 +443,7 @@ class ttReportHelper {
       if($canViewReports || $isClient)
         array_push($fields, 'u.name as user');
       // Add user custom fields.
-      if ($custom_fields && $custom_fields->userFields) {
+      if (isset($custom_fields) && $custom_fields->userFields) {
         foreach ($custom_fields->userFields as $userField) {
           $field_name = 'user_field_'.$userField['id'];
           $checkbox_field_name = 'show_'.$field_name;
@@ -490,7 +467,7 @@ class ttReportHelper {
       if ($options['show_task'] || $grouping_by_task)
         array_push($fields, 'null'); // null for task name. We need to match column count for union.
       // Add null values for time custom fields.
-      if ($custom_fields && $custom_fields->timeFields) {
+      if (isset($custom_fields) && $custom_fields->timeFields) {
         foreach ($custom_fields->timeFields as $timeField) {
           $field_name = 'time_field_'.$timeField['id'];
           $checkbox_field_name = 'show_'.$field_name;
@@ -540,7 +517,7 @@ class ttReportHelper {
       // Prepare sql query part for left joins.
       $left_joins = null;
       // Left joins for user custom fields.
-      if ($custom_fields && $custom_fields->userFields) {
+      if (isset($custom_fields) && $custom_fields->userFields) {
         foreach ($custom_fields->userFields as $userField) {
           $field_name = 'user_field_'.$userField['id'];
           $checkbox_field_name = 'show_'.$field_name;
@@ -585,6 +562,7 @@ class ttReportHelper {
     // Determine sort part.
     $sort_part = ' order by ';
     if ($grouping) {
+      $sort_part2 = '';
       $sort_part2 .= ($options['group_by1'] != null && $options['group_by1'] != 'no_grouping') ? ', '.$options['group_by1'] : '';
       $sort_part2 .= ($options['group_by2'] != null && $options['group_by2'] != 'no_grouping') ? ', '.$options['group_by2'] : '';
       $sort_part2 .= ($options['group_by3'] != null && $options['group_by3'] != 'no_grouping') ? ', '.$options['group_by3'] : '';
@@ -639,6 +617,8 @@ class ttReportHelper {
 
     if (is_array($report_items)) {
       // Iterate through records and build 2 comma-separated lists.
+      $report_item_ids = '';
+      $report_item_expense_ids = '';
       foreach($report_items as $item) {
         if ($item['type'] == 1)
           $report_item_ids .= ','.$item['id'];
@@ -657,10 +637,10 @@ class ttReportHelper {
   // getFromSession obtains tt_log and tt_expense_items ids stored in user session.
   static function getFromSession() {
     $items = array();
-    $report_item_ids = $_SESSION['report_item_ids'];
+    $report_item_ids = @$_SESSION['report_item_ids'];
     if ($report_item_ids)
       $items['report_item_ids'] = explode(',', $report_item_ids);
-    $report_item_expense_ids = $_SESSION['report_item_expense_ids'];
+    $report_item_expense_ids = @$_SESSION['report_item_expense_ids'];
     if ($report_item_expense_ids)
       $items['report_item_expense_ids'] = explode(',', $report_item_expense_ids);
     return $items;
@@ -689,7 +669,7 @@ class ttReportHelper {
     // By now we have sql for time items.
 
     // However, when we have expenses, we need to do a union with a separate query for expense items from tt_expense_items table.
-    if ($options['show_cost'] && $user->isPluginEnabled('ex')) { // if ex(penses) plugin is enabled
+    if (isset($options['show_cost']) && $options['show_cost'] && $user->isPluginEnabled('ex')) { // if ex(penses) plugin is enabled
 
       $concat_part = ttReportHelper::makeConcatExpensesPart($options);
       $group_by_fields_part = ttReportHelper::makeGroupByFieldsExpensesPart($options);
@@ -715,15 +695,30 @@ class ttReportHelper {
     while ($val = $res->fetchRow()) {
       $time = ttTimeHelper::minutesToDuration($val['time'] / 60);
       $rowLabel = ttReportHelper::makeGroupByLabel($val['group_field'], $options);
-      if ($options['show_cost']) {
+      if (isset($options['show_cost']) && $options['show_cost']) {
         $decimalMark = $user->getDecimalMark();
         if ('.' != $decimalMark) {
           $val['cost'] = str_replace('.', $decimalMark, $val['cost']);
           $val['expenses'] = str_replace('.', $decimalMark, $val['expenses']);
         }
-        $subtotals[$val['group_field']] = array('name'=>$rowLabel,'user'=>$val['user'],'project'=>$val['project'],'task'=>$val['task'],'client'=>$val['client'],'time'=>$time,'units'=> $val['units'],'cost'=>$val['cost'],'expenses'=>$val['expenses']);
-      } else
-        $subtotals[$val['group_field']] = array('name'=>$rowLabel,'user'=>$val['user'],'project'=>$val['project'],'task'=>$val['task'],'client'=>$val['client'],'time'=>$time, 'units'=> $val['units']);
+        $subtotals[$val['group_field']] = array('name'=>$rowLabel,
+          'user'=>isset($val['user']) ? $val['user'] : null,
+          'project'=>isset($val['project']) ? $val['project'] : null,
+          'task'=>isset($val['task']) ? $val['task'] : null,
+          'client'=>isset($val['client']) ? $val['client'] : null,
+          'time'=>$time,
+          'units'=>isset($val['units']) ? $val['units'] : null,
+          'cost'=>$val['cost'],
+          'expenses'=>$val['expenses']);
+      } else {
+        $subtotals[$val['group_field']] = array('name'=>$rowLabel,
+          'user'=>isset($val['user']) ? $val['user'] : null,
+          'project'=>isset($val['project']) ? $val['project'] : null,
+          'task'=>isset($val['task']) ? $val['task'] : null,
+          'client'=>isset($val['client']) ? $val['client'] : null,
+          'time'=>$time,
+          'units'=>isset($val['units']) ? $val['units'] : null);
+      }
     }
 
     return $subtotals;
@@ -737,7 +732,7 @@ class ttReportHelper {
 
     if ($user->isPluginEnabled('cf')) {
       global $custom_fields;
-      if (!$custom_fields) $custom_fields = new CustomFields();
+      if (!isset($custom_fields)) $custom_fields = new CustomFields();
     }
 
     $trackingMode = $user->getTrackingMode();
@@ -745,14 +740,15 @@ class ttReportHelper {
     $where = ttReportHelper::getWhere($options);
 
     // Prepare parts.
+    $time_part = $units_part = $cost_part = '';
     $time_part = "sum(time_to_sec(l.duration)) as time";
-    if ($options['show_work_units']) {
+    if (isset($options['show_work_units']) && $options['show_work_units']) {
       $unitTotalsOnly = $user->getConfigOption('unit_totals_only');
       $firstUnitThreshold = $user->getConfigInt('1st_unit_threshold', 0);
       $minutesInUnit = $user->getConfigInt('minutes_in_unit', 15);
       $units_part = $unitTotalsOnly ? ", null as units" : ", sum(if(l.billable = 0 or time_to_sec(l.duration)/60 < $firstUnitThreshold, 0, ceil(time_to_sec(l.duration)/60/$minutesInUnit))) as units";
     }
-    if ($options['show_cost']) {
+    if (isset($options['show_cost']) && $options['show_cost']) {
       if (MODE_TIME == $trackingMode)
         $cost_part = ", sum(cast(l.billable * coalesce(u.rate, 0) * time_to_sec(l.duration)/3600 as decimal(10,2))) as cost, null as expenses";
       else
@@ -764,7 +760,7 @@ class ttReportHelper {
     // Prepare left joins.
     $left_joins = null;
     // Left joins for custom fields.
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $field_value = $options[$field_name];
@@ -782,7 +778,7 @@ class ttReportHelper {
         }
       }
     }
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
@@ -802,7 +798,7 @@ class ttReportHelper {
         }
       }
     }
-    if ($options['show_cost']) {
+    if (isset($options['show_cost']) && $options['show_cost']) {
       if (MODE_TIME == $trackingMode) {
         $left_joins .= " left join tt_users u on (l.user_id = u.id)";
       } else {
@@ -811,7 +807,7 @@ class ttReportHelper {
     }
     // Prepare sql query part for inner joins.
     $inner_joins = null;
-    if ($user->isPluginEnabled('ts') && $options['timesheet']) {
+    if ($user->isPluginEnabled('ts') && isset($options['timesheet']) && $options['timesheet']) {
       $timesheet_option = $options['timesheet'];
       if ($timesheet_option == TIMESHEET_PENDING)
         $inner_joins .= " inner join tt_timesheets ts on (l.timesheet_id = ts.id and ts.submit_status = 1 and ts.approve_status is null)";
@@ -824,7 +820,7 @@ class ttReportHelper {
     $sql = "select $time_part $units_part $cost_part from tt_log l $left_joins $inner_joins $where";
 
     // If we have expenses, query becomes a bit more complex.
-    if ($options['show_cost'] && $user->isPluginEnabled('ex')) {
+    if (isset($options['show_cost']) && $options['show_cost'] && $user->isPluginEnabled('ex')) {
       $where = ttReportHelper::getExpenseWhere($options);
       $sql_for_expenses = "select null as time";
       if ($options['show_work_units']) $sql_for_expenses .= ", null as units";
@@ -832,7 +828,7 @@ class ttReportHelper {
       // Prepate left joins.
       $left_joins = null;
       // Left joins for custom fields.
-      if ($custom_fields && $custom_fields->userFields) {
+      if (isset($custom_fields) && $custom_fields->userFields) {
         foreach ($custom_fields->userFields as $userField) {
           $field_name = 'user_field_'.$userField['id'];
           $field_value = $options[$field_name];
@@ -868,7 +864,8 @@ class ttReportHelper {
 
     $val = $res->fetchRow();
     $total_time = ttTimeHelper::minutesToDuration($val['time'] / 60);
-    if ($options['show_cost']) {
+    $total_cost = $total_expenses = null;
+    if (isset($options['show_cost']) && $options['show_cost']) {
       $total_cost = $val['cost'];
       if (!$total_cost) $total_cost = '0.00';
       if ('.' != $decimalMark)
@@ -880,20 +877,21 @@ class ttReportHelper {
     }
 
     $dateFormat = $user->getDateFormat();
-    if ($options['period'])
+    if (isset($options['period']) && $options['period'])
       $period = new Period($options['period'], new DateAndTime($dateFormat));
     else {
       $period = new Period();
-      $period->setPeriod(
-        new DateAndTime($dateFormat, $options['period_start']),
-        new DateAndTime($dateFormat, $options['period_end']));
+      if (isset($options['period_start']) && isset($options['period_end']))
+        $period->setPeriod(
+          new DateAndTime($dateFormat, $options['period_start']),
+          new DateAndTime($dateFormat, $options['period_end']));
     }
 
     $totals['start_date'] = $period->getStartDate();
     $totals['end_date'] = $period->getEndDate();
     $totals['time'] = $total_time;
     $totals['minutes'] = $val['time'] / 60;
-    $totals['units'] = $val['units'];
+    $totals['units'] = isset($val['units']) ? $val['units'] : null;
     $totals['cost'] = $total_cost;
     $totals['expenses'] = $total_expenses;
 
@@ -1623,6 +1621,7 @@ class ttReportHelper {
   // makeGroupByKey builds a combined group by key from group_by1, group_by2 and group_by3 values
   // (passed in $options) and a row of data ($row obtained from a db query).
   static function makeGroupByKey($options, $row) {
+    $group_by_key = '';
     if ($options['group_by1'] != null && $options['group_by1'] != 'no_grouping') {
       // We have group_by1.
       $group_by1 = $options['group_by1'];
@@ -1675,9 +1674,13 @@ class ttReportHelper {
   static function makeGroupByPart($options) {
     if (!ttReportHelper::grouping($options)) return null;
 
-    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by1'], $options);
-    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by2'], $options);
-    $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by3'], $options);
+    $group_by_parts = '';
+    if (isset($options['group_by1']))
+      $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by1'], $options);
+    if (isset($options['group_by2']))
+      $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by2'], $options);
+    if (isset($options['group_by3']))
+      $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByPart($options['group_by3'], $options);
     // Remove garbage from the beginning.
     $group_by_parts = ltrim($group_by_parts, ', ');
     $group_by_part = "group by $group_by_parts";
@@ -1706,6 +1709,7 @@ class ttReportHelper {
   static function makeGroupByExpensesPart($options) {
     if (!ttReportHelper::grouping($options)) return null;
 
+    $group_by_parts = '';
     $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByExpensesPart($options['group_by1'], $options);
     $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByExpensesPart($options['group_by2'], $options);
     $group_by_parts .= ttReportHelper::makeSingleDropdownGroupByExpensesPart($options['group_by3'], $options);
@@ -1892,9 +1896,13 @@ class ttReportHelper {
   static function makeGroupByFieldsPart($options) {
     if (!ttReportHelper::grouping($options)) return null;
 
-    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by1'], $options);
-    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by2'], $options);
-    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by3'], $options);
+    $group_by_fields_parts = '';
+    if (isset($options['group_by1']))
+      $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by1'], $options);
+    if (isset($options['group_by2']))
+      $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by2'], $options);
+    if (isset($options['group_by3']))
+      $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldPart($options['group_by3'], $options);
     return $group_by_fields_parts;
   }
 
@@ -1903,9 +1911,13 @@ class ttReportHelper {
   static function makeGroupByFieldsExpensesPart($options) {
     if (!ttReportHelper::grouping($options)) return null;
 
-    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by1'], $options);
-    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by2'], $options);
-    $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by3'], $options);
+    $group_by_fields_parts = '';
+    if (isset($options['group_by1']))
+      $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by1'], $options);
+    if (isset($options['group_by2']))
+      $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by2'], $options);
+    if (isset($options['group_by3']))
+      $group_by_fields_parts .= ttReportHelper::makeSingleDropdownGroupByFieldExpensesPart($options['group_by3'], $options);
     return $group_by_fields_parts;
   }
 
@@ -1913,9 +1925,13 @@ class ttReportHelper {
   static function makeConcatPart($options) {
     if (!ttReportHelper::grouping($options)) return null;
 
-    $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by1'], $options);
-    $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by2'], $options);
-    $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by3'], $options);
+    $concat_part = '';
+    if (isset($options['group_by1']))
+      $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by1'], $options);
+    if (isset($options['group_by2']))
+      $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by2'], $options);
+    if (isset($options['group_by3']))
+      $concat_part .= ttReportHelper::makeSingleDropdownConcatPart($options['group_by3'], $options);
     // Remove garbage from the beginning.
     if (ttStartsWith($concat_part, ", ' - ', "))
       $concat_part = substr($concat_part, 9);
@@ -1948,6 +1964,7 @@ class ttReportHelper {
   static function makeConcatExpensesPart($options) {
     if (!ttReportHelper::grouping($options)) return null;
 
+    $concat_part = '';
     $concat_part .= ttReportHelper::makeSingleDropdownConcatExpensesPart($options['group_by1'], $options);
     $concat_part .= ttReportHelper::makeSingleDropdownConcatExpensesPart($options['group_by2'], $options);
     $concat_part .= ttReportHelper::makeSingleDropdownConcatExpensesPart($options['group_by3'], $options);
@@ -2037,7 +2054,7 @@ class ttReportHelper {
 
     if ($user->isPluginEnabled('cf')) {
       global $custom_fields;
-      if (!$custom_fields) $custom_fields = new CustomFields();
+      if (!isset($custom_fields)) $custom_fields = new CustomFields();
     }
 
     $trackingMode = $user->getTrackingMode();
@@ -2054,11 +2071,11 @@ class ttReportHelper {
     if (ttReportHelper::groupingBy('task', $options)) {
       $left_joins .= ' left join tt_tasks t on (l.task_id = t.id)';
     }
-    if ($options['show_cost'] && $trackingMode != MODE_TIME) {
+    if (isset($options['show_cost']) && $options['show_cost'] && $trackingMode != MODE_TIME) {
       $left_joins .= ' left join tt_user_project_binds upb on (l.user_id = upb.user_id and l.project_id = upb.project_id)';
     }
     // Left joins for time custom fields.
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $field_value = $options[$field_name];
@@ -2077,7 +2094,7 @@ class ttReportHelper {
       }
     }
     // Left joins for user custom fields.
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
@@ -2100,7 +2117,7 @@ class ttReportHelper {
 
     // Prepare inner joins.
     $inner_joins = null;
-    if ($user->isPluginEnabled('ts') && $options['timesheet']) {
+    if ($user->isPluginEnabled('ts') && isset($options['timesheet']) && $options['timesheet']) {
       $timesheet_option = $options['timesheet'];
       if ($timesheet_option == TIMESHEET_PENDING)
         $inner_joins .= " inner join tt_timesheets ts on (l.timesheet_id = ts.id and ts.submit_status = 1 and ts.approve_status is null)";
@@ -2118,8 +2135,8 @@ class ttReportHelper {
   static function makeWorkUnitPart($options) {
     global $user;
 
-    $workUnits = $options['show_work_units'];
-    if ($workUnits) {
+    $work_unit_part = '';
+    if (isset($options['show_work_units']) && $options['show_work_units']) {
       $unitTotalsOnly = $user->getConfigOption('unit_totals_only');
       $firstUnitThreshold = $user->getConfigInt('1st_unit_threshold', 0);
       $minutesInUnit = $user->getConfigInt('minutes_in_unit', 15);
@@ -2135,7 +2152,8 @@ class ttReportHelper {
   static function makeCostPart($options) {
     global $user;
 
-    if ($options['show_cost']) {
+    $cost_part = '';
+    if (isset($options['show_cost']) && $options['show_cost']) {
       if (MODE_TIME == $user->getTrackingMode())
         $cost_part = ", sum(cast(l.billable * coalesce(u.rate, 0) * time_to_sec(l.duration)/3600 as decimal(10, 2))) as cost";
       else
@@ -2165,7 +2183,7 @@ class ttReportHelper {
     }
     // Not adding left joins for time custom fiels by design.
     // Left joins for user custom fields.
-    if ($custom_fields && $custom_fields->userFields) {
+    if (isset($custom_fields) && $custom_fields->userFields) {
       foreach ($custom_fields->userFields as $userField) {
         $field_name = 'user_field_'.$userField['id'];
         $field_value = $options[$field_name];
@@ -2202,7 +2220,10 @@ class ttReportHelper {
   // ('date', 'user', 'project', etc.) by checking group_by1, group_by2,
   // and group_by3 values passed in $options.
   static function groupingBy($what, $options) {
-    $grouping = ($options['group_by1'] == $what) || ($options['group_by2'] == $what) || ($options['group_by3'] == $what);
+    $grouping_by1 = isset($options['group_by1']) && $options['group_by1'] == $what;
+    $grouping_by2 = isset($options['group_by2']) && $options['group_by2'] == $what;
+    $grouping_by3 = isset($options['group_by3']) && $options['group_by3'] == $what;
+    $grouping = $grouping_by1 || $grouping_by2 || $grouping_by3;
     return $grouping;
   }
 
@@ -2214,9 +2235,11 @@ class ttReportHelper {
 
     // First, try to get a label from a translation file, which is the most likely scenario
     // such as grouping by date, user, project, or task.
-    $key = 'label.'.$dropdown_value;
-    $part = $i18n->get($key);
-    if ($part) return $part;
+    if (!ttStartsWith($dropdown_value, 'time_field_') && !ttStartsWith($dropdown_value, 'user_field_')) {
+      $key = 'label.'.$dropdown_value;
+      $part = $i18n->get($key);
+      if ($part) return $part;
+    }
 
     // If label is not found in translation file, we may be grouping by a custom field.
     // Obtain custom field label if so.
@@ -2244,25 +2267,26 @@ class ttReportHelper {
     return null;
   }
 
-  // makeGroupByHeader builds a column header for a totals-only report using group_by1,
-  // group_by2, and group_by3 values passed in $options.
+  // makeGroupByHeader builds a column header for a totals-only report
+  // or a timesheet using group_by1, group_by2, and group_by3 values passed in $options.
   static function makeGroupByHeader($options) {
     $no_grouping = ($options['group_by1'] == null || $options['group_by1'] == 'no_grouping') &&
       ($options['group_by2'] == null || $options['group_by2'] == 'no_grouping') &&
       ($options['group_by3'] == null || $options['group_by3'] == 'no_grouping');
     if ($no_grouping) return null;
 
-    if ($options['group_by1'] != null && $options['group_by1'] != 'no_grouping') {
+    $group_by_header = '';
+    if (isset($options['group_by1']) && $options['group_by1'] != 'no_grouping') {
       // We have group_by1.
       $group_by1 = $options['group_by1'];
       $group_by_header .= ' - '.ttReportHelper::makeGroupByHeaderPart($group_by1);
     }
-    if ($options['group_by2'] != null && $options['group_by2'] != 'no_grouping') {
+    if (isset($options['group_by2']) && $options['group_by2'] != 'no_grouping') {
       // We have group_by2.
       $group_by2 = $options['group_by2'];
       $group_by_header .= ' - '.ttReportHelper::makeGroupByHeaderPart($group_by2);
     }
-    if ($options['group_by3'] != null && $options['group_by3'] != 'no_grouping') {
+    if (isset($options['group_by3']) && $options['group_by3'] != 'no_grouping') {
       // We have group_by3.
       $group_by3 = $options['group_by3'];
       $group_by_header .= ' - '.ttReportHelper::makeGroupByHeaderPart($group_by3);
@@ -2274,6 +2298,7 @@ class ttReportHelper {
   // makeGroupByXmlTag creates an xml tag for a totals only report using group_by1,
   // group_by2, and group_by3 values passed in $options.
   static function makeGroupByXmlTag($options) {
+    $tag = '';
     if ($options['group_by1'] != null && $options['group_by1'] != 'no_grouping') {
       // We have group_by1.
       $tag .= '_'.$options['group_by1'];

@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 import('ttUserHelper');
 import('ttFileHelper');
@@ -88,9 +64,11 @@ class ttTimesheetHelper {
     $last_id = $mdb2->lastInsertID('tt_timesheets', 'id');
 
     // Associate tt_log items with timesheet.
+    $client_id = $project_id = null;
     if (isset($fields['client'])) $client_id = (int) $fields['client_id'];
     if (isset($fields['project_id'])) $project_id = (int) $fields['project_id'];
     // sql parts.
+    $client_part = $project_part = '';
     if ($client_id) $client_part = " and client_id = $client_id";
     if ($project_id) $project_part = " and project_id = $project_id";
 
@@ -115,6 +93,7 @@ class ttTimesheetHelper {
     $group_id = $user->getGroup();
     $org_id = $user->org_id;
 
+    $filePart = $fileJoin = '';
     if ($user->isPluginEnabled('at')) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
@@ -148,6 +127,7 @@ class ttTimesheetHelper {
     $group_id = $user->getGroup();
     $org_id = $user->org_id;
 
+    $filePart = $fileJoin = '';
     if ($user->isPluginEnabled('at')) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
@@ -462,6 +442,7 @@ class ttTimesheetHelper {
     $group_id = $user->getGroup();
     $org_id = $user->org_id;
 
+    $client_id = $project_id = null;
     if (isset($fields['client_id'])) $client_id = (int) $fields['client_id'];
     if (isset($fields['project_id'])) $project_id = (int) $fields['project_id'];
 
@@ -472,6 +453,7 @@ class ttTimesheetHelper {
     $end = $end_date->toString(DB_DATEFORMAT);
 
     // sql parts.
+    $client_part = $project_part = '';
     if ($client_id) $client_part = " and client_id = $client_id";
     if ($project_id) $project_part = " and project_id = $project_id";
 
@@ -500,6 +482,7 @@ class ttTimesheetHelper {
     $group_id = $user->getGroup();
     $org_id = $user->org_id;
 
+    $client_id = $project_id = null;
     if (isset($fields['client_id'])) $client_id = (int) $fields['client_id'];
     if (isset($fields['project_id'])) $project_id = (int) $fields['project_id'];
 
@@ -512,6 +495,7 @@ class ttTimesheetHelper {
     $quoted_end = $mdb2->quote($end);
 
     // sql parts.
+    $client_part = $project_part = '';
     if ($client_id) $client_part = " and client_id = $client_id";
     if ($project_id) $project_part = " and project_id = $project_id";
 
@@ -523,7 +507,7 @@ class ttTimesheetHelper {
     $res = $mdb2->query($sql);
     if (!is_a($res, 'PEAR_Error')) {
       $val = $res->fetchRow();
-      if ($val['id']) {
+      if (isset($val['id']) && $val['id']) {
         return true;
       }
     }

@@ -29,6 +29,7 @@ foreach ($tasks as $task_item)
   $all_tasks[$task_item['id']] = $task_item['name'];
 $show_tasks = MODE_PROJECTS_AND_TASKS == $user->getTrackingMode() && count($tasks) > 0;
 
+$cl_name = $cl_description = '';
 if ($request->isPost()) {
   $cl_name = trim($request->getParameter('project_name'));
   $cl_description = trim($request->getParameter('description'));
@@ -90,5 +91,5 @@ $smarty->assign('show_files', $showFiles);
 $smarty->assign('show_users', count($users) > 0);
 $smarty->assign('show_tasks', $show_tasks);
 $smarty->assign('title', $i18n->get('title.add_project'));
-$smarty->assign('content_page_name', 'project_add2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'project_add.tpl');
+$smarty->display('index.tpl');

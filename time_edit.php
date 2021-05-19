@@ -35,6 +35,7 @@ $showPaidStatus = $user->isPluginEnabled('ps') && $user->can('manage_invoices');
 $trackingMode = $user->getTrackingMode();
 $showProject = MODE_PROJECTS == $trackingMode || MODE_PROJECTS_AND_TASKS == $trackingMode;
 $showTask = MODE_PROJECTS_AND_TASKS == $trackingMode;
+$taskRequired = false;
 if ($showTask) $taskRequired = $config->getDefinedValue('task_required');
 $recordType = $user->getRecordType();
 $showStart = TYPE_START_FINISH == $recordType || TYPE_ALL == $recordType;
@@ -58,8 +59,8 @@ if ($request->isPost()) {
   $cl_duration = trim($request->getParameter('duration'));
   $cl_date = $request->getParameter('date');
   $cl_note = trim($request->getParameter('note'));
-  // If we have user custom fields - collect input.
-  if ($custom_fields && $custom_fields->timeFields) {
+  // If we have time custom fields - collect input.
+  if (isset($custom_fields) && $custom_fields->timeFields) {
     foreach ($custom_fields->timeFields as $timeField) {
       $control_name = 'time_field_'.$timeField['id'];
       $timeCustomFields[$timeField['id']] = array('field_id' => $timeField['id'],
@@ -76,6 +77,7 @@ if ($request->isPost()) {
   $cl_billable = 1;
   if ($showBillable)
     $cl_billable = $request->getParameter('billable');
+  $cl_paid = 0;
   if ($showPaidStatus)
     $cl_paid = $request->getParameter('paid');
 } else {
@@ -89,7 +91,7 @@ if ($request->isPost()) {
   $cl_note = $time_rec['comment'];
 
   // If we have time custom fields - collect values from database.
-  if ($custom_fields && $custom_fields->timeFields) {
+  if (isset($custom_fields) && $custom_fields->timeFields) {
     foreach ($custom_fields->timeFields as $timeField) {
       $control_name = 'time_field_'.$timeField['id'];
       $timeCustomFields[$timeField['id']] = array('field_id' => $timeField['id'],
@@ -138,7 +140,7 @@ if ($showPaidStatus)
   $form->addInput(array('type'=>'checkbox','name'=>'paid','value'=>$cl_paid));
 
 // If we have time custom fields - add controls for them.
-if ($custom_fields && $custom_fields->timeFields) {
+if (isset($custom_fields) && $custom_fields->timeFields) {
   foreach ($custom_fields->timeFields as $timeField) {
     $field_name = 'time_field_'.$timeField['id'];
     if ($timeField['type'] == CustomFields::TYPE_TEXT) {
@@ -153,6 +155,7 @@ if ($custom_fields && $custom_fields->timeFields) {
 }
 
 // If we show project dropdown, add controls for project and client.
+$project_list = $client_list = array();
 if ($showProject) {
   // Dropdown for projects assigned to user.
   $options['include_templates'] = $user->isPluginEnabled('tp') && $config->getDefinedValue('bind_templates_with_projects');
@@ -194,6 +197,7 @@ if ($showProject) {
 }
 
 // Task dropdown.
+$task_list = array();
 if ($showTask) {
   $task_list = ttGroupHelper::getActiveTasks();
   $form->addInput(array('type'=>'combobox',
@@ -267,7 +271,7 @@ if ($request->isPost()) {
   if ($showClient && $user->isOptionEnabled('client_required') && !$cl_client)
     $err->add($i18n->get('error.client'));
   // Validate input in time custom fields.
-  if ($custom_fields && $custom_fields->timeFields) {
+  if (isset($custom_fields) && $custom_fields->timeFields) {
     foreach ($timeCustomFields as $timeField) {
       // Validation is the same for text and dropdown fields.
       if (!ttValidString($timeField['value'], !$timeField['required'])) $err->add($i18n->get('error.field'), htmlspecialchars($timeField['label']));
@@ -371,7 +375,7 @@ if ($request->isPost()) {
         'paid'=>$cl_paid));
 
       // Update time custom fields if we have them.
-      if ($res && $custom_fields && $custom_fields->timeFields) {
+      if ($res && isset($custom_fields) && $custom_fields->timeFields) {
         $res = $custom_fields->updateTimeFields($cl_id, $timeCustomFields);
       }
       if ($res)
@@ -428,7 +432,7 @@ if ($request->isPost()) {
 
       // Insert time custom fields if we have them.
       $res = true;
-      if ($id && $custom_fields && $custom_fields->timeFields) {
+      if ($id && isset($custom_fields) && $custom_fields->timeFields) {
         $res = $custom_fields->insertTimeFields($id, $timeCustomFields);
       }
       if ($id && $res) {
@@ -463,5 +467,5 @@ $smarty->assign('task_list', $task_list);
 $smarty->assign('forms', array($form->getName()=>$form->toArray()));
 $smarty->assign('onload', 'onLoad="fillDropdowns()"');
 $smarty->assign('title', $i18n->get('title.edit_time_record'));
-$smarty->assign('content_page_name', 'time_edit2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'time_edit.tpl');
+$smarty->display('index.tpl');

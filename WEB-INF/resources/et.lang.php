@@ -27,6 +27,7 @@ $i18n_key_words = array(
 'menu.plugins' => 'Lisad',
 'menu.time' => 'Ajaarvestus',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 'menu.expenses' => 'Kulud',
 'menu.reports' => 'Raportid',
@@ -133,6 +134,8 @@ $i18n_key_words = array(
 'button.export' => 'Ekspordi grupp',
 'button.import' => 'Impordi grupp',
 'button.close' => 'Sulge',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Stopp',
 // TODO: translate the following.
 // 'button.approve' => 'Approve',
@@ -193,6 +196,8 @@ $i18n_key_words = array(
 'label.select_none' => 'Märgi kõik mittevalituks',
 'label.day_view' => 'Päeva vaade',
 'label.week_view' => 'Nädala vaade',
+// TODO: translate the following:
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Keel',
 'label.decimal_mark' => 'Koma märk',
@@ -238,8 +243,6 @@ $i18n_key_words = array(
 'label.paid_status' => 'Makse olek',
 'label.paid' => 'Makstud',
 'label.mark_paid' => 'Märgi makstuks',
-// TODO: translate the following.
-// 'label.week_menu' => 'Week menu',
 'label.week_note' => 'Nädala märge',
 'label.week_list' => 'Nädala nimekiri',
 'label.work_units' => 'Töö ühikud',
@@ -301,6 +304,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Ajakande kustutamine',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Kulud',
 'title.edit_expense' => 'Kulukirje muutmine',
 'title.delete_expense' => 'Kulukirje kustutamine',

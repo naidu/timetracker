@@ -59,7 +59,6 @@ if ($user->can('track_time')) {
     $form->addInput(array('type'=>'combobox',
       'onchange'=>'document.timesheetsForm.user_changed.value=1;document.timesheetsForm.submit();',
       'name'=>'user',
-      'style'=>'width: 250px;',
       'value'=>$user_id,
       'data'=>$user_list,
       'datakeys'=>array('id','name')));

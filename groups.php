@@ -30,7 +30,6 @@ if (count($groups) > 1) {
   $form->addInput(array('type'=>'combobox',
     'onchange'=>'this.form.submit();',
     'name'=>'group',
-    'style'=>'width: 250px;',
     'value'=>$group_id,
     'data'=>$groups,
     'datakeys'=>array('id','name')));

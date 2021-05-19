@@ -1,71 +1,56 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 <script>
   function chLocation(newLocation) { document.location = newLocation; }
 </script>
 
-<table cellspacing="0" cellpadding="7" border="0" width="720">
+{if $inactive_roles}
+<div class="section-header">{$i18n.form.roles.active_roles}</div>
+{/if}
+<table class="x-scrollable-table">
   <tr>
-    <td valign="top">
-      <table cellspacing="1" cellpadding="3" border="0" width="100%">
-  {if $inactive_roles}
-        <tr><td class="sectionHeaderNoBorder">{$i18n.form.roles.active_roles}</td></tr>
-  {/if}
-        <tr>
-          <td width="25%" class="tableHeader">{$i18n.label.thing_name}</td>
-          <td class="tableHeader">{$i18n.form.roles.rank}</td>
-          <td width="35%" class="tableHeader">{$i18n.label.description}</td>
-          <td></td>
-          <td></td>
-        </tr>
+    <th>{$i18n.label.thing_name}</th>
+    <th>{$i18n.form.roles.rank}</th>
+    <th>{$i18n.label.description}</th>
+    <th></th>
+    <th></th>
+  </tr>
   {if $active_roles}
     {foreach $active_roles as $role}
-        <tr bgcolor="{cycle values="#f5f5f5,#ffffff"}">
-          <td>{$role.name|escape}</td>
-          <td>{$role.rank}</td>
-          <td>{$role.description|escape}</td>
-          <td><a href="role_edit.php?id={$role.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon-edit.png"></a></td>
-          <td><a href="role_delete.php?id={$role.id}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon-delete.png"></a></td>
-        </tr>
+  <tr>
+    <td class="text-cell">{$role.name|escape}</td>
+    <td class="number-cell">{$role.rank}</td>
+    <td class="text-cell">{$role.description|escape}</td>
+    <td><a href="role_edit.php?id={$role.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon-edit.png"></a></td>
+    <td><a href="role_delete.php?id={$role.id}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon-delete.png"></a></td>
+   </tr>
     {/foreach}
   {/if}
-      </table>
-
-      <table width="100%">
-        <tr>
-          <td align="center"><br>
-            <form><input type="button" onclick="chLocation('role_add.php');" value="{$i18n.button.add}"></form>
-          </td>
-        </tr>
-      </table>
-
-  {if $inactive_roles}
-      <table cellspacing="1" cellpadding="3" border="0" width="100%">
-        <tr><td class="sectionHeaderNoBorder">{$i18n.form.roles.inactive_roles}</td></tr>
-        <tr>
-          <td width="25%" class="tableHeader">{$i18n.label.thing_name}</td>
-          <td class="tableHeader">{$i18n.form.roles.rank}</td>
-          <td width="35%" class="tableHeader">{$i18n.label.description}</td>
-          <td></td>
-          <td></td>
-        </tr>
-    {foreach $inactive_roles as $role}
-        <tr bgcolor="{cycle values="#f5f5f5,#ffffff"}">
-          <td>{$role.name|escape}</td>
-          <td>{$role.rank}</td>
-          <td>{$role.description|escape}</td>
-          <td><a href="role_edit.php?id={$role.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon-edit.png"></a></td>
-          <td><a href="role_delete.php?id={$role.id}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon-delete.png"></a></td>
-        </tr>
-    {/foreach}
-      </table>
-
-      <table width="100%">
-        <tr>
-          <td align="center"><br>
-            <form><input type="button" onclick="chLocation('role_add.php');" value="{$i18n.button.add}"></form>
-          </td>
-        </tr>
-      </table>
-  {/if}
-    </td>
-  </tr>
 </table>
+<div class="button-set"><form><input type="button" onclick="chLocation('role_add.php');" value="{$i18n.button.add}"></form></div>
+
+{if $inactive_roles}
+<div class="section-header">{$i18n.form.roles.inactive_roles}</div>
+<table class="x-scrollable-table">
+  <tr>
+    <th>{$i18n.label.thing_name}</th>
+    <th>{$i18n.form.roles.rank}</th>
+    <th>{$i18n.label.description}</th>
+    <th></th>
+    <th></th>
+  </tr>
+  {if $active_roles}
+    {foreach $inactive_roles as $role}
+  <tr>
+    <td class="text-cell">{$role.name|escape}</td>
+    <td class="number-cell">{$role.rank}</td>
+    <td class="text-cell">{$role.description|escape}</td>
+    <td><a href="role_edit.php?id={$role.id}"><img class="table_icon" alt="{$i18n.label.edit}" src="img/icon-edit.png"></a></td>
+    <td><a href="role_delete.php?id={$role.id}"><img class="table_icon" alt="{$i18n.label.delete}" src="img/icon-delete.png"></a></td>
+   </tr>
+    {/foreach}
+  {/if}
+</table>
+<div class="button-set"><form><input type="button" onclick="chLocation('role_add.php');" value="{$i18n.button.add}"></form></div>
+{/if}

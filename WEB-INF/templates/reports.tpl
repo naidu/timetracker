@@ -1,3 +1,6 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 <script>
 // We need a few arrays to populate project dropdown.
 // When client selection changes, the project dropdown must be re-populated with only relevant projects.
@@ -118,7 +121,7 @@ function fillProjectDropdown(id) {
 function fillTaskDropdown(project_id) {
   var str_task_ids;
   // Get a string of comma-separated task ids.
-  if (project_id) {  
+  if (project_id) {
     var property = "p" + project_id;
     str_task_ids = obj_tasks[property];
   }
@@ -242,218 +245,282 @@ function handleCheckboxes() {
 }
 </script>
 
-{$forms.reportForm.open}
-<div style="padding: 0 0 10 0;">
-  <table border="0" class="divider">
-    <tr>
-      <td>
-        <table cellspacing="1" cellpadding="3" border="0">
-          <tr>
-            <td>{$i18n.label.fav_report}:</td><td>{$forms.reportForm.favorite_report.control}</td>
-            <td>{$forms.reportForm.btn_generate.control}&nbsp;{$forms.reportForm.btn_delete.control}</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</div>
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
 
-<table cellspacing="4" cellpadding="7" border="0">
+{$forms.reportForm.open}
+<table class="centered-table">
+  <tr><td class="text-cell">{$i18n.label.fav_report}:</td></tr>
+  <tr><td class="td-with-input">{$forms.reportForm.favorite_report.control}</td></tr>
+  <tr><td class="td-with-horizontally-centered-input">{$forms.reportForm.btn_generate.control}&nbsp;{$forms.reportForm.btn_delete.control}</td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+</table>
+<div class="form-control-separator"></div>
+<table class="centered-table">
+  <tr><td colspan="2"><div class="section-header">{$i18n.form.reports.select_period}</div></td></tr>
+  <tr class = "small-screen-label"><td><label for="period">{$i18n.form.reports.select_period}:</label></td></tr>
   <tr>
-    <td valign="top" colspan="2" align="center">
-      <table border="0" cellpadding="3">
-        <tr>
-          <td valign="top">
-            <table border="0" cellpadding="3">
-{if $show_client}
-              <tr><td><b>{$i18n.label.client}</b></td></tr>
-              <tr><td>{$forms.reportForm.client.control}</td></tr>
-{/if}
-{if $show_project}
-              <tr><td><b>{$i18n.label.project}</b></td></tr>
-              <tr><td>{$forms.reportForm.project.control}</td></tr>
-{/if}
-{if $show_billable}
-              <tr><td><b>{$i18n.form.time.billable}</b></td></tr>
-              <tr><td>{$forms.reportForm.include_records.control}</td></tr>
-{/if}
-{if $show_paid_status}
-              <tr><td><b>{$i18n.label.paid_status}</b></td></tr>
-              <tr><td>{$forms.reportForm.paid_status.control}</td></tr>
-{/if}
-            </table>
-          </td>
-          <td></td>
-          <td valign="top">
-            <table border="0" cellpadding="3">
-{if $show_task}
-              <tr><td><b>{$i18n.label.task}</b></td></tr>
-              <tr><td>{$forms.reportForm.task.control}</td></tr>
-{/if}
-{if $show_approved}
-              <tr><td><b>{$i18n.label.approved}</b></td></tr>
-              <tr><td>{$forms.reportForm.approved.control}</td></tr>
-{/if}
-{if $show_invoice_dropdown}
-              <tr><td><b>{$i18n.label.invoice}</b></td></tr>
-              <tr><td>{$forms.reportForm.invoice.control}</td></tr>
-{/if}
-{if $show_timesheet_dropdown}
-              <tr><td><b>{$i18n.label.timesheet}</b></td></tr>
-              <tr><td>{$forms.reportForm.timesheet.control}</td></tr>
-{/if}
-            </table>
-          </td>
-        </tr>
+    <td class="large-screen-label"><label for="period">{$i18n.form.reports.select_period}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.period.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr><td colspan="2"><div class="section-header">{$i18n.form.reports.set_period}</div></td></tr>
+  <tr class = "small-screen-label"><td><label for="start_date">{$i18n.label.start_date}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="start_date">{$i18n.label.start_date}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.start_date.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="end_date">{$i18n.label.end_date}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="end_date">{$i18n.label.end_date}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.end_date.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+</table>
+<div class="form-control-separator"></div>
 {if $show_active_users}
-        <tr>
-          <td colspan="3"><b>{if $show_inactive_users}{$i18n.label.active_users}{else}{$i18n.label.users}{/if}</b></td>
-        </tr>
-        <tr>
-          <td colspan="3">{$forms.reportForm.users_active.control}</td>
-        </tr>
+<div class="section-header">{if $show_inactive_users}{$i18n.label.active_users}{else}{$i18n.label.users}{/if}</div>
+<table class="x-scrollable-table">
+  <tr><td class="td-with-input">{$forms.reportForm.users_active.control}</td></tr>
+</table>
+<div class="form-control-separator"></div>
 {/if}
 {if $show_inactive_users}
-        <tr>
-          <td colspan="3"><b>{$i18n.label.inactive_users}</b></td>
-        </tr>
-        <tr>
-          <td colspan="3">{$forms.reportForm.users_inactive.control}</td>
-        </tr>
+<div class="section-header">{$i18n.label.inactive_users}</div>
+<table class="x-scrollable-table">
+  <tr><td class="td-with-input">{$forms.reportForm.users_inactive.control}</td></tr>
+</table>
+<div class="form-control-separator"></div>
 {/if}
-        <tr>
-          <td><b>{$i18n.form.reports.select_period}</b></td>
-          <td>&nbsp;</td>
-          <td><b>{$i18n.form.reports.set_period}</b></td>
-        </tr>
-        <tr valign="top">
-          <td>{$forms.reportForm.period.control}</td>
-          <td align="right">{$i18n.label.start_date}:</td>
-          <td>{$forms.reportForm.start_date.control}</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td align="right">{$i18n.label.end_date}:</td>
-          <td>{$forms.reportForm.end_date.control}</td>
-        </tr>
-        <tr><td colspan="3"><b>{$i18n.form.reports.show_fields}</b></td></tr>
-        <tr>
-          <td colspan="3">
-            <table border="0" width="100%">
-              <tr>
-                <td width="25%" valign="top">
-                  <table border="0" cellpadding="3">
+<table class="centered-table">
 {if $show_client}
-                    <tr><td><label>{$forms.reportForm.chclient.control}&nbsp;{$i18n.label.client}</label></td></tr>
+  <tr class = "small-screen-label"><td><label for="client">{$i18n.label.client}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="client">{$i18n.label.client}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.client.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_billable}
+  <tr class = "small-screen-label"><td><label for="include_records">{$i18n.form.time.billable}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="include_records">{$i18n.form.time.billable}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.include_records.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_invoice_dropdown}
+  <tr class = "small-screen-label"><td><label for="invoice">{$i18n.label.invoice}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="invoice">{$i18n.label.invoice}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.invoice.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_paid_status}
+  <tr class = "small-screen-label"><td><label for="paid_status">{$i18n.label.paid_status}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="paid_status">{$i18n.label.paid_status}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.paid_status.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 {/if}
 {if $show_project}
-                    <tr><td><label>{$forms.reportForm.chproject.control}&nbsp;{$i18n.label.project}</label></td></tr>
-{/if}
-{if $show_timesheet_checkbox}
-                    <tr><td><label>{$forms.reportForm.chtimesheet.control}&nbsp;{$i18n.label.timesheet}</label></td></tr>
-{/if}
-                  </table>
-                </td>
-                <td width="25%" valign="top">
-                  <table border="0" cellpadding="3">
-{if $show_start}
-                    <tr><td><label>{$forms.reportForm.chstart.control}&nbsp;{$i18n.label.start}</label></td></tr>
+  <tr class = "small-screen-label"><td><label for="project">{$i18n.label.project}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="project">{$i18n.label.project}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.project.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 {/if}
 {if $show_task}
-                    <tr><td><label>{$forms.reportForm.chtask.control}&nbsp;{$i18n.label.task}</label></td></tr>
+  <tr class = "small-screen-label"><td><label for="task">{$i18n.label.task}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="task">{$i18n.label.task}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.task.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_approved}
+  <tr class = "small-screen-label"><td><label for="approved">{$i18n.label.approved}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="approved">{$i18n.label.approved}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.approved.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_timesheet_dropdown}
+  <tr class = "small-screen-label"><td><label for="timesheet">{$i18n.label.timesheet}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="timesheet">{$i18n.label.timesheet}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.timesheet.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+</table>
+<div class="form-control-separator"></div>
+<table class="centered-table">
+  <tr><td colspan="2"><div class="section-header">{$i18n.form.reports.show_fields}</div></td></tr>
+{if $show_client}
+  <tr class = "small-screen-label"><td><label for="chclient">{$i18n.label.client}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chclient">{$i18n.label.client}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chclient.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_project}
+  <tr class = "small-screen-label"><td><label for="chproject">{$i18n.label.project}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chproject">{$i18n.label.project}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chproject.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_task}
+  <tr class = "small-screen-label"><td><label for="chtask">{$i18n.label.task}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chtask">{$i18n.label.task}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chtask.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_start}
+  <tr class = "small-screen-label"><td><label for="chstart">{$i18n.label.start}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chstart">{$i18n.label.start}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chstart.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_finish}
+  <tr class = "small-screen-label"><td><label for="chfinish">{$i18n.label.finish}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chfinish">{$i18n.label.finish}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chfinish.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+  <tr class = "small-screen-label"><td><label for="chduration">{$i18n.label.duration}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chduration">{$i18n.label.duration}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chduration.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="chnote">{$i18n.label.note}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chnote">{$i18n.label.note}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chnote.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{if $show_work_units}
+  <tr class = "small-screen-label"><td><label for="chunits">{$i18n.label.work_units}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chunits">{$i18n.label.work_units}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chunits.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+  <tr class = "small-screen-label"><td><label for="chcost">{$i18n.label.cost}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chcost">{$i18n.label.cost}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chcost.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{if $show_approved}
+  <tr class = "small-screen-label"><td><label for="chapproved">{$i18n.label.approved}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chapproved">{$i18n.label.approved}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chapproved.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+{if $show_paid_status}
+  <tr class = "small-screen-label"><td><label for="chpaid">{$i18n.label.paid}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chpaid">{$i18n.label.paid}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chpaid.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 {/if}
 {if $show_ip}
-                    <tr><td><label>{$forms.reportForm.chip.control}&nbsp;{$i18n.label.ip}</label></td></tr>
-{/if}
-{if $show_work_units}
-                    <tr><td><label>{$forms.reportForm.chunits.control}&nbsp;{$i18n.label.work_units}</label></td></tr>
-{/if}
-                  </table>
-                </td>
-                <td width="25%" valign="top">
-                  <table border="0" cellpadding="3">
-{if $show_finish}
-                    <tr><td><label>{$forms.reportForm.chfinish.control}&nbsp;{$i18n.label.finish}</label></td></tr>
-{/if}
-                    <tr><td><label>{$forms.reportForm.chnote.control}&nbsp;{$i18n.label.note}</label></td></tr>
-{if $show_approved}
-                    <tr><td><label>{$forms.reportForm.chapproved.control}&nbsp;{$i18n.label.approved}</label></td></tr>
+  <tr class = "small-screen-label"><td><label for="chip">{$i18n.label.ip}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chip">{$i18n.label.ip}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chip.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 {/if}
 {if $show_invoice_checkbox}
-                    <tr><td><label>{$forms.reportForm.chinvoice.control}&nbsp;{$i18n.label.invoice}</label></td></tr>
+  <tr class = "small-screen-label"><td><label for="chinvoice">{$i18n.label.invoice}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chinvoice">{$i18n.label.invoice}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chinvoice.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 {/if}
-                  </table>
-                </td>
-                <td width="25%" valign="top">
-                  <table border="0" cellpadding="3">
-                    <tr><td><label>{$forms.reportForm.chduration.control}&nbsp;{$i18n.label.duration}</label></td></tr>
-                    <tr><td><label>{$forms.reportForm.chcost.control}&nbsp;{$i18n.label.cost}</label></td></tr>
-{if $show_paid_status}
-                    <tr><td><label>{$forms.reportForm.chpaid.control}&nbsp;{$i18n.label.paid}</label></td></tr>
+{if $show_timesheet_checkbox}
+  <tr class = "small-screen-label"><td><label for="chtimesheet">{$i18n.label.timesheet}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chtimesheet">{$i18n.label.timesheet}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chtimesheet.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 {/if}
 {if $show_files}
-                    <tr><td><label>{$forms.reportForm.chfiles.control}&nbsp;{$i18n.label.files}</label></td></tr>
-{/if}
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-{if $custom_fields && $custom_fields->timeFields}
-    <tr><td colspan="3"><b>{$i18n.form.reports.time_fields}</b></td></tr>
-  {foreach $custom_fields->timeFields as $timeField}
-    <tr>
-      <td align="right">{$timeField['label']|escape}:</td>
-      {assign var="control_name" value='time_field_'|cat:$timeField['id']}
-      {assign var="checkbox_control_name" value='show_time_field_'|cat:$timeField['id']}
-      <td>{$forms.reportForm.$control_name.control}</td>
-      <td>{$forms.reportForm.$checkbox_control_name.control}</td>
-    </tr>
-  {/foreach}
-{/if}
-{if $custom_fields && $custom_fields->userFields}
-    <tr><td colspan="3"><b>{$i18n.form.reports.user_fields}</b></td></tr>
-  {foreach $custom_fields->userFields as $userField}
-    <tr>
-      <td align="right">{$userField['label']|escape}:</td>
-      {assign var="control_name" value='user_field_'|cat:$userField['id']}
-      {assign var="checkbox_control_name" value='show_user_field_'|cat:$userField['id']}
-      <td>{$forms.reportForm.$control_name.control}</td>
-      <td>{$forms.reportForm.$checkbox_control_name.control}</td>
-    </tr>
-  {/foreach}
-{/if}
-        <tr><td><b>{$i18n.form.reports.group_by}</b></td></tr>
-        <tr valign="top">
-          <td>{$forms.reportForm.group_by1.control}</td>
-          <td>{$forms.reportForm.group_by2.control}</td>
-          <td>{$forms.reportForm.group_by3.control}</td>
-        </tr>
-        <tr>
-            <td><span id="totals_only_label"><label>{$forms.reportForm.chtotalsonly.control} {$i18n.label.totals_only}</label></span></td>
-        </tr>
-      </table>
-
-<div style="padding: 10 0 10 0;">
-  <table border="0" class="divider">
-    <tr>
-      <td align="center">
-        <table cellspacing="1" cellpadding="3" border="0">
-          <tr>
-            <td>{$i18n.form.reports.save_as_favorite}:</td><td>{$forms.reportForm.new_fav_report.control}</td>
-            <td>{$forms.reportForm.btn_save.control}</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</div>
-
-      <table border="0" cellpadding="3" width="100%">
-        <tr><td colspan="3" height="50" align="center">{$forms.reportForm.btn_generate.control}</td></tr>
-      </table>
-    </td>
+  <tr class = "small-screen-label"><td><label for="chfiles">{$i18n.label.files}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="chfiles">{$i18n.label.files}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.chfiles.control}</td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
 </table>
+<div class="form-control-separator"></div>
+<table class="centered-table">
+{if isset($custom_fields) && $custom_fields->timeFields}
+  <tr><td colspan="2"><div class="section-header">{$i18n.form.reports.time_fields}</div></td></tr>
+  {foreach $custom_fields->timeFields as $timeField}
+    {assign var="control_name" value='time_field_'|cat:$timeField['id']}
+    {assign var="checkbox_control_name" value='show_time_field_'|cat:$timeField['id']}
+  <tr class = "small-screen-label"><td><label for="{$control_name}">{$timeField['label']|escape}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="{$control_name}">{$timeField['label']|escape}:</label></td>
+    {assign var="control_name" value='time_field_'|cat:$timeField['id']}
+    {assign var="checkbox_control_name" value='show_time_field_'|cat:$timeField['id']}
+    <td class="td-with-input">{$forms.reportForm.$control_name.control} {$forms.reportForm.$checkbox_control_name.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  {/foreach}
+{/if}
+{if isset($custom_fields) && $custom_fields->userFields}
+  <tr><td colspan="2"><div class="section-header">{$i18n.form.reports.user_fields}</div></td></tr>
+  {foreach $custom_fields->userFields as $userField}
+    {assign var="control_name" value='user_field_'|cat:$userField['id']}
+    {assign var="checkbox_control_name" value='show_user_field_'|cat:$userField['id']}
+  <tr class = "small-screen-label"><td><label for="{$control_name}">{$userField['label']|escape}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="{$control_name}">{$userField['label']|escape}:</label></td>
+    <td class="td-with-input">{$forms.reportForm.$control_name.control} {$forms.reportForm.$checkbox_control_name.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  {/foreach}
+{/if}
+</table>
+<div class="form-control-separator"></div>
+<table class="centered-table">
+  <tr><td><div class="section-header">{$i18n.form.reports.group_by}</div></td></tr>
+  <tr><td class="td-with-input">{$forms.reportForm.group_by1.control}</td></tr>
+  <tr><td class="td-with-input">{$forms.reportForm.group_by2.control}</td></tr>
+  <tr><td class="td-with-input">{$forms.reportForm.group_by3.control}</td></tr>
+  <tr><td class="td-with-input"><span id="totals_only_label"><label>{$forms.reportForm.chtotalsonly.control} {$i18n.label.totals_only}</label></span></td></tr>
+</table>
+<div class="form-control-separator"></div>
+<table class="centered-table">
+  <tr><td class="text-cell"><label for="new_fav_report">{$i18n.form.reports.save_as_favorite}:</label></td></tr>
+  <tr><td class="td-with-input">{$forms.reportForm.new_fav_report.control} {$forms.reportForm.btn_save.control}</td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+</table>
+<div class="button-set">{$forms.reportForm.btn_generate.control}</div>
 {$forms.reportForm.close}

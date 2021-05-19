@@ -35,6 +35,7 @@ $subtotals = ttReportHelper::getSubtotals($options);
 $totals = ttReportHelper::getTotals($options);
 
 // Determine which controls to show and obtain date for them.
+$showApprovers = false;
 $showSubmit = !$timesheet['submit_status'];
 if ($showSubmit) {
   $approvers = ttTimesheetHelper::getApprovers();
@@ -59,7 +60,7 @@ if ($showSubmit) {
 }
 
 if ($showApprove) {
-  $form->addInput(array('type'=>'textarea','name'=>'comment','maxlength'=>'250','style'=>'width: 300px; height: 60px;'));
+  $form->addInput(array('type'=>'textarea','name'=>'comment','maxlength'=>'250'));
   $form->addInput(array('type'=>'submit','name'=>'btn_approve','value'=>$i18n->get('button.approve')));
   $form->addInput(array('type'=>'submit','name'=>'btn_disapprove','value'=>$i18n->get('button.disapprove')));
 }
@@ -116,7 +117,6 @@ if ($request->isPost()) {
   }
 }
 
-$smarty->assign('not_client', $notClient);
 $smarty->assign('group_by_header', ttReportHelper::makeGroupByHeader($options));
 $smarty->assign('timesheet', $timesheet);
 $smarty->assign('subtotals', $subtotals);

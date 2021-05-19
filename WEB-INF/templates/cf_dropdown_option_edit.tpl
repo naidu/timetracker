@@ -1,27 +1,16 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {$forms.optionEditForm.open}
-<table cellspacing="4" cellpadding="7" border="0">
+<table class="centered-table">
+  <tr class = "small-screen-label"><td><label for="name">{$i18n.label.thing_name} (*):</label></td></tr>
   <tr>
-    <td>
-{if $user->can('manage_custom_fields')}
-      <table cellspacing="1" cellpadding="2" border="0">
-        <tr>
-          <td align="right">{$i18n.label.thing_name} (*):</td>
-          <td>{$forms.optionEditForm.name.control}</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>{$i18n.label.required_fields}</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
-         <td colspan="2" align="center" height="50">{$forms.optionEditForm.btn_save.control}</td>
-        </tr>
-      </table>
-{/if}
-    </td>
+    <td class="large-screen-label"><label for="name">{$i18n.label.thing_name} (*):</label></td>
+    <td class="td-with-input">{$forms.optionEditForm.name.control}</td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr><td colspan="2">{$i18n.label.required_fields}</td></tr>
 </table>
+<div class="button-set">{$forms.optionEditForm.btn_save.control}</div>
 {$forms.optionEditForm.close}

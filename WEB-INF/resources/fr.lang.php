@@ -26,6 +26,7 @@ $i18n_key_words = array(
 'menu.plugins' => 'Plugins',
 'menu.time' => 'Temps',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 'menu.expenses' => 'Dépenses',
 'menu.reports' => 'Rapports',
@@ -122,6 +123,8 @@ $i18n_key_words = array(
 'button.export' => 'Exporter l\\\'équipe', // TODO: replace "team" with "group".
 'button.import' => 'Importer une équipe', // TODO: replace "team" with "group".
 'button.close' => 'Fermer',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Arrêter',
 // TODO: translate the following.
 // 'button.approve' => 'Approve',
@@ -185,6 +188,7 @@ $i18n_key_words = array(
 // TODO: translate the following.
 // 'label.day_view' => 'Day view',
 // 'label.week_view' => 'Week view',
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Langage',
 'label.decimal_mark' => 'Séparateur de décimal',
@@ -229,7 +233,6 @@ $i18n_key_words = array(
 // 'label.paid_status' => 'Paid status',
 // 'label.paid' => 'Paid',
 // 'label.mark_paid' => 'Mark paid',
-// 'label.week_menu' => 'Week menu',
 // 'label.week_note' => 'Week note',
 // 'label.week_list' => 'Week list',
 // 'label.work_units' => 'Work units',
@@ -289,6 +292,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Suppression de l\\\'entrée de temps',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Dépenses',
 'title.edit_expense' => 'Modification d\\\'une dépense',
 'title.delete_expense' => 'Suppression d\\\'une dépense',

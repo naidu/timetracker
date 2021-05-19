@@ -40,7 +40,6 @@ $report_list = ttFavReportHelper::getReports();
 $form->addInput(array('type'=>'combobox',
   'name'=>'favorite_report',
   'onchange'=>'this.form.fav_report_changed.value=1;this.form.submit();',
-  'style'=>'width: 250px;',
   'data'=>$report_list,
   'datakeys'=>array('id','name'),
   'empty'=>array('-1'=>$i18n->get('dropdown.no'))));
@@ -51,6 +50,7 @@ $form->addInput(array('type'=>'submit','name'=>'btn_delete','value'=>$i18n->get(
 
 // Dropdown for clients if the clients plugin is enabled.
 $showClient = $user->isPluginEnabled('cl') && !$user->isClient();
+$client_list = array();
 if ($showClient) {
   if ($user->can('view_reports') || $user->can('view_all_reports')) {
     $client_list = ttClientHelper::getClients(); // TODO: improve getClients for "view_reports"
@@ -63,7 +63,6 @@ if ($showClient) {
   $form->addInput(array('type'=>'combobox',
     'onchange'=>'fillProjectDropdown(this.value);',
     'name'=>'client',
-    'style'=>'width: 250px;',
     'data'=>$client_list,
     'datakeys'=>array('id', 'name'),
     'empty'=>array(''=>$i18n->get('dropdown.all'))));
@@ -71,6 +70,7 @@ if ($showClient) {
 
 // Add project dropdown.
 $showProject = MODE_PROJECTS == $trackingMode || MODE_PROJECTS_AND_TASKS == $trackingMode;
+$project_list = array();
 if ($showProject) {
   if ($user->can('view_reports') || $user->can('view_all_reports')) {
     $project_list = ttProjectHelper::getProjects(); // All active and inactive projects.
@@ -85,7 +85,6 @@ if ($showProject) {
   $form->addInput(array('type'=>'combobox',
     'onchange'=>'fillTaskDropdown(this.value);selectAssignedUsers(this.value);',
     'name'=>'project',
-    'style'=>'width: 250px;',
     'data'=>$project_list,
     'datakeys'=>array('id','name'),
     'empty'=>array(''=>$i18n->get('dropdown.all'))));
@@ -93,6 +92,7 @@ if ($showProject) {
 
 // Add task dropdown.
 $showTask = MODE_PROJECTS_AND_TASKS == $trackingMode;
+$task_list = array();
 if ($showTask) {
   $task_list = ttGroupHelper::getActiveTasks();
   if (count($task_list) == 0) $showTask = false;
@@ -100,7 +100,6 @@ if ($showTask) {
 if ($showTask) {
   $form->addInput(array('type'=>'combobox',
     'name'=>'task',
-    'style'=>'width: 250px;',
     'data'=>$task_list,
     'datakeys'=>array('id','name'),
     'empty'=>array(''=>$i18n->get('dropdown.all'))));
@@ -113,7 +112,6 @@ if ($showBillable) {
     '2'=>$i18n->get('form.reports.include_not_billable'));
   $form->addInput(array('type'=>'combobox',
     'name'=>'include_records', // TODO: how about a better name here?
-    'style'=>'width: 250px;',
     'data'=>$include_options,
     'empty'=>array(''=>$i18n->get('dropdown.all'))));
 }
@@ -125,7 +123,6 @@ if ($showInvoiceDropdown) {
     '2'=>$i18n->get('form.reports.include_not_invoiced'));
   $form->addInput(array('type'=>'combobox',
     'name'=>'invoice',
-    'style'=>'width: 250px;',
     'data'=>$invoice_options,
     'empty'=>array(''=>$i18n->get('dropdown.all'))));
 }
@@ -136,7 +133,6 @@ $showPaidStatus = $user->isPluginEnabled('ps') && $user->can('manage_invoices');
 if ($showPaidStatus) {
   $form->addInput(array('type'=>'combobox',
    'name'=>'paid_status',
-   'style'=>'width: 250px;',
    'data'=>array('1'=>$i18n->get('dropdown.paid'),'2'=>$i18n->get('dropdown.not_paid')),
    'empty'=>array(''=>$i18n->get('dropdown.all'))
  ));
@@ -149,7 +145,6 @@ $showApproved = $user->isPluginEnabled('ap') &&
 if ($showApproved) {
   $form->addInput(array('type'=>'combobox',
    'name'=>'approved',
-   'style'=>'width: 250px;',
    'data'=>array('1'=>$i18n->get('dropdown.approved'),'2'=>$i18n->get('dropdown.not_approved')),
    'empty'=>array(''=>$i18n->get('dropdown.all'))
   ));
@@ -160,7 +155,6 @@ $showTimesheetDropdown = $user->isPluginEnabled('ts');
 if ($showTimesheetDropdown) {
   $form->addInput(array('type'=>'combobox',
    'name'=>'timesheet',
-   'style'=>'width: 250px;',
    'data'=>array(TIMESHEET_NOT_ASSIGNED=>$i18n->get('form.reports.include_not_assigned'),
      TIMESHEET_ASSIGNED=>$i18n->get('form.reports.include_assigned'),
      TIMESHEET_PENDING=>$i18n->get('form.reports.include_pending'),
@@ -173,7 +167,7 @@ $showTimesheetCheckbox = $user->isPluginEnabled('ts');
 
 // Add user table.
 $showUsers = $user->can('view_reports') || $user->can('view_all_reports') || $user->isClient();
-$user_list = array();
+$user_list = $user_list_active = $user_list_inactive = array();
 if ($showUsers) {
   // Prepare user and assigned projects arrays.
   if ($user->can('view_reports') || $user->can('view_all_reports')) {
@@ -210,10 +204,9 @@ if ($showUsers) {
     'name'=>'users_active',
     'data'=>$user_list_active,
     'layout'=>'V',
-    'groupin'=>$row_count,
-    'style'=>'width: 100%;'));
+    'groupin'=>$row_count));
 
-    foreach ($inactive_users as $single_user) {
+  foreach ($inactive_users as $single_user) {
     $user_list_inactive[$single_user['id']] = $single_user['name'];
     $projects = ttProjectHelper::getAssignedProjects($single_user['id']);
     if ($projects) {
@@ -222,19 +215,17 @@ if ($showUsers) {
       }
     }
   }
-  $row_count = is_array($user_list_inactive) ? ceil(count($user_list_inactive)/3) : 1;
+  $row_count = ceil(count($user_list_inactive)/3);
   $form->addInput(array('type'=>'checkboxgroup',
     'name'=>'users_inactive',
     'data'=>$user_list_inactive,
     'layout'=>'V',
-    'groupin'=>$row_count,
-    'style'=>'width: 100%;'));
+    'groupin'=>$row_count));
 }
 
 // Add control for time period.
 $form->addInput(array('type'=>'combobox',
   'name'=>'period',
-  'style'=>'width: 250px;',
   'data'=>array(INTERVAL_THIS_MONTH=>$i18n->get('dropdown.current_month'),
     INTERVAL_LAST_MONTH=>$i18n->get('dropdown.previous_month'),
     INTERVAL_THIS_WEEK=>$i18n->get('dropdown.current_week'),
@@ -286,15 +277,14 @@ if ($showTimesheetCheckbox)
   $form->addInput(array('type'=>'hidden','name'=>'timesheet_user_id'));
 
 // If we have time custom fields - add controls for them.
-if ($custom_fields && $custom_fields->timeFields) {
+if (isset($custom_fields) && $custom_fields->timeFields) {
   foreach ($custom_fields->timeFields as $timeField) {
     $field_name = 'time_field_'.$timeField['id'];
     $checkbox_field_name = 'show_'.$field_name;
     if ($timeField['type'] == CustomFields::TYPE_TEXT) {
-      $form->addInput(array('type'=>'text','name'=>$field_name,'style'=>'width: 250px;'));
+      $form->addInput(array('type'=>'text','name'=>$field_name));
     } elseif ($timeField['type'] == CustomFields::TYPE_DROPDOWN) {
       $form->addInput(array('type'=>'combobox','name'=>$field_name,
-      'style'=>'width: 250px;',
       'data'=>CustomFields::getOptions($timeField['id']),
       'empty'=>array(''=>$i18n->get('dropdown.all'))));
     }
@@ -304,15 +294,14 @@ if ($custom_fields && $custom_fields->timeFields) {
 }
 
 // If we have user custom fields - add controls for them.
-if ($custom_fields && $custom_fields->userFields) {
+if (isset($custom_fields) && $custom_fields->userFields) {
   foreach ($custom_fields->userFields as $userField) {
     $field_name = 'user_field_'.$userField['id'];
     $checkbox_field_name = 'show_'.$field_name;
     if ($userField['type'] == CustomFields::TYPE_TEXT) {
-      $form->addInput(array('type'=>'text','name'=>$field_name,'style'=>'width: 250px;'));
+      $form->addInput(array('type'=>'text','name'=>$field_name,));
     } elseif ($userField['type'] == CustomFields::TYPE_DROPDOWN) {
       $form->addInput(array('type'=>'combobox','name'=>$field_name,
-      'style'=>'width: 250px;',
       'data'=>CustomFields::getOptions($userField['id']),
       'empty'=>array(''=>$i18n->get('dropdown.all'))));
     }
@@ -333,14 +322,14 @@ if (MODE_PROJECTS == $trackingMode || MODE_PROJECTS_AND_TASKS == $trackingMode)
 if (MODE_PROJECTS_AND_TASKS == $trackingMode)
   $group_by_options['task'] = $i18n->get('form.reports.group_by_task');
 // If we have time custom fields - add group by options for them.
-if ($custom_fields && $custom_fields->timeFields) {
+if (isset($custom_fields) && $custom_fields->timeFields) {
   foreach ($custom_fields->timeFields as $timeField) {
     $field_name = 'time_field_'.$timeField['id'];
     $group_by_options[$field_name] = $timeField['label'];
   }
 }
 // If we have user custom fields - add group by options for them.
-if ($custom_fields && $custom_fields->userFields) {
+if (isset($custom_fields) && $custom_fields->userFields) {
   foreach ($custom_fields->userFields as $userField) {
     $field_name = 'user_field_'.$userField['id'];
     $group_by_options[$field_name] = $userField['label'];
@@ -353,7 +342,7 @@ if ($group_by_options_size > 3) $form->addInput(array('type'=>'combobox','onchan
 $form->addInput(array('type'=>'checkbox','name'=>'chtotalsonly'));
 
 // Add text field for a new favorite report name.
-$form->addInput(array('type'=>'text','name'=>'new_fav_report','maxlength'=>'30','style'=>'width: 250px;'));
+$form->addInput(array('type'=>'text','name'=>'new_fav_report','maxlength'=>'30'));
 // Save button.
 $form->addInput(array('type'=>'submit','name'=>'btn_save','value'=>$i18n->get('button.save')));
 

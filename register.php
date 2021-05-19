@@ -18,6 +18,8 @@ $auth->doLogout();
 
 if (!defined('CURRENCY_DEFAULT')) define('CURRENCY_DEFAULT', '$');
 
+$cl_group_name = $cl_currency = $cl_lang = $cl_manager_name = $cl_manager_login =
+$cl_password1 = $cl_password2 = $cl_manager_email = '';
 if ($request->isPost()) {
   $cl_group_name = trim($request->getParameter('group_name'));
   $cl_currency = trim($request->getParameter('currency'));
@@ -94,5 +96,5 @@ if ($request->isPost()) {
 $smarty->assign('title', $i18n->get('title.add_group'));
 $smarty->assign('forms', array($form->getName()=>$form->toArray()));
 $smarty->assign('onload', 'onLoad="document.groupForm.group_name.focus()"');
-$smarty->assign('content_page_name', 'register2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'register.tpl');
+$smarty->display('index.tpl');

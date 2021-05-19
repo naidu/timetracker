@@ -26,6 +26,7 @@ $i18n_key_words = array(
 'menu.plugins' => 'Plugins',
 'menu.time' => 'Tid',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 'menu.expenses' => 'Udgifter',
 'menu.reports' => 'Rapporter',
@@ -122,6 +123,8 @@ $i18n_key_words = array(
 'button.export' => 'Eksporter team', // TODO: replace "team" with "group".
 'button.import' => 'Importer team', // TODO: replace "team" with "group".
 'button.close' => 'Luk',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Stop',
 // TODO: translate the following.
 // 'button.approve' => 'Approve',
@@ -186,6 +189,7 @@ $i18n_key_words = array(
 // TODO: translate the following.
 // 'label.day_view' => 'Day view',
 // 'label.week_view' => 'Week view',
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Sprog',
 'label.decimal_mark' => 'Decimal tegn',
@@ -231,7 +235,6 @@ $i18n_key_words = array(
 // 'label.paid_status' => 'Paid status',
 // 'label.paid' => 'Paid',
 // 'label.mark_paid' => 'Mark paid',
-// 'label.week_menu' => 'Week menu',
 // 'label.week_note' => 'Week note',
 // 'label.week_list' => 'Week list',
 // 'label.work_units' => 'Work units',
@@ -291,6 +294,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Slet Tidsregistrering',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Udgifter',
 'title.edit_expense' => 'Redigér Udgift',
 'title.delete_expense' => 'Slet Udgift',

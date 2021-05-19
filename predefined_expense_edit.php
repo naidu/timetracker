@@ -33,8 +33,8 @@ if ($request->isPost()) {
 
 $form = new Form('predefinedExpenseForm');
 $form->addInput(array('type'=>'hidden','name'=>'id','value'=>$predefined_expense_id));
-$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'name','style'=>'width: 250px;','value'=>$cl_name));
-$form->addInput(array('type'=>'text','maxlength'=>'40','name'=>'cost','style'=>'width: 100px;','value'=>$cl_cost));
+$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'name','value'=>$cl_name));
+$form->addInput(array('type'=>'text','class'=>'text-field-with-hint','maxlength'=>'40','name'=>'cost','value'=>$cl_cost));
 $form->addInput(array('type'=>'submit','name'=>'btn_submit','value'=>$i18n->get('button.submit')));
 
 if ($request->isPost()) {

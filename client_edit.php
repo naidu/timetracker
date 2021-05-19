@@ -26,7 +26,8 @@ if (!$client) {
 // End of access checks.
 
 $projects = ttGroupHelper::getActiveProjects();
-
+$cl_name = $cl_address = $cl_tax = $cl_status = null;
+$cl_projects = array();
 if ($request->isPost()) {
   $cl_name = trim($request->getParameter('name'));
   $cl_address = trim($request->getParameter('address'));
@@ -103,5 +104,5 @@ if ($request->isPost()) {
 $smarty->assign('forms', array($form->getName()=>$form->toArray()));
 $smarty->assign('show_projects', $show_projects);
 $smarty->assign('title', $i18n->get('title.edit_client'));
-$smarty->assign('content_page_name', 'client_edit2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'client_edit.tpl');
+$smarty->display('index.tpl');

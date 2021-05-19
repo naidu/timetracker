@@ -74,13 +74,13 @@ if ($request->isPost()) {
   $uc->setValue(SYSC_CHART_TYPE, $cl_type);
 } else {
   // Initialize chart interval.
-  $cl_interval = $_SESSION['chart_interval'];
+  $cl_interval = @$_SESSION['chart_interval'];
   if (!$cl_interval) $cl_interval = $uc->getValue(SYSC_CHART_INTERVAL);
   if (!$cl_interval) $cl_interval = INTERVAL_THIS_MONTH;
   $_SESSION['chart_interval'] = $cl_interval;
 
   // Initialize chart type.
-  $cl_type = $_SESSION['chart_type'];
+  $cl_type = @$_SESSION['chart_type'];
   if (!$cl_type) $cl_type = $uc->getValue(SYSC_CHART_TYPE);
   $cl_type = ttChartHelper::adjustType($cl_type);
   $_SESSION['chart_type'] = $cl_type;
@@ -205,5 +205,5 @@ $smarty->assign('chart_selector', $chart_selector);
 $smarty->assign('onload', 'onLoad="adjustTodayLinks()"');
 $smarty->assign('forms', array($chart_form->getName() => $chart_form->toArray()));
 $smarty->assign('title', $i18n->get('title.charts'));
-$smarty->assign('content_page_name', 'charts2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'charts.tpl');
+$smarty->display('index.tpl');

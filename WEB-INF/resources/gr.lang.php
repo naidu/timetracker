@@ -25,6 +25,7 @@ $i18n_key_words = array(
 'menu.plugins' => 'Πρόσθετα',
 'menu.time' => 'Χρόνος',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 'menu.expenses' => 'Έξοδα',
 'menu.reports' => 'Αναφορές',
@@ -118,6 +119,8 @@ $i18n_key_words = array(
 'button.export' => 'Εξαγωγη ομάδας',
 'button.import' => 'Εισαγωγή ομάδας',
 'button.close' => 'Κλείσιμο',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Τέλος',
 // TODO: translate the following.
 // 'button.approve' => 'Approve',
@@ -179,6 +182,8 @@ $i18n_key_words = array(
 'label.select_none' => 'Μη επιλογή',
 'label.day_view' => 'Προβολή ημέρας',
 'label.week_view' => 'Προβολή εβδομάδας',
+// TODO: translate the following:
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Γλώσσα',
 'label.decimal_mark' => 'Δεκαδική ένδειξη',
@@ -223,8 +228,6 @@ $i18n_key_words = array(
 'label.paid_status' => 'Κατάσταση πληρωμής',
 'label.paid' => 'Πληρωμένο',
 'label.mark_paid' => 'Σήμανση πληρωμένα',
-// TODO: translate the following.
-// 'label.week_menu' => 'Week menu',
 'label.week_note' => 'Σημείωση εβδομάδας',
 'label.week_list' => 'Λίστα εβδομάδων',
 // TODO: translate the following.
@@ -285,6 +288,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Διαγραφή χρόνου',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Δαπάνες',
 'title.edit_expense' => 'Επεξεργασία δαπάνης',
 'title.delete_expense' => 'Διαγραφή δαπάνης',

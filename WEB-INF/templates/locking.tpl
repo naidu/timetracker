@@ -1,20 +1,17 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {$forms.lockingForm.open}
-<table cellspacing="4" cellpadding="7" border="0">
+<table class="centered-table">
+  <tr class = "small-screen-label"><td><label for="lock_spec">{$i18n.label.schedule}:</label></td></tr>
   <tr>
-    <td>
-      <table cellspacing="1" cellpadding="2" border="0">
-        <tr>
-          <td align="right">{$i18n.label.schedule}:</td>
-          <td>{$forms.lockingForm.lock_spec.control} <a href="https://www.anuko.com/lp/tt_6.htm" target="_blank">{$i18n.label.what_is_it}</a></td>
-        </tr>
-        <tr>
-          <td colspan="2">&nbsp;</td>
-        </tr>
-        <tr>
-          <td colspan="2" height="50" align="center">{$forms.lockingForm.btn_save.control}</td>
-        </tr>
-      </table>
+    <td class="large-screen-label"><label for="lock_spec">{$i18n.label.schedule}:</label></td>
+    <td class="td-with-input">{$forms.lockingForm.lock_spec.control}
+      <span class="what-is-it-img"><a href="https://www.anuko.com/lp/tt_6.htm" target="_blank"><img src="img/icon-question-mark.png" title="{$i18n.label.what_is_it}" alt="{$i18n.label.what_is_it}"></a></span>
+      <span class="what-is-it-text"><a href="https://www.anuko.com/lp/tt_6.htm" target="_blank">{$i18n.label.what_is_it}</a></span>
     </td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 </table>
+<div class="button-set">{$forms.lockingForm.btn_save.control}</div>
 {$forms.lockingForm.close}

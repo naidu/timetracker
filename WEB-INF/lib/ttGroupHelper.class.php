@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 import('ttRoleHelper');
 
@@ -228,6 +204,7 @@ class ttGroupHelper {
     $mdb2 = getConnection();
 
     // Add modified info to sql for some tables, depending on table name.
+    $modified_part = '';
     if ($table_name == 'tt_users') {
       $modified_part = ', modified = now(), modified_ip = '.$mdb2->quote($_SERVER['REMOTE_ADDR']).', modified_by = '.$user->id;
     }
@@ -336,6 +313,8 @@ class ttGroupHelper {
     $group_id = $user->getGroup();
     $org_id = $user->org_id;
 
+    $filePart = '';
+    $fileJoin = '';
     if ($includeFiles) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
@@ -364,6 +343,8 @@ class ttGroupHelper {
     $group_id = $user->getGroup();
     $org_id = $user->org_id;
 
+    $filePart = '';
+    $fileJoin = '';
     if ($includeFiles) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
@@ -422,6 +403,7 @@ class ttGroupHelper {
     $addPaidStatus = $user->isPluginEnabled('ps');
     $result = array();
 
+    $client_part = '';
     if ($user->isClient())
       $client_part = "and i.client_id = $user->client_id";
 
@@ -502,7 +484,7 @@ class ttGroupHelper {
       return false;
     while ($val = $res->fetchRow()) {
       // Localize top manager role name, as it is not localized in db.
-      if ($val['rank'] == 512)
+      if (isset($val['rank']) && $val['rank'] == 512)
         $val['role_name'] = $i18n->get('role.top_manager.label');
       $user_list[] = $val;
     }

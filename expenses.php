@@ -120,6 +120,7 @@ if ($show_project) {
   $largeScreenCalendarRowSpan += 2;
 
   // Dropdown for clients if the clients plugin is enabled.
+  $client_list = array();
   if ($user->isPluginEnabled('cl')) {
     $active_clients = ttGroupHelper::getActiveClients(true);
     // We need an array of assigned project ids to do some trimming.
@@ -152,12 +153,11 @@ if ($predefined_expenses) {
   $form->addInput(array('type'=>'combobox',
     'onchange'=>'recalculateCost();',
     'name'=>'predefined_expense',
-    'value'=>$cl_predefined_expense,
     'data'=>$predefined_expenses,
     'datakeys'=>array('id', 'name'),
     'empty'=>array(''=>$i18n->get('dropdown.select'))));
   $largeScreenCalendarRowSpan += 2;
-  $form->addInput(array('type'=>'text','onchange'=>'recalculateCost();','maxlength'=>'40','name'=>'quantity','value'=>$cl_quantity));
+  $form->addInput(array('type'=>'text','onchange'=>'recalculateCost();','maxlength'=>'40','name'=>'quantity'));
   $largeScreenCalendarRowSpan += 2;
 }
 $form->addInput(array('type'=>'textarea','maxlength'=>'800','name'=>'item_name','value'=>$cl_item_name));
@@ -230,5 +230,5 @@ $smarty->assign('client_list', $client_list);
 $smarty->assign('project_list', $project_list);
 $smarty->assign('timestring', $selected_date->toString($user->getDateFormat()));
 $smarty->assign('title', $i18n->get('title.expenses'));
-$smarty->assign('content_page_name', 'expenses2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'expenses.tpl');
+$smarty->display('index.tpl');

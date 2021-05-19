@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 import('ttConfigHelper');
 import('ttGroupHelper');
@@ -349,7 +325,7 @@ class ttUser {
 
     $filePart = '';
     $fileJoin = '';
-    if (isset($options['include_files'])) {
+    if (isset($options['include_files']) && $options['include_files']) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
       " where entity_type = 'project' and group_id = $group_id and org_id = $org_id and status = 1) Sub1".
@@ -362,7 +338,7 @@ class ttUser {
       " where p.group_id = $group_id and p.org_id = $org_id and p.status = 1 order by p.name";
     $res = $mdb2->query($sql);
     if (!is_a($res, 'PEAR_Error')) {
-      $bindTemplatesWithProjects = $options['include_templates'];
+      $bindTemplatesWithProjects = isset($options['include_templates']) && $options['include_templates'];
       while ($val = $res->fetchRow()) {
         // If we have to include templates, get them in a separate query for each project.
         // Although, theoretically, we could use mysql group_concat, but this requires grouping by, which makes
@@ -577,6 +553,7 @@ class ttUser {
 
   // addGroupToDropdown is a recursive function to populate a tree of groups, used with getGroupsForDropdown().
   function addGroupToDropdown(&$groups, $group_id, $subgroup_level) {
+    $name = '';
     // Add indentation markup to indicate subdirectory level.
     for ($i = 0; $i < $subgroup_level; $i++) {
       $name .= '🛑'; // Unicode stop sign.
@@ -594,6 +571,7 @@ class ttUser {
 
   // getSubgroups obtains a list of immediate subgroups.
   function getSubgroups($group_id = null) {
+    $groups = array();
     $mdb2 = getConnection();
 
     if (!$group_id) $group_id = $this->getGroup();
@@ -694,10 +672,13 @@ class ttUser {
   function updateGroup($fields) {
     $mdb2 = getConnection();
 
-    $group_id = $fields['group_id'];
+    $group_id = isset($fields['group_id']) ? $fields['group_id'] : null;
     if ($group_id && !$this->isGroupValid($group_id)) return false;
     if (!$group_id) $group_id = $this->getGroup();
 
+    $name_part = $description_part = $currency_part = $lang_part = $decimal_mark_part = $date_format_part = $time_format_part =
+      $week_start_part = $tracking_mode_part = $project_required_part = $record_type_part = $bcc_email_part =  $allow_ip_part =
+      $plugins_part = $config_part = $custom_css_part = $lock_spec_part = $holidays_part = $workday_minutes_part = '';
     if (isset($fields['name'])) $name_part = ', name = '.$mdb2->quote($fields['name']);
     if (isset($fields['description'])) $description_part = ', description = '.$mdb2->quote($fields['description']);
     if (isset($fields['currency'])) $currency_part = ', currency = '.$mdb2->quote($fields['currency']);
@@ -861,6 +842,7 @@ class ttUser {
     $this->behalf_id = null;
     $this->behalf_name = null;
     unset($this->behalfGroup);
+    $this->behalfGroup = null;
     unset($_SESSION['behalf_group_id']);
     unset($_SESSION['behalf_group_name']);
     unset($_SESSION['behalf_id']);
@@ -868,6 +850,7 @@ class ttUser {
 
     // Destroy report bean if it was set in session.
     $form = new Form('dummyForm');
+    global $request;
     $bean = new ActionForm('reportBean', $form, $request);
     if ($bean->isSaved()) {
       $bean->destroyBean();

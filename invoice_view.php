@@ -75,8 +75,8 @@ if ($user->isPluginEnabled('ps') && !$user->isClient()) {
   $mark_paid_action_options = array('1'=>$i18n->get('dropdown.paid'),'2'=>$i18n->get('dropdown.not_paid'));
   $form->addInput(array('type'=>'combobox',
     'name'=>'mark_paid_action_options',
-    'data'=>$mark_paid_action_options,
-    'value'=>$cl_mark_paid_action_option));
+    'class'=>'dropdown-field-with-button',
+    'data'=>$mark_paid_action_options));
   $form->addInput(array('type'=>'submit','name'=>'btn_mark_paid','value'=>$i18n->get('button.submit')));
   $smarty->assign('show_mark_paid', true);
 }
@@ -103,6 +103,7 @@ $smarty->assign('client_name', $client['name']);
 $smarty->assign('client_address', $client['address']);
 $smarty->assign('show_project', MODE_PROJECTS == $trackingMode || MODE_PROJECTS_AND_TASKS == $trackingMode);
 $smarty->assign('show_task', MODE_PROJECTS_AND_TASKS == $trackingMode);
+$smarty->assign('show_paid_column', $user->isPluginEnabled('ps'));
 $smarty->assign('invoice_items', $invoice_items);
 $smarty->assign('colspan', $colspan);
 $smarty->assign('title', $i18n->get('title.view_invoice'));

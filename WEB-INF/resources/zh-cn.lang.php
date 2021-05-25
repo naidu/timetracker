@@ -26,6 +26,7 @@ $i18n_key_words = array(
 // 'menu.plugins' => 'Plugins',
 'menu.time' => '时间记录',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 'menu.expenses' => '费用',
 'menu.reports' => '报告',
@@ -125,6 +126,7 @@ $i18n_key_words = array(
 'button.import' => '导入团队信息', // TODO: replace "team" with "group".
 'button.close' => '关闭',
 // TODO: translate the following.
+// 'button.start' => 'Start',
 // 'button.stop' => 'Stop',
 // 'button.approve' => 'Approve',
 // 'button.disapprove' => 'Disapprove',
@@ -192,6 +194,7 @@ $i18n_key_words = array(
 // TODO: translate the following.
 // 'label.day_view' => 'Day view',
 // 'label.week_view' => 'Week view',
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID号',
 'label.language' => '语言',
 // TODO: translate the following.
@@ -241,7 +244,6 @@ $i18n_key_words = array(
 // 'label.paid_status' => 'Paid status',
 // 'label.paid' => 'Paid',
 // 'label.mark_paid' => 'Mark paid',
-// 'label.week_menu' => 'Week menu',
 // 'label.week_note' => 'Week note',
 // 'label.week_list' => 'Week list',
 // 'label.work_units' => 'Work units',
@@ -300,6 +302,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => '删除时间记录',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 // 'title.expenses' => 'Expenses',
 // 'title.edit_expense' => 'Editing Expense Item',
 // 'title.delete_expense' => 'Deleting Expense Item',

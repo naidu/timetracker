@@ -39,10 +39,10 @@ if ($request->isPost()) {
 
 $form = new Form('mailForm');
 $form->addInput(array('type'=>'hidden','name'=>'id','value'=>$cl_invoice_id));
-$form->addInput(array('type'=>'text','name'=>'receiver','style'=>'width: 300px;','value'=>$cl_receiver));
-$form->addInput(array('type'=>'text','name'=>'cc','style'=>'width: 300px;','value'=>$cl_cc));
-$form->addInput(array('type'=>'text','name'=>'subject','style'=>'width: 300px;','value'=>$cl_subject));
-$form->addInput(array('type'=>'textarea','name'=>'comment','maxlength'=>'250','style'=>'width: 300px; height: 60px;'));
+$form->addInput(array('type'=>'text','name'=>'receiver','value'=>$cl_receiver));
+$form->addInput(array('type'=>'text','name'=>'cc','value'=>$cl_cc));
+$form->addInput(array('type'=>'text','name'=>'subject','value'=>$cl_subject));
+$form->addInput(array('type'=>'textarea','name'=>'comment','maxlength'=>'250'));
 $form->addInput(array('type'=>'submit','name'=>'btn_send','value'=>$i18n->get('button.send')));
 
 if ($request->isPost()) {

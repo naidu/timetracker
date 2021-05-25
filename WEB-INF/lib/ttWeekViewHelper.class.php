@@ -1,30 +1,6 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Anuko Time Tracker
-// +----------------------------------------------------------------------+
-// | Copyright (c) Anuko International Ltd. (https://www.anuko.com)
-// +----------------------------------------------------------------------+
-// | LIBERAL FREEWARE LICENSE: This source code document may be used
-// | by anyone for any purpose, and freely redistributed alone or in
-// | combination with other software, provided that the license is obeyed.
-// |
-// | There are only two ways to violate the license:
-// |
-// | 1. To redistribute this code in source form, with the copyright
-// |    notice or license removed or altered. (Distributing in compiled
-// |    forms without embedded copyright notices is permitted).
-// |
-// | 2. To redistribute modified versions of this code in *any* form
-// |    that bears insufficient indications that the modifications are
-// |    not the work of the original author(s).
-// |
-// | This license applies to this document only, not any other software
-// | that it may be combined with.
-// |
-// +----------------------------------------------------------------------+
-// | Contributors:
-// | https://www.anuko.com/time_tracker/credits.htm
-// +----------------------------------------------------------------------+
+/* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt */
 
 // ttWeekViewHelper class groups together functions used in week view.
 class ttWeekViewHelper {
@@ -369,11 +345,13 @@ class ttWeekViewHelper {
     // Insert label.
     global $i18n;
     $dayTotals['label'] = $i18n->get('label.day_total').':';
-
+    foreach($dayHeaders as $dayHeader) {
+      $dayTotals[$dayHeader] = 0;
+    }
     foreach ($dataArray as $row) {
       foreach($dayHeaders as $dayHeader) {
         if (array_key_exists($dayHeader, $row)) {
-          $minutes = ttTimeHelper::toMinutes($row[$dayHeader]['duration']);
+          $minutes = ttTimeHelper::toMinutes(@$row[$dayHeader]['duration']);
           $dayTotals[$dayHeader] += $minutes;
         }
       }
@@ -428,8 +406,9 @@ class ttWeekViewHelper {
   static function makeRowIdentifier($record) {
     global $user;
     // Start with client.
+    $row_identifier = '';
     if ($user->isPluginEnabled('cl'))
-      $row_identifier = $record['client_id'] ? 'cl:'.$record['client_id'] : '';
+      $row_identifier .= $record['client_id'] ? 'cl:'.$record['client_id'] : '';
     // Add billable flag.
     if (!empty($row_identifier)) $row_identifier .= ',';
     $row_identifier .= 'bl:'.$record['billable'];
@@ -439,7 +418,7 @@ class ttWeekViewHelper {
     $row_identifier .= $record['task_id'] ? ',ts:'.$record['task_id'] : '';
     // Add custom field parts.
     global $custom_fields;
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         if ($timeField['type'] == CustomFields::TYPE_TEXT)
@@ -460,8 +439,9 @@ class ttWeekViewHelper {
   static function makeRowLabel($record) {
     global $user;
     // Start with client.
+    $label = '';
     if ($user->isPluginEnabled('cl'))
-      $label = $record['client'];
+      $label .= $record['client'];
 
     // Add project.
     if (!empty($label) && !empty($record['project'])) $label .= ' - ';
@@ -473,7 +453,7 @@ class ttWeekViewHelper {
 
     // Add custom field parts.
     global $custom_fields;
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $field_value = $record[$field_name];
@@ -553,7 +533,7 @@ class ttWeekViewHelper {
     $fields4insert['billable'] = ttWeekViewHelper::parseFromWeekViewRow($fields['row_id'], 'bl');
     $fields4insert['project'] = ttWeekViewHelper::parseFromWeekViewRow($fields['row_id'], 'pr');
     $fields4insert['task'] = ttWeekViewHelper::parseFromWeekViewRow($fields['row_id'], 'ts');
-    $fields4insert['note'] = $fields['note'];
+    $fields4insert['note'] = isset($fields['note']) ? $fields['note'] : null;
 
     // Try to insert a record.
     $id = ttTimeHelper::insert($fields4insert);

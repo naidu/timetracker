@@ -1,22 +1,8 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {$forms.groupForm.open}
-<table cellspacing="4" cellpadding="7" border="0">
-  <tr>
-    <td>
-      <table cellspacing="0" cellpadding="0" border="0">
-        <tr><td colspan="2">{$i18n.form.group_delete.hint}</td></tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-          <td colspan="2" align="center"><b>{$group_to_delete|escape}</b></td>
-        </tr>
-        <tr>
-          <td colspan="2" align="center">&nbsp;</td>
-        </tr>
-        <tr>
-          <td align="right">{$forms.groupForm.btn_delete.control}&nbsp;</td>
-          <td align="left">&nbsp;{$forms.groupForm.btn_cancel.control}</td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
+<div class="page-hint">{$i18n.form.group_delete.hint}</div>
+<div class="section-header">{$group_to_delete|escape}</div>
+<div class="button-set">{$forms.groupForm.btn_delete.control}&nbsp;{$forms.groupForm.btn_cancel.control}</div>
 {$forms.groupForm.close}

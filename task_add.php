@@ -21,6 +21,7 @@ if (MODE_PROJECTS_AND_TASKS != $user->getTrackingMode()) {
 
 $projects = ttGroupHelper::getActiveProjects();
 
+$cl_name = $cl_description = '';
 if ($request->isPost()) {
   $cl_name = trim($request->getParameter('name'));
   $cl_description = trim($request->getParameter('description'));
@@ -61,5 +62,5 @@ $smarty->assign('forms', array($form->getName()=>$form->toArray()));
 $smarty->assign('show_projects', count($projects) > 0);
 $smarty->assign('onload', 'onLoad="document.taskForm.name.focus()"');
 $smarty->assign('title', $i18n->get('title.add_task'));
-$smarty->assign('content_page_name', 'task_add2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'task_add.tpl');
+$smarty->display('index.tpl');

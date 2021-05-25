@@ -414,9 +414,9 @@ class ttTimeHelper {
     $org_id = $user->org_id;
 
     $date = $fields['date'];
-    $start = $fields['start'];
-    $finish = $fields['finish'];
-    $duration = $fields['duration'];
+    $start = isset($fields['start']) ? $fields['start'] : null;
+    $finish = isset($fields['finish']) ? $fields['finish'] : null ;
+    $duration = isset($fields['duration']) ? $fields['duration'] : null;
     if ($duration) {
       $minutes = ttTimeHelper::postedDurationToMinutes($duration);
       $duration = ttTimeHelper::minutesToDuration($minutes);
@@ -424,10 +424,10 @@ class ttTimeHelper {
     $client = $fields['client'];
     $project = $fields['project'];
     $task = $fields['task'];
-    $invoice = $fields['invoice'];
+    $invoice = isset($fields['invoice']) ? $fields['invoice'] : null;
     $note = $fields['note'];
     $billable = $fields['billable'];
-    $paid = $fields['paid'];
+    $paid = isset($fields['paid']) ? $fields['paid'] : null;
 
     $start = ttTimeHelper::to24HourFormat($start);
     if ($finish) {
@@ -479,7 +479,7 @@ class ttTimeHelper {
     $task = $fields['task'];
     $start = $fields['start'];
     $finish = $fields['finish'];
-    $duration = $fields['duration'];
+    $duration = isset($fields['duration']) ? $fields['duration'] : null;
     if ($duration) {
       $minutes = ttTimeHelper::postedDurationToMinutes($duration);
       $duration = ttTimeHelper::minutesToDuration($minutes);
@@ -881,7 +881,8 @@ class ttTimeHelper {
       $time_fields_array = array();
     }
 
-    if ($custom_fields && $custom_fields->timeFields) {
+    $time_fields = '';
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         if ($timeField['type'] == CustomFields::TYPE_TEXT) {
@@ -895,6 +896,8 @@ class ttTimeHelper {
       $time_fields = ", ".join(', ', $time_fields_array);
     }
     
+    $filePart = '';
+    $fileJoin = '';
     if ($includeFiles) {
       $filePart = ', if(Sub1.entity_id is null, 0, 1) as has_files';
       $fileJoin =  " left join (select distinct entity_id from tt_files".
@@ -907,7 +910,7 @@ class ttTimeHelper {
     if ($user->isPluginEnabled('cl'))
       $left_joins .= " left join tt_clients c on (l.client_id = c.id)";
       
-    if ($custom_fields && $custom_fields->timeFields) {
+    if (isset($custom_fields) && $custom_fields->timeFields) {
       foreach ($custom_fields->timeFields as $timeField) {
         $field_name = 'time_field_'.$timeField['id'];
         $cflTable = 'cfl'.$timeField['id'];

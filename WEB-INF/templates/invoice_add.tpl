@@ -1,46 +1,50 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {$forms.invoiceForm.open}
-<table cellspacing="4" cellpadding="7" border="0">
+<table class="centered-table">
+  <tr class = "small-screen-label"><td><label for="number">{$i18n.form.invoice.number} (*):</label></td></tr>
   <tr>
-    <td>
-      <table cellspacing="1" cellpadding="2" border="0">
-        <tr>
-          <td align="right">{$i18n.form.invoice.number} (*):</td>
-          <td>{$forms.invoiceForm.number.control}</td>
-        </tr>
-        <tr>
-          <td align="right">{$i18n.label.date} (*):</td>
-          <td>{$forms.invoiceForm.date.control}</td>
-        </tr>
-        <tr>
-          <td align="right">{$i18n.label.client} (*):</td>
-          <td>{$forms.invoiceForm.client.control}</td>
-        </tr>
-{if $show_project}
-        <tr>
-          <td align="right">{$i18n.label.project}:</td>
-          <td>{$forms.invoiceForm.project.control}</td>
-        </tr>
-{/if}
-        <tr>
-          <td align="right">{$i18n.label.start_date} (*):</td>
-          <td>{$forms.invoiceForm.start.control}</td>
-        </tr>
-        <tr>
-          <td align="right">{$i18n.label.end_date} (*):</td>
-          <td>{$forms.invoiceForm.finish.control}</td>
-        </tr>
-        <tr>
-          <td height="40"></td>
-          <td>{$i18n.label.required_fields}</td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-          <td colspan="2" align="center" height="50">{$forms.invoiceForm.btn_submit.control}</td>
-        </tr>
-      </table>
-    </td>
+    <td class="large-screen-label"><label for="number">{$i18n.form.invoice.number} (*):</label></td>
+    <td class="td-with-input">{$forms.invoiceForm.number.control}</td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="date">{$i18n.label.date}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="date">{$i18n.label.date}:</label></td>
+    <td class="td-with-input">{$forms.invoiceForm.date.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="client">{$i18n.label.client}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="client">{$i18n.label.client}:</label></td>
+    <td class="td-with-input">{$forms.invoiceForm.client.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{if isset($show_project) && $show_project}
+  <tr class = "small-screen-label"><td><label for="project">{$i18n.label.project}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="project">{$i18n.label.project}:</label></td>
+    <td class="td-with-input">{$forms.invoiceForm.project.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+  <tr class = "small-screen-label"><td><label for="start">{$i18n.label.start_date} (*):</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="start">{$i18n.label.start_date} (*):</label></td>
+    <td class="td-with-input">{$forms.invoiceForm.start.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="finish">{$i18n.label.end_date} (*):</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="finish">{$i18n.label.end_date} (*):</label></td>
+    <td class="td-with-input">{$forms.invoiceForm.finish.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr><td colspan="2">{$i18n.label.required_fields}</td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 </table>
+<div class="button-set">{$forms.invoiceForm.btn_submit.control}</div>
 {$forms.invoiceForm.close}
 
 <script>

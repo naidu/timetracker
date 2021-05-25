@@ -25,6 +25,8 @@ $i18n_key_words = array(
 'menu.group' => 'Gruppe',
 'menu.plugins' => 'Erweiterungen',
 'menu.time' => 'Zeiten',
+// TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 'menu.week' => 'Woche',
 'menu.expenses' => 'Kosten',
 'menu.reports' => 'Berichte',
@@ -117,6 +119,8 @@ $i18n_key_words = array(
 'button.export' => 'Gruppe exportieren',
 'button.import' => 'Gruppe importieren',
 'button.close' => 'Schließen',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Stop',
 // TODO: translate the following.
 // (PR#81 suggested 'Freigeben / Genehmigen' for 'Approve' and 'Freigabe zurücknehmen' for 'Disapprove'.
@@ -179,6 +183,8 @@ $i18n_key_words = array(
 'label.select_none' => 'Alle abwählen',
 'label.day_view' => 'Tagesansicht',
 'label.week_view' => 'Wochenansicht',
+// TODO: translate the following:
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Sprache',
 'label.decimal_mark' => 'Dezimaltrennzeichen',
@@ -222,7 +228,6 @@ $i18n_key_words = array(
 'label.paid_status' => 'Bezahlstatus',
 'label.paid' => 'Bezahlt',
 'label.mark_paid' => 'Als bezahlt setzen',
-'label.week_menu' => 'Wochenansicht im Menü',
 'label.week_note' => 'Wochennotiz',
 'label.week_list' => 'Wochenliste',
 'label.work_units' => 'Arbeitseinheiten',
@@ -285,6 +290,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Eintrag löschen',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Kosten',
 'title.edit_expense' => 'Kostenposition ändern',
 'title.delete_expense' => 'Kostenposition löschen',

@@ -67,31 +67,34 @@ $options = ttReportHelper::getReportOptions($bean);
 // - We can assign items to invoices.
 // - We can assign items to a timesheet.
 // Determine these conditions separately.
-if ($bean->getAttribute('chapproved') && ($user->can('approve_reports') || $user->can('approve_all_reports')))
+$useMarkApproved = $useMarkPaid = $useAssignToInvoice = $useAssignToTimesheet = false;
+if (!$bean->getAttribute('chtotalsonly') && $bean->getAttribute('chapproved') && ($user->can('approve_reports') || $user->can('approve_all_reports')))
   $useMarkApproved = true;
-if ($bean->getAttribute('chpaid') && $user->can('manage_invoices'))
+if (!$bean->getAttribute('chtotalsonly') && $bean->getAttribute('chpaid') && $user->can('manage_invoices'))
   $useMarkPaid = true;
-if ($bean->getAttribute('chinvoice') && $client_id && 'no_grouping' == $bean->getAttribute('group_by1') && !$user->isClient() && $user->can('manage_invoices'))
+if (!$bean->getAttribute('chtotalsonly') && $bean->getAttribute('chinvoice') && $client_id && !$user->isClient() && $user->can('manage_invoices'))
   $useAssignToInvoice = true;
-if ($bean->getAttribute('chtimesheet')) {
+if (!$bean->getAttribute('chtotalsonly') && $bean->getAttribute('chtimesheet')) {
   $timesheets = ttTimesheetHelper::getMatchingTimesheets($options);
   if ($timesheets) $useAssignToTimesheet = true;
 }
 
 $use_checkboxes = $useMarkApproved || $useMarkPaid || $useAssignToInvoice || $useAssignToTimesheet;
-if ($use_checkboxes)
-  $smarty->assign('use_checkboxes', true);
+$smarty->assign('use_checkboxes', $use_checkboxes);
 
 // Controls for "Mark approved" block.
+$smarty->assign('use_mark_approved', false);
 if ($useMarkApproved) {
   $mark_approved_select_options = array('1'=>$i18n->get('dropdown.all'),'2'=>$i18n->get('dropdown.select'));
   $form->addInput(array('type'=>'combobox',
     'name'=>'mark_approved_select_options',
+    'class'=>'dropdown-field-with_button',
     'data'=>$mark_approved_select_options,
     'value'=>$cl_mark_approved_select_option));
   $mark_approved_action_options = array('1'=>$i18n->get('dropdown.approved'),'2'=>$i18n->get('dropdown.not_approved'));
   $form->addInput(array('type'=>'combobox',
     'name'=>'mark_approved_action_options',
+    'class'=>'dropdown-field-with-button',
     'data'=>$mark_approved_action_options,
     'value'=>$cl_mark_approved_action_option));
   $form->addInput(array('type'=>'submit','name'=>'btn_mark_approved','value'=>$i18n->get('button.submit')));
@@ -99,15 +102,18 @@ if ($useMarkApproved) {
 }
 
 // Controls for "Mark paid" block.
+$smarty->assign('use_mark_paid', false);
 if ($useMarkPaid) {
   $mark_paid_select_options = array('1'=>$i18n->get('dropdown.all'),'2'=>$i18n->get('dropdown.select'));
   $form->addInput(array('type'=>'combobox',
     'name'=>'mark_paid_select_options',
+    'class'=>'dropdown-field-with-button',
     'data'=>$mark_paid_select_options,
     'value'=>$cl_mark_paid_select_option));
   $mark_paid_action_options = array('1'=>$i18n->get('dropdown.paid'),'2'=>$i18n->get('dropdown.not_paid'));
   $form->addInput(array('type'=>'combobox',
     'name'=>'mark_paid_action_options',
+    'class'=>'dropdown-field-with-button',
     'data'=>$mark_paid_action_options,
     'value'=>$cl_mark_paid_action_option));
   $form->addInput(array('type'=>'submit','name'=>'btn_mark_paid','value'=>$i18n->get('button.submit')));
@@ -115,6 +121,7 @@ if ($useMarkPaid) {
 }
 
 // Controls for "Assign to invoice" block.
+$smarty->assign('use_assign_to_invoice', false);
 if ($useAssignToInvoice) {
   // Client is selected and we are displaying the invoice column.
   $recent_invoices = ttGroupHelper::getRecentInvoices($client_id);
@@ -122,10 +129,12 @@ if ($useAssignToInvoice) {
     $assign_invoice_select_options = array('1'=>$i18n->get('dropdown.all'),'2'=>$i18n->get('dropdown.select'));
     $form->addInput(array('type'=>'combobox',
       'name'=>'assign_invoice_select_options',
+      'class'=>'dropdown-field-with-button',
       'data'=>$assign_invoice_select_options,
       'value'=>$cl_assign_invoice_select_option));
     $form->addInput(array('type'=>'combobox',
       'name'=>'recent_invoice',
+      'class'=>'dropdown-field-with-button',
       'data'=>$recent_invoices,
       'datakeys'=>array('id','name'),
       'value'=>$cl_recent_invoice_option,
@@ -136,14 +145,17 @@ if ($useAssignToInvoice) {
 }
 
 // Controls for "Assign to timesheet" block.
+$smarty->assign('use_assign_to_timesheet', false);
 if ($useAssignToTimesheet) {
   $assign_timesheet_select_options = array('1'=>$i18n->get('dropdown.all'),'2'=>$i18n->get('dropdown.select'));
   $form->addInput(array('type'=>'combobox',
       'name'=>'assign_timesheet_select_options',
+      'class'=>'dropdown-field-with-button',
       'data'=>$assign_timesheet_select_options,
       'value'=>$cl_assign_timesheet_select_option));
   $form->addInput(array('type'=>'combobox',
       'name'=>'timesheet',
+      'class'=>'dropdown-field-with-button',
       'data'=>$timesheets,
       'datakeys'=>array('id','name'),
       'value'=>$cl_timesheet_option,
@@ -173,8 +185,8 @@ if ($request->isPost()) {
     // Note: getting from session assures we act only on previously displayed records.
     // Rebuilding from $bean may get us a different set.
     $item_ids = ttReportHelper::getFromSession();
-    $time_log_ids = $item_ids['report_item_ids'];
-    $expense_item_ids = $item_ids['report_item_expense_ids'];
+    $time_log_ids = @$item_ids['report_item_ids'];
+    $expense_item_ids = @$item_ids['report_item_expense_ids'];
     // The above code is here because the arrays are used in both "Mark paid" and "Assign to invoice" handlers below.
   }
 
@@ -248,6 +260,8 @@ $report_items = ttReportHelper::getItems($options);
 if ($request->isGet() && $use_checkboxes)
   ttReportHelper::putInSession($report_items);
 
+$subtotals = array();
+$smarty->assign('print_subtotals', false);
 if (ttReportHelper::grouping($options)) {
   $subtotals = ttReportHelper::getSubtotals($options);
   $smarty->assign('group_by_header', ttReportHelper::makeGroupByHeader($options));
@@ -261,10 +275,10 @@ if (ttReportHelper::grouping($options)) {
 }
 $totals = ttReportHelper::getTotals($options);
 
-// Determine column span for note field.
+// Determine column span for note field and empty rows.
 $colspan = 0;
 if ($user->can('view_reports') || $user->can('view_all_reports') || $user->isClient()) $colspan++;
-if ($custom_fields && $custom_fields->userFields) {
+if (isset($custom_fields) && $custom_fields->userFields) {
   foreach ($custom_fields->userFields as $userField) {
     $checkbox_control_name = 'show_user_field_'.$userField['id'];
     if ($bean->getAttribute($checkbox_control_name)) $colspan++;
@@ -273,7 +287,7 @@ if ($custom_fields && $custom_fields->userFields) {
 if ($bean->getAttribute('chclient')) $colspan++;
 if ($bean->getAttribute('chproject')) $colspan++;
 if ($bean->getAttribute('chtask')) $colspan++;
-if ($custom_fields && $custom_fields->timeFields) {
+if (isset($custom_fields) && $custom_fields->timeFields) {
   foreach ($custom_fields->timeFields as $timeField) {
     $checkbox_control_name = 'show_time_field_'.$timeField['id'];
     if ($bean->getAttribute($checkbox_control_name)) $colspan++;
@@ -282,6 +296,7 @@ if ($custom_fields && $custom_fields->timeFields) {
 if ($bean->getAttribute('chstart')) $colspan++;
 if ($bean->getAttribute('chfinish')) $colspan++;
 if ($bean->getAttribute('chduration')) $colspan++;
+if (!$user->getConfigOption('report_note_on_separate_row') && $bean->getAttribute('chnote')) $colspan++;
 if ($bean->getAttribute('chunits')) $colspan++;
 if ($bean->getAttribute('chcost')) $colspan++;
 if ($bean->getAttribute('chapproved')) $colspan++;
@@ -290,6 +305,8 @@ if ($bean->getAttribute('chip')) $colspan++;
 if ($bean->getAttribute('chinvoice')) $colspan++;
 if ($bean->getAttribute('chtimesheet')) $colspan++;
 if ($bean->getAttribute('chfiles')) $colspan++;
+if ($use_checkboxes) $colspan++;
+$colspan++; // One more column for edit icons.
 
 // Assign variables that are used to alternate color of rows for different dates.
 $smarty->assign('prev_date', '');

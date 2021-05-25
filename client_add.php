@@ -19,6 +19,8 @@ if (!$user->isPluginEnabled('cl')) {
 
 $projects = ttGroupHelper::getActiveProjects();
 
+$cl_name = $cl_address = $cl_tax = '';
+$cl_projects = array();
 if ($request->isPost()) {
   $cl_name = trim($request->getParameter('name'));
   $cl_address = trim($request->getParameter('address'));
@@ -66,5 +68,5 @@ $smarty->assign('forms', array($form->getName()=>$form->toArray()));
 $smarty->assign('onload', 'onLoad="document.clientForm.name.focus()"');
 $smarty->assign('show_projects', $show_projects);
 $smarty->assign('title', $i18n->get('title.add_client'));
-$smarty->assign('content_page_name', 'client_add2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'client_add.tpl');
+$smarty->display('index.tpl');

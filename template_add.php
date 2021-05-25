@@ -19,9 +19,11 @@ if (!$user->isPluginEnabled('tp')) {
 
 $config = new ttConfigHelper($user->getConfig());
 $bindTemplatesWithProjects = $config->getDefinedValue('bind_templates_with_projects');
+$projects = $cl_projects = array();
 if ($bindTemplatesWithProjects)
   $projects = ttGroupHelper::getActiveProjects();
 
+$cl_name = $cl_description = $cl_content = null;
 if ($request->isPost()) {
   $cl_name = trim($request->getParameter('name'));
   $cl_description = trim($request->getParameter('description'));
@@ -35,9 +37,9 @@ if ($request->isPost()) {
 }
 
 $form = new Form('templateForm');
-$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'name','style'=>'width: 250px;','value'=>$cl_name));
-$form->addInput(array('type'=>'textarea','name'=>'description','style'=>'width: 250px; height: 40px;','value'=>$cl_description));
-$form->addInput(array('type'=>'textarea','name'=>'content','style'=>'width: 250px; height: 80px;','value'=>$cl_content));
+$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'name','value'=>$cl_name));
+$form->addInput(array('type'=>'textarea','name'=>'description','value'=>$cl_description));
+$form->addInput(array('type'=>'textarea','name'=>'content','value'=>$cl_content));
 $form->addInput(array('type'=>'checkboxgroup','name'=>'projects','layout'=>'H','data'=>$projects,'datakeys'=>array('id','name'),'value'=>$cl_projects));
 $form->addInput(array('type'=>'submit','name'=>'btn_add','value'=>$i18n->get('button.add')));
 

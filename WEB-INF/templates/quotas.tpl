@@ -1,47 +1,36 @@
-<table cellspacing="0" cellpadding="7" border="0" width="720">
-  <tr><td valign="top">{$i18n.form.quota.hint}</td></tr>
-</table>
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
 
+<div class="page-hint">{$i18n.form.quota.hint}</div>
 {$forms.monthlyQuotasForm.open}
-<div style="padding: 0 0 10 0">
-  <table border="0" class="divider">
-    <tr>
-      <td align="center">
-        <table>
-          <tr>
-            <td>{$i18n.form.quota.workday_hours}:</td>
-            <td>{$forms.monthlyQuotasForm.workdayHours.control}</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</div>
-<table>
+<table class="centered-table">
+  <tr class = "small-screen-label"><td><label for="workdayHours">{$i18n.form.quota.workday_hours}:</label></td></tr>
   <tr>
-    <td>{$i18n.form.quota.year}:</td>
-    <td>{$forms.monthlyQuotasForm.year.control}</td>
+    <td class="large-screen-label"><label for="workdayHours">{$i18n.form.quota.workday_hours}:</label></td>
+    <td class="td-with-input">{$forms.monthlyQuotasForm.workdayHours.control}</td>
   </tr>
-  <tr><td>&nbsp;</td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="year">{$i18n.form.quota.year}:</label></td></tr>
   <tr>
-    <td colspan="2">
-      <table>
-        <tr>
-          <td class="tableHeaderCentered">{$i18n.form.quota.month}</td>
-          <td class="tableHeaderCentered">{$i18n.label.quota}</td>
-        </tr>
-{foreach $months as $month}
-        <tr>
-          <td>{$month}:</td>
-          <td>{$forms.monthlyQuotasForm.$month.control}</td>
-        </tr>
-{/foreach}
-        <tr><td colspan="2">&nbsp;</td></tr>
-        <tr><td colspan="2" style="text-align:center;"><input type="submit" name="btn_submit" value="{$i18n.button.save}"></td></tr>
-      </table>
-    </td>
+    <td class="large-screen-label"><label for="year">{$i18n.form.quota.year}:</label></td>
+    <td class="td-with-input">{$forms.monthlyQuotasForm.year.control}</td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 </table>
+<div class="form-control-separator"></div>
+<table class="x-scrollable-table">
+  <tr>
+    <th>{$i18n.form.quota.month}</th>
+    <th>{$i18n.label.quota}</th>
+  </tr>
+{foreach $months as $month}
+  <tr>
+    <td class="label-cell">{$month}:</td>
+    <td>{$forms.monthlyQuotasForm.$month.control}</td>
+  </tr>
+{/foreach}
+</table>
+<div class="button-set"><input type="submit" name="btn_submit" value="{$i18n.button.save}"</div>
 {$forms.monthlyQuotasForm.close}
 
 <script>

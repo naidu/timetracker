@@ -1,3 +1,6 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 <script>
   function confirm_deleting_entries() {
     var dropdown = document.getElementById("delete_invoice_entries");
@@ -10,25 +13,22 @@
 </script>
 
 {$forms.invoiceDeleteForm.open}
-<table cellspacing="4" cellpadding="7" border="0">
+<table class="centered-table">
+  <tr class = "small-screen-label"><td>{$i18n.form.invoice.invoice_to_delete}:</td></tr>
   <tr>
-    <td>
-      <table cellspacing="0" cellpadding="2" border="0">
-        <tr>
-          <td>{$i18n.form.invoice.invoice_to_delete}:</td>
-          <th>{$invoice_to_delete|escape}</th>
-        </tr>
-        <tr>
-          <td>{$i18n.form.invoice.invoice_entries}:</td>
-          <td>{$forms.invoiceDeleteForm.delete_invoice_entries.control}</td>
-        </tr>
-        <tr><td colspan="2" align="center">&nbsp;</td></tr>
-        <tr>
-          <td align="right">{$forms.invoiceDeleteForm.btn_delete.control}&nbsp;</td>
-          <td align="left">&nbsp;{$forms.invoiceDeleteForm.btn_cancel.control}</td>
-        </tr>
-      </table>
+    <td class="large-screen-label">{$i18n.form.invoice.invoice_to_delete}:</label></td>
+    <th>{$invoice_to_delete|escape}</th>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="delete_invoice_entries">{$i18n.form.invoice.invoice_entries}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="delete_invoice_entries">{$i18n.form.invoice.invoice_entries}:</label></td>
+    <td class="td-with-input">{$forms.invoiceDeleteForm.delete_invoice_entries.control}
+      <span class="what-is-it-img"><a href="https://www.anuko.com/lp/tt_49.htm" target="_blank"><img src="img/icon-question-mark.png" title="{$i18n.label.what_is_it}" alt="{$i18n.label.what_is_it}"></a></span>
+      <span class="what-is-it-text"><a href="https://www.anuko.com/lp/tt_49.htm" target="_blank">{$i18n.label.what_is_it}</a></span>
     </td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 </table>
+<div class="button-set">{$forms.invoiceDeleteForm.btn_delete.control} {$forms.invoiceDeleteForm.btn_cancel.control}</div>
 {$forms.invoiceDeleteForm.close}

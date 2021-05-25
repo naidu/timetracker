@@ -41,7 +41,10 @@ if ($home_group) {
 // Set on behalf group accordingly.
 $groupChanged = (bool)$request->getParameter('group_changed');
 if ($request->isPost() && $groupChanged) {
- $user->setOnBehalfGroup($group_id);
+ $user->setOnBehalfGroup($group_id); // User changed the group in a post using group selector on group_edit.php.
+}
+if ($request->isGet() && !$home_group) {
+ $user->setOnBehalfGroup($group_id); // User got here in a get by clicking an edit icon for a subgroup on groups.php.
 }
 
 $groups = $user->getGroupsForDropdown();
@@ -91,7 +94,6 @@ if (count($groups) > 1) {
   $form->addInput(array('type'=>'combobox',
     'onchange'=>'document.groupForm.group_changed.value=1;document.groupForm.submit();',
     'name'=>'group',
-    'style'=>'width: 250px;',
     'value'=>$group_id,
     'data'=>$groups,
     'datakeys'=>array('id','name')));
@@ -116,10 +118,10 @@ foreach ($lang_files as $lfile) {
   $longname_lang[] = array('id'=>I18n::getLangFromFilename($lfile),'name'=>$lname);
 }
 $longname_lang = mu_sort($longname_lang, 'name');
-$form->addInput(array('type'=>'combobox','name'=>'lang','style'=>'width: 200px','data'=>$longname_lang,'datakeys'=>array('id','name'),'value'=>$cl_lang));
+$form->addInput(array('type'=>'combobox','name'=>'lang','data'=>$longname_lang,'datakeys'=>array('id','name'),'value'=>$cl_lang));
 
 $DECIMAL_MARK_OPTIONS = array(array('id'=>'.','name'=>'.'),array('id'=>',','name'=>','));
-$form->addInput(array('type'=>'combobox','name'=>'decimal_mark','style'=>'width: 150px','data'=>$DECIMAL_MARK_OPTIONS,'datakeys'=>array('id','name'),'value'=>$cl_decimal_mark,
+$form->addInput(array('type'=>'combobox','name'=>'decimal_mark','class'=>'dropdown-field-with-format-example','data'=>$DECIMAL_MARK_OPTIONS,'datakeys'=>array('id','name'),'value'=>$cl_decimal_mark,
   'onchange'=>'adjustDecimalPreview()'));
 
 $DATE_FORMAT_OPTIONS = array(
@@ -128,12 +130,12 @@ $DATE_FORMAT_OPTIONS = array(
   array('id'=>'%d-%m-%Y','name'=>'d-m-Y'),
   array('id'=>'%d.%m.%Y','name'=>'d.m.Y'),
   array('id'=>'%d.%m.%Y %a','name'=>'d.m.Y a'));
-$form->addInput(array('type'=>'combobox','name'=>'date_format','style'=>'width: 150px;','data'=>$DATE_FORMAT_OPTIONS,'datakeys'=>array('id','name'),'value'=>$cl_date_format,
+$form->addInput(array('type'=>'combobox','name'=>'date_format','class'=>'dropdown-field-with-format-example','data'=>$DATE_FORMAT_OPTIONS,'datakeys'=>array('id','name'),'value'=>$cl_date_format,
   'onchange'=>'MakeFormatPreview(&quot;date_format_preview&quot;, this);'));
 $TIME_FORMAT_OPTIONS = array(
   array('id'=>'%H:%M','name'=>$i18n->get('form.group_edit.24_hours')),
   array('id'=>'%I:%M %p','name'=>$i18n->get('form.group_edit.12_hours')));
-$form->addInput(array('type'=>'combobox','name'=>'time_format','style'=>'width: 150px;','data'=>$TIME_FORMAT_OPTIONS,'datakeys'=>array('id','name'),'value'=>$cl_time_format,
+$form->addInput(array('type'=>'combobox','name'=>'time_format','class'=>'dropdown-field-with-format-example','data'=>$TIME_FORMAT_OPTIONS,'datakeys'=>array('id','name'),'value'=>$cl_time_format,
   'onchange'=>'MakeFormatPreview(&quot;time_format_preview&quot;, this);'));
 
 // Prepare week start choices.
@@ -141,7 +143,7 @@ $week_start_options = array();
 foreach ($i18n->weekdayNames as $id => $week_dn) {
   $week_start_options[] = array('id' => $id, 'name' => $week_dn);
 }
-$form->addInput(array('type'=>'combobox','name'=>'start_week','style'=>'width: 150px;','data'=>$week_start_options,'datakeys'=>array('id','name'),'value'=>$cl_start_week));
+$form->addInput(array('type'=>'combobox','name'=>'start_week','data'=>$week_start_options,'datakeys'=>array('id','name'),'value'=>$cl_start_week));
 
 // Show holidays control.
 $form->addInput(array('type'=>'text','name'=>'holidays','value'=>$cl_holidays));
@@ -151,7 +153,7 @@ $tracking_mode_options = array();
 $tracking_mode_options[MODE_TIME] = $i18n->get('form.group_edit.mode_time');
 $tracking_mode_options[MODE_PROJECTS] = $i18n->get('form.group_edit.mode_projects');
 $tracking_mode_options[MODE_PROJECTS_AND_TASKS] = $i18n->get('form.group_edit.mode_projects_and_tasks');
-$form->addInput(array('type'=>'combobox','name'=>'tracking_mode','style'=>'width: 150px;','data'=>$tracking_mode_options,'value'=>$cl_tracking_mode));
+$form->addInput(array('type'=>'combobox','name'=>'tracking_mode','data'=>$tracking_mode_options,'value'=>$cl_tracking_mode));
 $form->addInput(array('type'=>'checkbox','name'=>'project_required','value'=>$cl_project_required));
 
 // Prepare record type choices.
@@ -159,7 +161,7 @@ $record_type_options = array();
 $record_type_options[TYPE_ALL] = $i18n->get('form.group_edit.type_all');
 $record_type_options[TYPE_START_FINISH] = $i18n->get('form.group_edit.type_start_finish');
 $record_type_options[TYPE_DURATION] = $i18n->get('form.group_edit.type_duration');
-$form->addInput(array('type'=>'combobox','name'=>'record_type','style'=>'width: 150px;','data'=>$record_type_options,'value'=>$cl_record_type));
+$form->addInput(array('type'=>'combobox','name'=>'record_type','data'=>$record_type_options,'value'=>$cl_record_type));
 
 // Punch mode checkbox.
 $form->addInput(array('type'=>'checkbox','name'=>'punch_mode','value'=>$cl_punch_mode));

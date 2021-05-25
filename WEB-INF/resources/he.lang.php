@@ -27,6 +27,7 @@ $i18n_key_words = array(
 'menu.plugins' => 'תוספים',
 'menu.time' => 'זמן',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 // 'menu.expenses' => 'Expenses',
 'menu.reports' => 'דוחות',
@@ -138,6 +139,8 @@ $i18n_key_words = array(
 'button.export' => 'ייצא צוות', // TODO: replace "team" with "group".
 'button.import' => 'ייבא צוות', // TODO: replace "team" with "group".
 'button.close' => 'סגור',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'עצור',
 // TODO: translate the following.
 // 'button.approve' => 'Approve',
@@ -204,6 +207,7 @@ $i18n_key_words = array(
 // TODO: translate the following.
 // 'label.day_view' => 'Day view',
 // 'label.week_view' => 'Week view',
+// 'label.puncher' => 'Puncher',
 'label.id' => 'מזהה',
 'label.language' => 'שפה',
 // TODO: translate the following.
@@ -250,7 +254,6 @@ $i18n_key_words = array(
 // 'label.paid_status' => 'Paid status',
 // 'label.paid' => 'Paid',
 // 'label.mark_paid' => 'Mark paid',
-// 'label.week_menu' => 'Week menu',
 // 'label.week_note' => 'Week note',
 // 'label.week_list' => 'Week list',
 // 'label.work_units' => 'Work units',
@@ -310,6 +313,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'מחיקת רשומה',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 // 'title.expenses' => 'Expenses',
 // 'title.edit_expense' => 'Editing Expense Item',
 // 'title.delete_expense' => 'Deleting Expense Item',

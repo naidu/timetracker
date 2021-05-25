@@ -1,26 +1,21 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {$forms.predefinedExpenseForm.open}
-<table cellspacing="4" cellpadding="7" border="0">
+<table class="centered-table">
+  <tr class = "small-screen-label"><td><label for="name">{$i18n.label.thing_name} (*):</label></td></tr>
   <tr>
-    <td>
-      <table cellspacing="1" cellpadding="2" border="0">
-        <tr>
-          <td align="right">{$i18n.label.thing_name} (*):</td>
-          <td>{$forms.predefinedExpenseForm.name.control}</td>
-        </tr>
-        <tr>
-          <td align="right">{$i18n.label.cost} (*):</td>
-          <td>{$forms.predefinedExpenseForm.cost.control} {$user->getCurrency()|escape}</td>
-        </tr>
-        <tr>
-          <td height="40"></td>
-          <td>{$i18n.label.required_fields}</td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-          <td colspan="2" align="center" height="50">{$forms.predefinedExpenseForm.btn_submit.control}</td>
-        </tr>
-      </table>
-    </td>
+    <td class="large-screen-label"><label for="name">{$i18n.label.thing_name} (*):</label></td>
+    <td class="td-with-input">{$forms.predefinedExpenseForm.name.control}</td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="cost">{$i18n.label.cost} (*):</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="cost">{$i18n.label.cost} (*):</label></td>
+    <td class="td-with-input">{$forms.predefinedExpenseForm.cost.control} {$user->getCurrency()|escape}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr><td colspan="2">{$i18n.label.required_fields}</td></tr>
 </table>
+<div class="button-set">{$forms.predefinedExpenseForm.btn_submit.control}</div>
 {$forms.predefinedExpenseForm.close}

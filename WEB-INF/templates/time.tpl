@@ -5,7 +5,9 @@ License: See license.txt *}
 
 {if $show_navigation}
 <div class="optional-nav">
-  <a href="time.php?date={$selected_date->toString()}">{$i18n.label.day_view}</a>&nbsp;/&nbsp;<a href="week.php?date={$selected_date->toString()}">{$i18n.label.week_view}</a>
+  <a href="time.php?date={$selected_date->toString()}">{$i18n.label.day_view}</a>
+  {if $user->isPluginEnabled('pu')}&nbsp;/&nbsp;<a href="puncher.php">{$i18n.label.puncher}{/if}</a>
+  {if $user->isPluginEnabled('wv')}&nbsp;/&nbsp;<a href="week.php?date={$selected_date->toString()}">{$i18n.label.week_view}{/if}</a>
 </div>
 {/if}
 
@@ -36,7 +38,7 @@ License: See license.txt *}
   </tr>
   <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 {/if}
-{if $custom_fields && $custom_fields->timeFields}
+{if isset($custom_fields) && $custom_fields->timeFields}
   {foreach $custom_fields->timeFields as $timeField}
         {assign var="control_name" value='time_field_'|cat:$timeField['id']}
   <tr class = "small-screen-label"><td><label for="{$control_name}">{$timeField['label']|escape}{if $timeField['required']} (*){/if}:</label></td></tr>
@@ -93,7 +95,7 @@ License: See license.txt *}
   </tr>
   <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 {/if}
-{if $template_dropdown}
+{if (isset($template_dropdown) && $template_dropdown)}
   <tr class = "small-screen-label"><td><label for="template">{$i18n.label.template}:</label></td></tr>
   <tr>
     <td class = "large-screen-label"><label for="template">{$i18n.label.template}:</label></td>
@@ -117,7 +119,7 @@ License: See license.txt *}
   {if $show_client}
     <th>{$i18n.label.client}</th>
   {/if}
-  {if $show_record_custom_fields && $custom_fields && $custom_fields->timeFields}
+  {if $show_record_custom_fields && isset($custom_fields) && $custom_fields->timeFields}
     {foreach $custom_fields->timeFields as $timeField}
     <th>{$timeField['label']|escape}</th>
     {/foreach}
@@ -148,7 +150,7 @@ License: See license.txt *}
     <td class="text-cell">{$record.client|escape}</td>
     {/if}
     {* record custom fileds *}
-    {if $show_record_custom_fields && $custom_fields && $custom_fields->timeFields}
+    {if $show_record_custom_fields && isset($custom_fields) && $custom_fields->timeFields}
       {foreach $custom_fields->timeFields as $timeField}
           {assign var="control_name" value='time_field_'|cat:$timeField['id']}
     <td class="text-cell">{$record.$control_name|escape}</td>

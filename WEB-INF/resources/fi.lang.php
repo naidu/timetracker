@@ -26,6 +26,7 @@ $i18n_key_words = array(
 'menu.plugins' => 'Lisäosat',
 'menu.time' => 'Tunnit',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 'menu.expenses' => 'Kulut',
 'menu.reports' => 'Raportit',
@@ -124,6 +125,8 @@ $i18n_key_words = array(
 'button.export' => 'Vie tiimi', // TODO: replace "team" with "group".
 'button.import' => 'Tuo tiimi', // TODO: replace "team" with "group".
 'button.close' => 'Sulje',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Lopeta',
 // TODO: translate the following.
 // 'button.approve' => 'Approve',
@@ -189,6 +192,7 @@ $i18n_key_words = array(
 // TODO: translate the following.
 // 'label.day_view' => 'Day view',
 // 'label.week_view' => 'Week view',
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Kieli',
 'label.decimal_mark' => 'Desimaalierotin',
@@ -235,7 +239,6 @@ $i18n_key_words = array(
 // 'label.paid_status' => 'Paid status',
 // 'label.paid' => 'Paid',
 // 'label.mark_paid' => 'Mark paid',
-// 'label.week_menu' => 'Week menu',
 // 'label.week_note' => 'Week note',
 // 'label.week_list' => 'Week list',
 // 'label.work_units' => 'Work units',
@@ -295,6 +298,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Tuntikirjausten poisto',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Kulut',
 'title.edit_expense' => 'Kulutietojen muokkaus',
 'title.delete_expense' => 'Kulutiedon poisto',

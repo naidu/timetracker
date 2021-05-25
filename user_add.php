@@ -33,6 +33,9 @@ if ($user->isPluginEnabled('cf')) {
   $smarty->assign('custom_fields', $custom_fields);
 }
 
+$cl_name = $cl_login = $cl_password1 = $cl_password2 = $cl_email =
+$cl_role_id = $cl_client_id = $cl_quota_percent = $cl_rate = null;
+$cl_projects = array();
 $assigned_projects = array();
 if ($request->isPost()) {
   $cl_name = trim($request->getParameter('name'));
@@ -46,7 +49,7 @@ if ($request->isPost()) {
   $cl_client_id = $request->getParameter('client');
   $cl_quota_percent = $request->getParameter('quota_percent');
   // If we have user custom fields - collect input.
-  if ($custom_fields && $custom_fields->userFields) {
+  if (isset($custom_fields) && $custom_fields->userFields) {
     foreach ($custom_fields->userFields as $userField) {
       $control_name = 'user_field_'.$userField['id'];
       $userCustomFields[$userField['id']] = array('field_id' => $userField['id'],
@@ -87,7 +90,7 @@ if ($user->isPluginEnabled('cl'))
   $form->addInput(array('type'=>'combobox','name'=>'client','value'=>$cl_client_id,'data'=>$clients,'datakeys'=>array('id', 'name'),'empty'=>array(''=>$i18n->get('dropdown.select'))));
 
 // If we have custom fields - add controls for them.
-if ($custom_fields && $custom_fields->userFields) {
+if (isset($custom_fields) && $custom_fields->userFields) {
   foreach ($custom_fields->userFields as $userField) {
     $field_name = 'user_field_'.$userField['id'];
     if ($userField['type'] == CustomFields::TYPE_TEXT) {
@@ -161,7 +164,7 @@ if ($request->isPost()) {
   if ($user->isPluginEnabled('cl') && ttRoleHelper::isClientRole($cl_role_id) && !$cl_client_id) $err->add($i18n->get('error.client'));
   if (!ttValidFloat($cl_quota_percent, true)) $err->add($i18n->get('error.field'), $i18n->get('label.quota'));
   // Validate input in user custom fields.
-  if ($custom_fields && $custom_fields->userFields) {
+  if (isset($custom_fields) && $custom_fields->userFields) {
     foreach ($userCustomFields as $userField) {
       // Validation is the same for text and dropdown fields.
       if (!ttValidString($userField['value'], !$userField['required'])) $err->add($i18n->get('error.field'), htmlspecialchars($userField['label']));
@@ -188,7 +191,7 @@ if ($request->isPost()) {
 
       // Insert user custom fields if we have them.
       $result = true;
-      if ($user_id && $custom_fields && $custom_fields->userFields) {
+      if ($user_id && isset($custom_fields) && $custom_fields->userFields) {
         $result = $custom_fields->insertEntityFields(CustomFields::ENTITY_USER, $user_id, $userCustomFields);
       }
 
@@ -214,5 +217,5 @@ $smarty->assign('onload', 'onLoad="document.userForm.name.focus();handleClientRo
 $smarty->assign('show_quota', $show_quota);
 $smarty->assign('show_projects', $show_projects);
 $smarty->assign('title', $i18n->get('title.add_user'));
-$smarty->assign('content_page_name', 'user_add2.tpl');
-$smarty->display('index2.tpl');
+$smarty->assign('content_page_name', 'user_add.tpl');
+$smarty->display('index.tpl');

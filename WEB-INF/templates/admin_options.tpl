@@ -1,39 +1,41 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {$forms.optionsForm.open}
-<table cellspacing="4" cellpadding="7" border="0">
+<table class="centered-table">
+  <tr class = "small-screen-label"><td><label for="name">{$i18n.label.person_name} (*):</label></td></tr>
   <tr>
-    <td>
-      <table cellspacing="1" cellpadding="2" border="0">
-        <tr>
-          <td align="right" nowrap>{$i18n.label.person_name} (*):</td>
-          <td>{$forms.optionsForm.name.control}</td>
-        </tr>
-        <tr>
-          <td align="right" nowrap>{$i18n.label.login} (*):</td>
-          <td>{$forms.optionsForm.login.control}</td>
-        </tr>
-{if !$auth_external}
-        <tr>
-          <td align="right">{$i18n.label.password}:</td>
-          <td>{$forms.optionsForm.password1.control}</td>
-        </tr>
-        <tr>
-          <td align="right">{$i18n.label.confirm_password}:</td>
-          <td>{$forms.optionsForm.password2.control}</td>
-        </tr>
-{/if}
-        <tr>
-          <td align="right" nowrap>{$i18n.label.email}:</td>
-          <td>{$forms.optionsForm.email.control}</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>{$i18n.label.required_fields}</td>
-        </tr>
-        <tr>
-          <td colspan="2" align="center" height="50">{$forms.optionsForm.btn_submit.control}</td>
-        </tr>
-      </table>
-    </td>
+    <td class="large-screen-label"><label for="name">{$i18n.label.person_name} (*):</label></td>
+    <td class="td-with-input">{$forms.optionsForm.name.control}</td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="login">{$i18n.label.login} (*):</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="login">{$i18n.label.login} (*):</label></td>
+    <td class="td-with-input">{$forms.optionsForm.login.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{if !$auth_external}
+  <tr class = "small-screen-label"><td><label for="password1">{$i18n.label.password}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="password1">{$i18n.label.password}:</label></td>
+    <td class="td-with-input">{$forms.optionsForm.password1.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="password2">{$i18n.label.confirm_password}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="password2">{$i18n.label.confirm_password}:</label></td>
+    <td class="td-with-input">{$forms.optionsForm.password2.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+  <tr class = "small-screen-label"><td><label for="email">{$i18n.label.email}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="email">{$i18n.label.email}:</label></td>
+    <td class="td-with-input">{$forms.optionsForm.email.control}</td>
+  </tr>
+  <tr><td colspan="2">{$i18n.label.required_fields}</td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 </table>
+<div class="button-set">{$forms.optionsForm.btn_submit.control}</div>
 {$forms.optionsForm.close}

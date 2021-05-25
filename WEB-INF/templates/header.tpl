@@ -2,16 +2,17 @@
 <html lang="{constant('LANG_DEFAULT')}">
 <head>
   <meta charset="{constant('CHARSET')}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link href="{constant('DEFAULT_CSS')}" rel="stylesheet">
-{if $i18n.language.rtl}
+{if (isset($i18n.language.rtl) && $i18n.language.rtl)}
   <link href="{constant('RTL_CSS')}" rel="stylesheet">
 {/if}
 {if $user->getCustomCss()}
   <link href="custom_css.php" rel="stylesheet">
 {/if}
-  <title>Time Tracker{if $title} - {$title}{/if}</title>
+  <title>Time Tracker{if isset($title) && $title} - {$title}{/if}</title>
   <script src="js/strftime.js"></script>
   <script>
     {* Setup locale for strftime *}
@@ -20,192 +21,174 @@
   <script src="js/strptime.js"></script>
 </head>
 
-<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" {$onload}>
+<body{if isset($onload)} {$onload}{/if}>
 
-{assign var="tab_width" value="700"}
-
-<table height="100%" cellspacing="0" cellpadding="0" width="100%" border="0">
-  <tr>
-    <td valign="top" align="center"> <!-- This is to centrally align all our content. -->
-
-      <!-- top image -->
-      <table cellspacing="0" cellpadding="0" width="100%" border="0">
-        <tr>
+<div class="logo">
 {if $user->custom_logo}
-          <td align="center">
+  <img alt="Time Tracker" width="300" height="43" src="{$custom_logo}">
 {else}
-          <td bgcolor="#a6ccf7" background="img/top_bg.gif" align="center">
+  <a href="https://www.anuko.com/lp/tt_1.htm" target="_blank"><img alt="Anuko Time Tracker" width="300" height="43" src="img/logo.png"></a>
 {/if}
-            <table cellspacing="0" cellpadding="0" width="{$tab_width}" border="0">
-              <tr>
-                <td valign="top">
-                  <table id="page_logo" cellspacing="0" cellpadding="0" width="100%" border="0">
-                    <tr><td height="6" colspan="2"><img width="1" height="6" src="img/1x1.gif" border="0"></td></tr>
-                    <tr valign="top">
-{if $user->custom_logo}
-                      <td height="55" align="center"><img alt="Time Tracker" width="300" height="43" src="{$custom_logo}" border="0"></td>
-{else}
-                      <td height="55" align="center"><a href="https://www.anuko.com/lp/tt_1.htm" target="_blank"><img alt="Anuko Time Tracker" width="300" height="43" src="img/logo.png" border="0"></a></td>
-{/if}
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <!-- end of top image -->
+</div>
 
-{if $authenticated}
+{* top menu for small screens *}
+<div class="top-menu-small-screen">
+  <table class="top-menu-table">
+    <tr>
+      <td><a href="site_map.php">{$i18n.label.menu}</a> </td>
+      <td><a href="{constant('HELP_LINK')}">{$i18n.menu.help}</a></td>
+    </tr>
+  </table>
+</div>
+{* end of top menu for small screens *}
+
+{* top menu for large screens *}
+{if (isset($authenticated) && $authenticated)}
   {if $user->can('administer_site')}
-      <!-- top menu for admin -->
-      <table id="top_menu_admin" cellspacing="0" cellpadding="3" width="100%" border="0">
-        <tr>
-          <td class="systemMenu" height="17" align="center">&nbsp;
-            <a class="systemMenu" href="logout.php">{$i18n.menu.logout}</a>
-            <a class="systemMenu" href="{constant('FORUM_LINK')}" target="_blank">{$i18n.menu.forum}</a>
-            <a class="systemMenu" href="{constant('HELP_LINK')}" target="_blank">{$i18n.menu.help}</a>
-          </td>
-        </tr>
-      </table>
-      <!-- end of top menu for admin -->
+  {* top menu for admin *}
+<div class="top-menu-large-screen">
+  <table class="top-menu-table">
+    <tr>
+      <td><a href="logout.php">{$i18n.menu.logout}</a></td>
+      <td><a href="{constant('FORUM_LINK')}" target="_blank">{$i18n.menu.forum}</a></td>
+      <td><a href="{constant('HELP_LINK')}" target="_blank">{$i18n.menu.help}</a></td>
+    </tr>
+  </table>
+</div>
+  {* end of top menu for admin *}
 
-      <!-- sub menu for admin -->
-      <table id="sub_menu_admin" cellspacing="0" cellpadding="3" width="100%" border="0">
-        <tr>
-          <td align="center" bgcolor="#d9d9d9" nowrap height="17" background="img/subm_bg.gif">&nbsp;
-            <a class="mainMenu" href="admin_groups.php">{$i18n.menu.groups}</a>
-            <a class="mainMenu" href="admin_options.php">{$i18n.menu.options}</a>
+  {* sub menu for admin *}
+<div class="top-submenu-large-screen">
+  <table class="top-submenu-table">
+    <tr>
+      <td><a href="admin_groups.php">{$i18n.menu.groups}</a></td>
+      <td><a href="admin_options.php">{$i18n.menu.options}</a></td>
     {if isTrue('WORK_SERVER_ADMINISTRATION')}
-            <a class="mainMenu" href="work/admin_work.php">{$i18n.label.work}</a>
+      <td><a href="work/admin_work.php">{$i18n.label.work}</a></td>
     {/if}
-          </td>
-        </tr>
-      </table>
-      <!-- end of sub menu for admin -->
+    </td>
+  </table>
+</div>
+  {* end of sub menu for admin *}
   {else}
-      <!-- top menu for authorized user -->
-      <table id="top_menu_authorized_user" cellspacing="0" cellpadding="3" width="100%" border="0">
-        <tr>
-          <td class="systemMenu" height="17" align="center">&nbsp;
-            <a class="systemMenu" href="logout.php">{$i18n.menu.logout}</a>
+  {* top menu for authorized user *}
+<div class="top-menu-large-screen">
+  <table class="top-menu-table">
+    <tr>
+      <td><a href="logout.php">{$i18n.menu.logout}</a></td>
     {if $user->exists() && $user->can('manage_own_settings')}
-            <a class="systemMenu" href="profile_edit.php">{$i18n.menu.profile}</a>
+      <td><a href="profile_edit.php">{$i18n.menu.profile}</a></td>
     {/if}
     {if $user->can('manage_basic_settings')}
-            <a class="systemMenu" href="group_edit.php">{$i18n.menu.group}</a>
+      <td><a href="group_edit.php">{$i18n.menu.group}</a></td>
     {/if}
     {if $user->can('manage_features')}
-            <a class="systemMenu" href="plugins.php">{$i18n.menu.plugins}</a>
+      <td><a href="plugins.php">{$i18n.menu.plugins}</a></td>
     {/if}
-            <a class="systemMenu" href="{constant('FORUM_LINK')}" target="_blank">{$i18n.menu.forum}</a>
-            <a class="systemMenu" href="{constant('HELP_LINK')}" target="_blank">{$i18n.menu.help}</a>
-          </td>
-        </tr>
-      </table>
-      <!-- end of top menu for authorized user -->
+      <td><a href="{constant('FORUM_LINK')}" target="_blank">{$i18n.menu.forum}</a></td>
+      <td><a href="{constant('HELP_LINK')}" target="_blank">{$i18n.menu.help}</a></td>
+    </tr>
+  </table>
+</div>
+  {* end of top menu for authorized user *}
 
-      <!-- sub menu for authorized user -->
-      <table id="sub_menu_authorized_user" cellspacing="0" cellpadding="3" width="100%" border="0">
-        <tr>
-          <td align="center" bgcolor="#d9d9d9" nowrap height="17" background="img/subm_bg.gif">&nbsp;
+  {* sub menu for authorized user *}
+<div class="top-submenu-large-screen">
+  <table class="top-submenu-table">
+    <tr>
     {if $user->exists() && ($user->can('track_own_time') || $user->can('track_time'))}
-           <a class="mainMenu" href="time.php">{$i18n.menu.time}</a>
+      <td><a href="time.php">{$i18n.menu.time}</a></td>
+      {if $user->isPluginEnabled('pu') && $user->isOptionEnabled('puncher_menu')}
+      <td><a href="puncher.php">{$i18n.menu.puncher}</a></td>
+      {/if}
       {if $user->isPluginEnabled('wv') && $user->isOptionEnabled('week_menu')}
-           <a class="mainMenu" href="week.php">{$i18n.menu.week}</a>
+      <td><a href="week.php">{$i18n.menu.week}</a></td>
       {/if}
     {/if}
     {if $user->exists() && $user->isPluginEnabled('ex') && ($user->can('track_own_expenses') || $user->can('track_expenses'))}
-           <a class="mainMenu" href="expenses.php">{$i18n.menu.expenses}</a>
+      <td><a href="expenses.php">{$i18n.menu.expenses}</a></td>
     {/if}
     {if $user->exists() && ($user->can('view_own_reports') || $user->can('view_reports') || $user->can('view_all_reports') || $user->can('view_client_reports'))}
-           <a class="mainMenu" href="reports.php">{$i18n.menu.reports}</a>
+      <td><a href="reports.php">{$i18n.menu.reports}</a></td>
     {/if}
     {if $user->exists() && $user->isPluginEnabled('ts') && ($user->can('track_own_time') || $user->can('track_time'))}
-           <a class="mainMenu" href="timesheets.php">{$i18n.menu.timesheets}</a>
+      <td><a href="timesheets.php">{$i18n.menu.timesheets}</a></td>
     {/if}
     {if $user->exists() && $user->isPluginEnabled('iv') && ($user->can('manage_invoices') || $user->can('view_client_invoices'))}
-           <a class="mainMenu" href="invoices.php">{$i18n.title.invoices}</a>
+      <td><a href="invoices.php">{$i18n.title.invoices}</a></td>
     {/if}
     {if ($user->exists() && $user->isPluginEnabled('ch') && ($user->can('view_own_charts') || $user->can('view_charts'))) &&
         (constant('MODE_PROJECTS') == $user->getTrackingMode() || constant('MODE_PROJECTS_AND_TASKS') == $user->getTrackingMode() ||
         $user->isPluginEnabled('cl'))}
-           <a class="mainMenu" href="charts.php">{$i18n.menu.charts}</a>
+      <td><a href="charts.php">{$i18n.menu.charts}</a></td>
     {/if}
     {if ($user->can('view_own_projects') || $user->can('manage_projects')) && (constant('MODE_PROJECTS') == $user->getTrackingMode() || constant('MODE_PROJECTS_AND_TASKS') == $user->getTrackingMode())}
-           <a class="mainMenu" href="projects.php">{$i18n.menu.projects}</a>
+      <td><a href="projects.php">{$i18n.menu.projects}</a></td>
     {/if}
     {if (constant('MODE_PROJECTS_AND_TASKS') == $user->getTrackingMode() && ($user->can('view_own_tasks') || $user->can('manage_tasks')))}
-           <a class="mainMenu" href="tasks.php">{$i18n.menu.tasks}</a>
+      <td><a href="tasks.php">{$i18n.menu.tasks}</a></td>
     {/if}
     {if $user->can('view_users') || $user->can('manage_users')}
-           <a class="mainMenu" href="users.php">{$i18n.menu.users}</a>
+      <td><a href="users.php">{$i18n.menu.users}</a></td>
     {/if}
     {if $user->isPluginEnabled('cl') && ($user->can('view_own_clients') || $user->can('manage_clients'))}
-           <a class="mainMenu" href="clients.php">{$i18n.menu.clients}</a>
+      <td><a href="clients.php">{$i18n.menu.clients}</a></td>
     {/if}
     {if $user->isPluginEnabled('wk') && ($user->can('update_work') || $user->can('bid_on_work') || $user->can('manage_work')) && $user->exists()}
-           <a class="mainMenu" href="work/work.php">{$i18n.title.work}</a>
+      <td><a href="work/work.php">{$i18n.title.work}</a></td>
     {/if}
     {if $user->can('export_data')}
-           <a class="mainMenu" href="export.php">{$i18n.menu.export}</a>
+      <td><a href="export.php">{$i18n.menu.export}</a></td>
     {/if}
-          </td>
-        </tr>
-      </table>
-      <!-- end of sub menu for authorized user -->
+    </tr>
+  </table>
+</div>
+  {* end of sub menu for authorized user *}
   {/if}
 {else}
-      <!-- top menu for non authorized user -->
-      <table id="top_menu_non_authorized_user" cellspacing="0" cellpadding="3" width="100%" border="0">
-        <tr>
-          <td class="systemMenu" height="17" align="center">&nbsp;
-            <a class="systemMenu" href="login.php">{$i18n.menu.login}</a>
+  {* top menu for non authorized user *}
+<div class="top-menu-large-screen">
+  <table class="top-menu-table">
+    <tr>
+      <td><a href="login.php">{$i18n.menu.login}</a></td>
   {if isTrue('MULTIORG_MODE') && constant('AUTH_MODULE') == 'db'}
-            <a class="systemMenu" href="register.php">{$i18n.menu.register}</a>
+      <td><a href="register.php">{$i18n.menu.register}</a></td>
   {/if}
-            <a class="systemMenu" href="{constant('FORUM_LINK')}" target="_blank">{$i18n.menu.forum}</a>
-            <a class="systemMenu" href="{constant('HELP_LINK')}" target="_blank">{$i18n.menu.help}</a>
-          </td>
-        </tr>
-      </table>
+      <td><a href="{constant('FORUM_LINK')}" target="_blank">{$i18n.menu.forum}</a></td>
+      <td><a href="{constant('HELP_LINK')}" target="_blank">{$i18n.menu.help}</a></td>
+    </tr>
+  </table>
+</div>
 {/if}
-      <br>
+{* end of top menu for large screens *}
 
-      <!-- page title and user details -->
-{if $title}
-      <table id="page_title" cellspacing="0" cellpadding="5" width="{$tab_width+20}" border="0">
-        <tr><td class="sectionHeader"><div class="pageTitle">{$title}{if $timestring}: {$timestring}{/if}</div></td></tr>
-        <tr><td>{$user->getUserPartForHeader()}</td></tr> {* No need to escape as it is done in the class. *}
-      </table>
+{* page title and user details *}
+{if isset($title) && $title}
+<div class="page-title">{$title}{if isset($timestring) && $timestring}: {$timestring}{/if}</div>
+  {if (isset($authenticated) && $authenticated)}
+<div class="user-details">{$user->getUserPartForHeader()}</div> {* No need to escape as it is done in the class. *}
+  {/if}
 {/if}
-      <!-- end of page title and user details -->
+{* end of page title and user details *}
 
-      <!-- output errors -->
+{* output errors *}
 {if $err->yes()}
-      <table id="page_errors" cellspacing="4" cellpadding="7" width="{$tab_width}" border="0">
-        <tr>
-          <td class="error">
+<div class="page-errors">
   {foreach $err->getErrors() as $error}
-            {$error.message}<br> {* No need to escape as they are not coming from user and may contain a link. *}
+{$error.message}<br> {* No need to escape as they are not coming from user and may contain a link. *}
   {/foreach}
-          </td>
-        </tr>
-      </table>
+</div>
 {/if}
-      <!-- end of output errors -->
+{* end of output errors *}
 
-      <!-- output messages -->
+{* output messages *}
 {if $msg->yes()}
-      <table id="page_messages" cellspacing="4" cellpadding="7" width="{$tab_width}" border="0">
-        <tr>
-          <td class="info_message">
+<div class="page-messages">
   {foreach $msg->getErrors() as $message}
-            {$message.message}<br> {* No need to escape. *}
+{$message.message}<br> {* No need to escape. *}
   {/foreach}
-          </td>
-        </tr>
-      </table>
+</div>
 {/if}
-      <!-- end of output messages -->
+{* end of output messages *}
+
+<div class="page-content">

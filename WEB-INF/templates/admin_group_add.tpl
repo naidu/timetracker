@@ -1,49 +1,53 @@
+{* Copyright (c) Anuko International Ltd. https://www.anuko.com
+License: See license.txt *}
+
 {$forms.groupForm.open}
-<table cellspacing="4" cellpadding="7" border="0">
+<table class="centered-table">
+  <tr class = "small-screen-label"><td><label for="group_name">{$i18n.label.group_name} (*):</label></td></tr>
   <tr>
-    <td>
-      <table cellspacing="1" cellpadding="2" border="0">
-        <tr>
-          <td align="right" nowrap>{$i18n.label.group_name} (*):</td>
-          <td>{$forms.groupForm.group_name.control}</td>
-        </tr>
-        <tr>
-           <td align="right" nowrap>{$i18n.label.language}:</td>
-           <td>{$forms.groupForm.lang.control}</td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-          <td align="right" nowrap>{$i18n.label.manager_name} (*):</td>
-          <td>{$forms.groupForm.manager_name.control}</td>
-        </tr>
-        <tr>
-          <td align="right" nowrap>{$i18n.label.manager_login} (*):</td>
-          <td>{$forms.groupForm.manager_login.control}</td>
-        </tr>
-{if !$auth_external}
-        <tr>
-          <td align="right" nowrap>{$i18n.label.password} (*):</td>
-          <td>{$forms.groupForm.password1.control}</td>
-        </tr>
-        <tr>
-          <td align="right" nowrap>{$i18n.label.confirm_password} (*):</td>
-          <td>{$forms.groupForm.password2.control}</td>
-        </tr>
-{/if}
-        <tr>
-          <td align="right" nowrap>{$i18n.label.email}:</td>
-          <td>{$forms.groupForm.manager_email.control}</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>{$i18n.label.required_fields}</td>
-        </tr>
-        <tr><td colspan="2">&nbsp;</td></tr>
-        <tr>
-          <td colspan="2" height="50" align="center">{$forms.groupForm.btn_submit.control}</td>
-        </tr>
-      </table>
-    </td>
+    <td class="large-screen-label"><label for="group_name">{$i18n.label.group_name} (*):</label></td>
+    <td class="td-with-input">{$forms.groupForm.group_name.control}</td>
   </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="lang">{$i18n.label.language}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="lang">{$i18n.label.language}:</label></td>
+    <td class="td-with-input">{$forms.groupForm.lang.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="manager_name">{$i18n.label.manager_name} (*):</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="manager_name">{$i18n.label.manager_name} (*):</label></td>
+    <td class="td-with-input">{$forms.groupForm.manager_name.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="manager_login">{$i18n.label.manager_login} (*):</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="manager_login">{$i18n.label.manager_login} (*):</label></td>
+    <td class="td-with-input">{$forms.groupForm.manager_login.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{if !$auth_external}
+  <tr class = "small-screen-label"><td><label for="password1">{$i18n.label.password} (*):</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="password1">{$i18n.label.password} (*):</label></td>
+    <td class="td-with-input">{$forms.groupForm.password1.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+  <tr class = "small-screen-label"><td><label for="password2">{$i18n.label.confirm_password} (*):</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="password2">{$i18n.label.confirm_password} (*):</label></td>
+    <td class="td-with-input">{$forms.groupForm.password2.control}</td>
+  </tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
+{/if}
+  <tr class = "small-screen-label"><td><label for="manager_email">{$i18n.label.email}:</label></td></tr>
+  <tr>
+    <td class="large-screen-label"><label for="manager_email">{$i18n.label.email}:</label></td>
+    <td class="td-with-input">{$forms.groupForm.manager_email.control}</td>
+  </tr>
+  <tr><td colspan="2">{$i18n.label.required_fields}</td></tr>
+  <tr><td><div class="small-screen-form-control-separator"></div></td></tr>
 </table>
+<div class="button-set">{$forms.groupForm.btn_submit.control}</div>
 {$forms.groupForm.close}

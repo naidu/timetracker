@@ -25,6 +25,7 @@ $i18n_key_words = array(
 'menu.plugins' => 'Tillägg',
 'menu.time' => 'Tider',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 'menu.expenses' => 'Kostnader',
 'menu.reports' => 'Rapporter',
@@ -122,6 +123,8 @@ $i18n_key_words = array(
 'button.export' => 'Exportera grupp',
 'button.import' => 'Importera grupp',
 'button.close' => 'Stäng',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Avsluta',
 // TODO: translate the following.
 // 'button.approve' => 'Approve',
@@ -185,6 +188,7 @@ $i18n_key_words = array(
 // TODO: translate the following.
 // 'label.day_view' => 'Day view',
 // 'label.week_view' => 'Week view',
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Språk',
 'label.decimal_mark' => 'Decimaltecken',
@@ -231,7 +235,6 @@ $i18n_key_words = array(
 // 'label.paid_status' => 'Paid status',
 // 'label.paid' => 'Paid',
 // 'label.mark_paid' => 'Mark paid',
-// 'label.week_menu' => 'Week menu',
 // 'label.week_note' => 'Week note',
 // 'label.week_list' => 'Week list',
 // 'label.work_units' => 'Work units',
@@ -291,6 +294,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Ta bort tidsregistrering',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Kostnader',
 'title.edit_expense' => 'Redigera kostnad',
 'title.delete_expense' => 'Ta bort kostnad',

@@ -61,17 +61,16 @@ $form = new Form('notificationForm');
 $form->addInput(array('type'=>'hidden','name'=>'id','value'=>$notification_id));
 $form->addInput(array('type'=>'combobox',
   'name'=>'fav_report',
-  'style'=>'width: 250px;',
   'value'=>$cl_fav_report_id,
   'data'=>$fav_reports,
   'datakeys'=>array('id','name'),
   'empty'=>array(''=>$i18n->get('dropdown.select'))));
-$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'cron_spec','style'=>'width: 250px;','value'=>$cl_cron_spec));
-$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'email','style'=>'width: 250px;','value'=>$cl_email));
-$form->addInput(array('type'=>'text','name'=>'cc','style'=>'width: 300px;','value'=>$cl_cc));
-$form->addInput(array('type'=>'text','name'=>'subject','style'=>'width: 300px;','value'=>$cl_subject));
+$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'cron_spec','value'=>$cl_cron_spec));
+$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'email','value'=>$cl_email));
+$form->addInput(array('type'=>'text','name'=>'cc','value'=>$cl_cc));
+$form->addInput(array('type'=>'text','name'=>'subject','value'=>$cl_subject));
 $form->addInput(array('type'=>'textarea','name'=>'comment','value'=>$cl_comment));
-$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'report_condition','style'=>'width: 250px;','value'=>$cl_report_condition));
+$form->addInput(array('type'=>'text','maxlength'=>'100','name'=>'report_condition','value'=>$cl_report_condition));
 $form->addInput(array('type'=>'submit','name'=>'btn_submit','value'=>$i18n->get('button.save')));
 
 if ($request->isPost()) {

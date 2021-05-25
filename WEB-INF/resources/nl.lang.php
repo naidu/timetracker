@@ -23,6 +23,8 @@ $i18n_key_words = array(
 'menu.group' => 'Groep',
 'menu.plugins' => 'Plugins',
 'menu.time' => 'Tijden',
+// TODO: translate the following:
+// 'menu.puncher' => 'Punch',
 'menu.week' => 'Week',
 'menu.expenses' => 'Kosten',
 'menu.reports' => 'Rapporten',
@@ -107,6 +109,8 @@ $i18n_key_words = array(
 'button.export' => 'Groep exporteren',
 'button.import' => 'Groep importeren',
 'button.close' => 'Sluiten',
+// TODO: translate the following.
+// 'button.start' => 'Start',
 'button.stop' => 'Stop',
 'button.approve' => 'Goedkeuren',
 'button.disapprove' => 'Afkeuren',
@@ -164,6 +168,8 @@ $i18n_key_words = array(
 'label.select_none' => 'Selecteer niets',
 'label.day_view' => 'Dag overzicht',
 'label.week_view' => 'Week overzicht',
+// TODO: translate the following.
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Taal',
 'label.decimal_mark' => 'Decimaal teken',
@@ -206,7 +212,6 @@ $i18n_key_words = array(
 'label.paid_status' => 'Status van betaling',
 'label.paid' => 'Betaald',
 'label.mark_paid' => 'Markeer als betaald',
-'label.week_menu' => 'Week menu',
 'label.week_note' => 'Week aantekening',
 'label.week_list' => 'Week overzicht',
 'label.work_units' => 'Werk eenheid',
@@ -256,6 +261,8 @@ $i18n_key_words = array(
 'title.edit_time_record' => 'Wijzigen tijdrecord',
 'title.delete_time_record' => 'Verwijder tijdrecord',
 'title.time_files' => 'Tijden bestanden',
+// TODO: Translate the following:
+// 'title.puncher' => 'Puncher',
 'title.expenses' => 'Kosten',
 'title.edit_expense' => 'Bewerk kosten artikel',
 'title.delete_expense' => 'Verwijder kosten artikel',

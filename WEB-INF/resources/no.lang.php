@@ -28,6 +28,7 @@ $i18n_key_words = array(
 // 'menu.plugins' => 'Plugins',
 'menu.time' => 'Tid',
 // TODO: translate the following.
+// 'menu.puncher' => 'Punch',
 // 'menu.week' => 'Week',
 // 'menu.expenses' => 'Expenses',
 'menu.reports' => 'Rapporter',
@@ -132,6 +133,7 @@ $i18n_key_words = array(
 'button.import' => 'Importer team', // TODO: replace "team" with "group".
 'button.close' => 'Lukk',
 // TODO: translate the following.
+// 'button.start' => 'Start',
 // 'button.stop' => 'Stop',
 // 'button.approve' => 'Approve',
 // 'button.disapprove' => 'Disapprove',
@@ -200,6 +202,7 @@ $i18n_key_words = array(
 // TODO: translate the following.
 // 'label.day_view' => 'Day view',
 // 'label.week_view' => 'Week view',
+// 'label.puncher' => 'Puncher',
 'label.id' => 'ID',
 'label.language' => 'Språk',
 // TODO: translate the following.
@@ -248,7 +251,6 @@ $i18n_key_words = array(
 // 'label.paid_status' => 'Paid status',
 // 'label.paid' => 'Paid',
 // 'label.mark_paid' => 'Mark paid',
-// 'label.week_menu' => 'Week menu',
 // 'label.week_note' => 'Week note',
 // 'label.week_list' => 'Week list',
 // 'label.work_units' => 'Work units',
@@ -307,6 +309,7 @@ $i18n_key_words = array(
 'title.delete_time_record' => 'Slett tids oppføringen',
 // TODO: Translate the following.
 // 'title.time_files' => 'Time Record Files',
+// 'title.puncher' => 'Puncher',
 // 'title.expenses' => 'Expenses',
 // 'title.edit_expense' => 'Editing Expense Item',
 // 'title.delete_expense' => 'Deleting Expense Item',
